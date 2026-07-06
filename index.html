@@ -339,7 +339,7 @@
             border: 1px solid var(--border-glow);
             color: var(--text-main);
             font-size: 20px;
-            display: none; /* Скрыта в обычном режиме */
+            display: none; 
             align-items: center;
             justify-content: center;
             cursor: pointer;
@@ -368,6 +368,61 @@
         .app-container.fullscreen-map .back-btn {
             display: flex;
         }
+
+        /* СТИЛИ ДЛЯ СПИСКОВ ВНУТРИ ВКЛАДОК */
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card-inner);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .friends-list, #historyList {
+            max-height: 140px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 2px;
+        }
+        .friends-list::-webkit-scrollbar, #historyList::-webkit-scrollbar {
+            width: 4px;
+        }
+        .friends-list::-webkit-scrollbar-thumb, #historyList::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+        .friend-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .friend-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #222;
+            border: 1px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 11px;
+            color: #fff;
+        }
+        .send-energy-btn {
+            background: var(--accent-white);
+            color: var(--accent-black);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -394,33 +449,51 @@
         </div>
 
         <div class="bottom-hud">
-            <div class="main-panel" id="hudPanel">
-                
-                <div class="crypto-grid">
-                    <div class="crypto-card">
-                        <span class="title">Шаг / Тап</span>
-                        <span class="value">+1.5 КМ</span>
+            
+            <div id="tab-main" class="tab-panel">
+                <div class="main-panel" id="hudPanel">
+                    <div class="crypto-grid">
+                        <div class="crypto-card">
+                            <span class="title">Шаг / Тап</span>
+                            <span class="value">+1.5 КМ</span>
+                        </div>
+                        <div class="crypto-card">
+                            <span class="title">Дистанция</span>
+                            <span class="value" id="hudDistance">0.0 км</span>
+                        </div>
+                        <div class="crypto-card">
+                            <span class="title">Время</span>
+                            <span class="value" id="hudTime">0 мин</span>
+                        </div>
                     </div>
-                    <div class="crypto-card">
-                        <span class="title">Дистанция</span>
-                        <span class="value" id="hudDistance">0.0 км</span>
-                    </div>
-                    <div class="crypto-card">
-                        <span class="title">Время</span>
-                        <span class="value" id="hudTime">0 мин</span>
-                    </div>
-                </div>
 
-                <div class="slider-wrapper">
-                    <div class="slider-info">
-                        <span>Радиус сканирования</span>
-                        <span id="radiusLabel" style="color: var(--accent-white); font-weight: 700;">3.0 км</span>
+                    <div class="slider-wrapper">
+                        <div class="slider-info">
+                            <span>Радиус сканирования</span>
+                            <span id="radiusLabel" style="color: var(--accent-white); font-weight: 700;">3.0 км</span>
+                        </div>
+                        <input type="range" id="radiusSlider" class="cyber-slider" min="500" max="5000" step="100" value="3000">
                     </div>
-                    <input type="range" id="radiusSlider" class="cyber-slider" min="500" max="5000" step="100" value="3000">
                 </div>
+                <button class="action-btn" id="generateBtn" style="margin-top: 10px;" disabled>Укажите точку центра</button>
             </div>
 
-            <button class="action-btn" id="generateBtn" disabled>Укажите точку старта</button>
+            <div id="tab-friends" class="tab-panel" style="display: none;">
+                <div class="main-panel">
+                    <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Ваша команда</div>
+                    <div class="friends-list">
+                        </div>
+                </div>
+                <button class="action-btn" id="inviteBtn" style="margin-top: 10px; padding: 12px; font-size: 12px;">+ Пригласить друга</button>
+            </div>
+
+            <div id="tab-history" class="tab-panel" style="display: none;">
+                <div class="main-panel">
+                    <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">История вылазок</div>
+                    <div id="historyList">
+                        </div>
+                </div>
+            </div>
 
             <div class="energy-bar-row">
                 <div class="energy-info">
@@ -472,7 +545,6 @@
             }
         };
 
-        // Подключаем стандартную светлую/цветную карту
         const map = L.map('map', { 
             zoomControl: false, attributionControl: false, zoomAnimation: true, fadeAnimation: true
         }).setView([55.7558, 37.6173], 13);
@@ -480,9 +552,17 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
         let startMarker = null, targetMarker = null, radiusCircle = null, routeCore = null, routeGlow = null, selectedLocation = null;
+        let userLocation = null, liveLocationMarker = null, initialLocationSet = false;
         let currentRadius = 3000;
 
-        // Переменные для управления полноэкранным режимом карты
+        // Базы данных приложения (State)
+        let routeHistory = []; 
+        let friendsData = [
+            { name: "@alex_ton", dist: "14.2 км", active: true },
+            { name: "@crypto_mario", dist: "8.5 км", active: false },
+            { name: "@vlados_run", dist: "3.1 км", active: true }
+        ];
+
         const appContainer = document.querySelector('.app-container');
         const backBtn = document.getElementById('backBtn');
         let isMapFullscreen = false;
@@ -503,23 +583,17 @@
             }
         });
 
-        // ИСПРАВЛЕННЫЙ КЛИК ПО КАРТЕ (Без багов удаления маршрута)
+        // КЛИК ПО КАРТЕ
         map.on('click', function(e) {
             haptics.tap();
-
             if (!isMapFullscreen) {
-                // Если карта была маленькой, просто плавно разворачиваем её
                 appContainer.classList.add('fullscreen-map');
                 isMapFullscreen = true;
-                
-                // Если точка старта ещё вообще не выбрана, ставим её
                 if (!selectedLocation) {
                     selectedLocation = e.latlng;
                     resetLayoutAndDrawStart();
                 }
             } else {
-                // Если карта УЖЕ большая, разрешаем менять точку старта, 
-                // ТОЛЬКО если маршрут еще не сгенерирован, чтобы избежать случайных удалений
                 if (!routeCore) {
                     selectedLocation = e.latlng;
                     resetLayoutAndDrawStart();
@@ -527,9 +601,8 @@
             }
         });
 
-        // Кнопка возврата возвращает HUD на место
         backBtn.addEventListener('click', function(e) {
-            e.stopPropagation(); // Предотвращаем срабатывание клика по самой карте
+            e.stopPropagation();
             haptics.tap();
             appContainer.classList.remove('fullscreen-map');
             isMapFullscreen = false;
@@ -576,8 +649,9 @@
             if (routeGlow) map.removeLayer(routeGlow);
 
             let candidate = getRandomPointInRadius(selectedLocation, currentRadius);
+            let routeStart = userLocation ? userLocation : selectedLocation;
 
-            const routingUrl = `https://router.project-osrm.org/route/v1/walking/${selectedLocation.lng},${selectedLocation.lat};${candidate.lng},${candidate.lat}?overview=full&geometries=geojson`;
+            const routingUrl = `https://router.project-osrm.org/route/v1/walking/${routeStart.lng},${routeStart.lat};${candidate.lng},${candidate.lat}?overview=full&geometries=geojson`;
             
             let routeData = null;
             try {
@@ -594,6 +668,9 @@
                 radius: 9, fillColor: '#fff', fillOpacity: 1, color: '#000', weight: 3
             }).addTo(map);
 
+            let finalDistance = "0.0 км";
+            let finalTime = "0 мин";
+
             if (routeData && routeData.routes && routeData.routes.length > 0) {
                 const route = routeData.routes[0];
                 
@@ -605,35 +682,137 @@
                     style: { color: '#ffffff', weight: 3, opacity: 1, lineCap: 'round', lineJoin: 'round' }
                 }).addTo(map);
 
-                hudDistance.innerText = (route.distance / 1000).toFixed(1) + ' км';
-                hudTime.innerText = Math.round(route.duration / 60) + ' мин';
+                finalDistance = (route.distance / 1000).toFixed(1) + ' км';
+                finalTime = Math.round(route.duration / 60) + ' мин';
             } else {
-                routeCore = L.polyline([selectedLocation, [candidate.lat, candidate.lng]], {
+                routeCore = L.polyline([routeStart, [candidate.lat, candidate.lng]], {
                     color: '#000', weight: 4, dashArray: '8, 8', opacity: 0.8
                 }).addTo(map);
                 
-                const d = map.distance(selectedLocation, [candidate.lat, candidate.lng]);
-                hudDistance.innerText = (d / 1000).toFixed(1) + ' км';
-                hudTime.innerText = Math.round((d / 4500) * 60) + ' мин';
+                const d = map.distance(routeStart, [candidate.lat, candidate.lng]);
+                finalDistance = (d / 1000).toFixed(1) + ' км';
+                finalTime = Math.round((d / 4500) * 60) + ' мин';
             }
 
-            const boundsGroup = new L.featureGroup([startMarker, targetMarker]);
-            map.fitBounds(boundsGroup.getBounds().pad(0.35), { animate: true, duration: 0.5 });
+            hudDistance.innerText = finalDistance;
+            hudTime.innerText = finalTime;
+
+            // АВТОМАТИЧЕСКАЯ ЗАПИСЬ В ИСТОРИЮ
+            routeHistory.unshift({
+                timeCreated: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                distance: finalDistance,
+                duration: finalTime
+            });
+
+            const bounds = L.latLngBounds([selectedLocation, [candidate.lat, candidate.lng]]);
+            if (userLocation) bounds.extend(userLocation);
+            map.fitBounds(bounds.pad(0.35), { animate: true, duration: 0.5 });
         });
 
-        map.locate({setView: true, maxZoom: 14});
+        // ГЕОПОЗИЦИЯ ИГРОКА
+        map.locate({setView: false, watch: true, enableHighAccuracy: true});
         map.on('locationfound', function(e) {
-            selectedLocation = e.latlng;
-            resetLayoutAndDrawStart();
+            userLocation = e.latlng;
+            if (liveLocationMarker) {
+                liveLocationMarker.setLatLng(userLocation);
+            } else {
+                liveLocationMarker = L.circleMarker(userLocation, {
+                    radius: 6, fillColor: '#ffffff', fillOpacity: 1, color: '#000000', weight: 2.5
+                }).addTo(map);
+            }
+            if (!initialLocationSet) {
+                map.setView(userLocation, 14);
+                selectedLocation = userLocation;
+                resetLayoutAndDrawStart();
+                initialLocationSet = true;
+            }
         });
 
-        // ИНТЕГРАЦИЯ С ТЕЛЕГРАМ АККАУНТОМ
+        // ЛОГИКА НАВИГАЦИИ ПО ВКЛАДКАМ
+        const tabs = document.querySelectorAll('.tab-item');
+        const panels = document.querySelectorAll('.tab-panel');
+
+        tabs.forEach((tab, index) => {
+            tab.addEventListener('click', () => {
+                haptics.tap();
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                panels.forEach(p => p.style.display = 'none');
+                panels[index].style.display = 'block';
+
+                // Инициализация рендеринга при открытии вкладок
+                if (index === 1) renderFriends();
+                if (index === 2) renderHistory();
+            });
+        });
+
+        // ФУНКЦИИ ДЛЯ ВКЛАДКИ «ДРУЗЬЯ»
+        function renderFriends() {
+            const container = document.querySelector('.friends-list');
+            container.innerHTML = friendsData.map(f => `
+                <div class="list-item">
+                    <div class="friend-info">
+                        <div class="friend-avatar">${f.name.charAt(1).toUpperCase()}</div>
+                        <div>
+                            <div style="font-weight: 600;">${f.name}</div>
+                            <div style="color: var(--text-muted); font-size: 10px;">Всего: ${f.dist}</div>
+                        </div>
+                    </div>
+                    <button class="send-energy-btn" onclick="sendEnergy('${f.name}')">${f.active ? '⚡ Дать' : '💤 Офф'}</button>
+                </div>
+            `).join('');
+        }
+
+        window.sendEnergy = function(friendName) {
+            haptics.success();
+            const tg = window.Telegram ? window.Telegram.WebApp : null;
+            if (tg) {
+                tg.showAlert(`Вы успешно отправили +50⚡ энергии другу ${friendName}!`);
+            } else {
+                alert(`Вы успешно отправили +50⚡ энергии другу ${friendName}!`);
+            }
+        };
+
+        document.getElementById('inviteBtn').addEventListener('click', () => {
+            haptics.tap();
+            const tg = window.Telegram ? window.Telegram.WebApp : null;
+            if (tg) {
+                // Вызов официального меню ТГ для шаринга вашей реф-ссылки Mini App
+                tg.openTelegramLink('https://t.me/share/url?url=https://t.me/your_bot_username/app?startapp=ref_123&text=Эй!%20Пойдем%20гулять%20по%20случайным%20маршрутам%20и%20майнить%20GrandTon!');
+            } else {
+                alert('Реферальная ссылка скопирована в буфер обмена браузера!');
+            }
+        });
+
+        // ФУНКЦИИ ДЛЯ ВКЛАДКИ «ИСТОРИЯ»
+        function renderHistory() {
+            const container = document.getElementById('historyList');
+            if (routeHistory.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); font-size: 11px; padding: 25px 0; line-height: 1.5;">
+                        История вылазок пока пуста.<br>Сгенерируйте и пройдите свой первый случайный маршрут во вкладке Main!
+                    </div>`;
+                return;
+            }
+            container.innerHTML = routeHistory.map((h, i) => `
+                <div class="list-item">
+                    <div>
+                        <div style="font-weight: 600;">Рандом Трек #${routeHistory.length - i}</div>
+                        <div style="color: var(--text-muted); font-size: 10px;">Создан в ${h.timeCreated} • Время: ${h.duration}</div>
+                    </div>
+                    <div style="font-weight: 700; color: var(--accent-white); font-size: 13px;">${h.distance}</div>
+                </div>
+            `).join('');
+        }
+
+        // ИНТЕГРАЦИЯ ТЕЛЕГРАМ-АККАУНТА ПРИ СТАРТЕ
         const tg = window.Telegram ? window.Telegram.WebApp : null;
         if (tg) {
             tg.ready();
-            tg.expand(); // Разворачивает Mini App на максимум в Telegram
+            tg.expand();
             
-            // Получаем реальные данные профиля
             const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
             if (user) {
                 const username = user.username ? '@' + user.username : `${user.first_name || 'User'}`;
