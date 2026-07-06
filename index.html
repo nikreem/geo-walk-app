@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GeoRandomizer - Grand Combat Edition</title>
+    <title>GeoRandomizer - Creator Edition</title>
     
+    <!-- Подключение Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
         :root {
             --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-            --bg-space: #050811;
-            --panel-bg: rgba(11, 17, 32, 0.82);
-            --card-inner: rgba(20, 31, 56, 0.65);
-            --border-glow: rgba(255, 255, 255, 0.08);
-            --neon-blue: #007AFF;
-            --neon-cyan: #00f0ff;
-            --neon-gold: #ffb800;
+            --bg-space: #000000;
+            --panel-bg: rgba(15, 15, 15, 0.75);
+            --card-inner: rgba(30, 30, 30, 0.6);
+            --border-glow: rgba(255, 255, 255, 0.15);
+            --accent-white: #ffffff;
+            --accent-black: #000000;
             --text-main: #ffffff;
-            --text-muted: #7d8ca3;
+            --text-muted: #999999;
         }
 
         * {
@@ -32,7 +32,7 @@
             width: 100%;
             height: 100%;
             font-family: var(--font-apple);
-            background-color: #020408;
+            background-color: var(--bg-space);
             color: var(--text-main);
             display: flex;
             justify-content: center;
@@ -43,7 +43,7 @@
         /* Адаптация под жесткий формат 9:16 */
         .app-container {
             width: 100%;
-            max-width: 430px; /* Стандартная ширина iPhone Pro Max */
+            max-width: 430px; 
             height: 100%;
             max-height: 932px;
             position: relative;
@@ -51,15 +51,14 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
         }
 
-        /* Для десктопов делаем красивую рамку телефона */
         @media (min-width: 440px) {
             .app-container {
                 height: 90vh;
                 border-radius: 40px;
-                border: 4px solid #1a2436;
+                border: 4px solid #222;
             }
         }
 
@@ -72,28 +71,22 @@
             z-index: 1;
         }
 
-        /* Премиальный глубокий темный фильтр для карты */
-        .leaflet-layer {
-            filter: invert(100%) hue-rotate(200deg) brightness(40%) contrast(125%) saturate(70%);
-        }
-
-        /* ВЕРХНИЙ БЛОК: Профиль пользователя в стиле GrandCombat */
+        /* ВЕРХНИЙ БЛОК: Профиль Создателя */
         .top-hud {
             position: absolute;
-            top: 16px;
+            top: 12px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90%;
+            width: 92%;
             z-index: 1000;
             background: var(--panel-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--border-glow);
-            border-radius: 20px;
-            padding: 12px 14px;
+            border-radius: 18px;
+            padding: 10px 14px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
         }
 
         .profile-row {
@@ -109,42 +102,46 @@
         }
 
         .avatar-frame {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border: 2px solid var(--neon-blue);
+            background: var(--accent-white);
+            color: var(--accent-black);
+            border: 2px solid #555;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            box-shadow: 0 0 10px rgba(0,122,255,0.4);
+            font-weight: 800;
+            font-size: 16px;
         }
 
         .user-name {
             font-size: 14px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .lvl-badge {
-            font-size: 11px;
-            color: var(--neon-gold);
-            background: rgba(255, 184, 0, 0.1);
-            padding: 1px 6px;
+            font-size: 10px;
+            color: var(--accent-black);
+            background: var(--accent-white);
+            padding: 2px 6px;
             border-radius: 6px;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         .wallet-selector {
             background: var(--card-inner);
             border: 1px solid var(--border-glow);
-            padding: 6px 12px;
-            border-radius: 12px;
+            padding: 6px 10px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
         }
@@ -156,34 +153,33 @@
             left: 0;
             width: 100%;
             z-index: 1000;
-            padding: 16px;
+            padding: 12px 16px 20px 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            background: linear-gradient(to top, #04060c 85%, rgba(4,6,12,0));
+            gap: 10px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 75%, rgba(0,0,0,0));
         }
 
         .main-panel {
             background: var(--panel-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
             border: 1px solid var(--border-glow);
-            padding: 16px;
+            padding: 14px;
         }
 
-        /* Тройные карточки как "Earn for tap / Profit per hour" */
         .crypto-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .crypto-card {
             background: var(--card-inner);
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
             padding: 10px 4px;
             text-align: center;
             display: flex;
@@ -192,96 +188,98 @@
         }
 
         .crypto-card .title {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.2px;
+            letter-spacing: 0.5px;
         }
 
         .crypto-card .value {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
-            color: var(--neon-cyan);
+            color: var(--accent-white);
         }
 
-        /* Ползунок радиуса */
+        /* Ползунок */
         .slider-wrapper {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 14px;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .slider-info {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .cyber-slider {
             -webkit-appearance: none;
             width: 100%;
             height: 4px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             outline: none;
         }
 
         .cyber-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            background: var(--neon-cyan);
-            box-shadow: 0 0 8px var(--neon-cyan);
+            background: var(--accent-white);
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
             cursor: pointer;
         }
 
-        /* Кнопка CONFIRM в стиле GrandCombat */
+        /* Монохромная Кнопка CONFIRM */
         .action-btn {
             width: 100%;
-            background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
-            border: none;
-            border-radius: 16px;
-            padding: 15px;
-            color: var(--text-main);
-            font-size: 14px;
+            background: linear-gradient(180deg, #444444 0%, #1a1a1a 100%);
+            border: 1px solid #555;
+            border-radius: 14px;
+            padding: 14px;
+            color: var(--accent-white);
+            font-size: 13px;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
             text-transform: uppercase;
             transition: all 0.2s ease;
         }
 
         .action-btn:disabled {
-            background: #151c2c;
-            color: var(--text-muted);
+            background: #111;
+            border-color: #222;
+            color: #555;
             box-shadow: none;
             cursor: not-allowed;
         }
 
-        /* Индикатор энергии (⚡ 928 / 1000) */
+        /* Энергия Создателя */
         .energy-bar-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 4px;
-            font-size: 13px;
+            padding: 0 6px;
+            font-size: 12px;
         }
 
         .energy-info {
             display: flex;
             align-items: center;
-            gap: 4px;
-            font-weight: 600;
+            gap: 6px;
+            font-weight: 700;
+            color: var(--accent-white);
         }
 
         .boost-link {
-            color: var(--neon-gold);
-            font-weight: 700;
+            color: var(--text-muted);
+            font-weight: 600;
             text-decoration: none;
             cursor: pointer;
             display: flex;
@@ -289,53 +287,55 @@
             gap: 4px;
         }
 
-        /* Нижнее меню вкладок */
+        /* Обновленное Нижнее меню на 3 вкладки */
         .footer-tabs {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            background: #090d16;
+            grid-template-columns: repeat(3, 1fr);
+            background: #0a0a0a;
             border: 1px solid var(--border-glow);
-            border-radius: 16px;
+            border-radius: 14px;
             padding: 4px;
         }
 
         .tab-item {
             text-align: center;
             color: var(--text-muted);
-            font-size: 10px;
-            padding: 6px 0;
+            font-size: 11px;
+            padding: 8px 0;
             font-weight: 500;
             cursor: pointer;
+            border-radius: 10px;
         }
 
         .tab-item.active {
-            color: var(--neon-blue);
-            background: rgba(0, 122, 255, 0.07);
-            border-radius: 12px;
+            color: var(--accent-black);
+            background: var(--accent-white);
+            font-weight: 700;
         }
 
-        /* Пульсация во время обработки */
         .radar-pulse {
             animation: cyberPulse 0.8s infinite alternate;
         }
         @keyframes cyberPulse {
-            from { border-color: rgba(255,255,255,0.08); }
-            to { border-color: rgba(0, 240, 255, 0.5); }
+            from { border-color: rgba(255,255,255,0.1); }
+            to { border-color: rgba(255, 255, 255, 0.6); }
         }
     </style>
 </head>
 <body>
 
     <div class="app-container">
+        <!-- Полноцветная карта OpenStreetMap -->
         <div id="map"></div>
 
+        <!-- Верхний профиль -->
         <div class="top-hud">
             <div class="profile-row">
                 <div class="user-meta">
-                    <div class="avatar-frame">U</div>
+                    <div class="avatar-frame">K</div>
                     <div>
-                        <div class="user-name">User Walk <span class="lvl-badge">Pro</span></div>
-                        <div style="font-size: 11px; color: var(--text-muted);">Ранг: Разведчик</div>
+                        <div class="user-name">@kirushapross <span class="lvl-badge">Creator</span></div>
+                        <div style="font-size: 11px; color: var(--text-muted);">Ранг: Создатель</div>
                     </div>
                 </div>
                 <div class="wallet-selector">
@@ -345,6 +345,7 @@
             </div>
         </div>
 
+        <!-- Нижний блок -->
         <div class="bottom-hud">
             <div class="main-panel" id="hudPanel">
                 
@@ -353,12 +354,12 @@
                         <span class="title">Шаг / Тап</span>
                         <span class="value">+1.5 КМ</span>
                     </div>
-                    <div class="crypto-card" style="border-color: rgba(0, 240, 255, 0.2);">
+                    <div class="crypto-card">
                         <span class="title">Дистанция</span>
                         <span class="value" id="hudDistance">0.0 км</span>
                     </div>
                     <div class="crypto-card">
-                        <span class="title">Награда</span>
+                        <span class="title">Время</span>
                         <span class="value" id="hudTime">0 мин</span>
                     </div>
                 </div>
@@ -366,7 +367,7 @@
                 <div class="slider-wrapper">
                     <div class="slider-info">
                         <span>Радиус сканирования</span>
-                        <span id="radiusLabel" style="color: var(--neon-cyan); font-weight: 700;">3.0 км</span>
+                        <span id="radiusLabel" style="color: var(--accent-white); font-weight: 700;">3.0 км</span>
                     </div>
                     <input type="range" id="radiusSlider" class="cyber-slider" min="500" max="5000" step="100" value="3000">
                 </div>
@@ -374,20 +375,20 @@
 
             <button class="action-btn" id="generateBtn" disabled>Укажите точку старта</button>
 
+            <!-- Энергия Создателя -->
             <div class="energy-bar-row">
                 <div class="energy-info">
                     <span>⚡</span>
-                    <span>928 / 1000</span>
+                    <span>1000 / 1000</span>
                 </div>
                 <div class="boost-link">🚀 Буст</div>
             </div>
 
+            <!-- Обновленные вкладки -->
             <div class="footer-tabs">
                 <div class="tab-item active">🏠<br>Main</div>
-                <div class="tab-item">⛏️<br>Mine</div>
                 <div class="tab-item">👥<br>Friends</div>
-                <div class="tab-item">💰<br>Earn</div>
-                <div class="tab-item">📊<br>Stats</div>
+                <div class="tab-item">📜<br>История</div>
             </div>
         </div>
     </div>
@@ -426,12 +427,12 @@
             }
         };
 
-        // Карта
+        // Подключаем стандартную светлую/цветную карту
         const map = L.map('map', { 
             zoomControl: false, attributionControl: false, zoomAnimation: true, fadeAnimation: true
         }).setView([55.7558, 37.6173], 13);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
         let startMarker = null, targetMarker = null, radiusCircle = null, routeCore = null, routeGlow = null, selectedLocation = null;
         let currentRadius = 3000;
@@ -467,11 +468,11 @@
             if (routeGlow) map.removeLayer(routeGlow);
 
             startMarker = L.circleMarker(selectedLocation, {
-                radius: 7, fillColor: '#007AFF', fillOpacity: 1, color: '#fff', weight: 2
+                radius: 7, fillColor: '#000', fillOpacity: 1, color: '#fff', weight: 2
             }).addTo(map);
 
             radiusCircle = L.circle(selectedLocation, {
-                radius: currentRadius, color: '#00f0ff', weight: 1, fillColor: '#007AFF', fillOpacity: 0.01, dashArray: '4, 8'
+                radius: currentRadius, color: '#000', weight: 1.5, fillColor: '#000', fillOpacity: 0.03, dashArray: '4, 8'
             }).addTo(map);
 
             map.fitBounds(radiusCircle.getBounds(), { animate: true, duration: 0.4 });
@@ -492,7 +493,7 @@
 
             generateBtn.disabled = true;
             hudPanel.classList.add('radar-pulse');
-            generateBtn.innerText = "ПОИСК КРИПТО-ТОЧЕК...";
+            generateBtn.innerText = "ПОИСК ТОЧЕК...";
 
             if (targetMarker) map.removeLayer(targetMarker);
             if (routeCore) map.removeLayer(routeCore);
@@ -500,7 +501,6 @@
 
             let candidate = getRandomPointInRadius(selectedLocation, currentRadius);
 
-            // Оптимизированный OSRM роутинг (без зависаний Overpass)
             const routingUrl = `https://router.project-osrm.org/route/v1/walking/${selectedLocation.lng},${selectedLocation.lat};${candidate.lng},${candidate.lat}?overview=full&geometries=geojson`;
             
             let routeData = null;
@@ -515,29 +515,26 @@
             haptics.success();
 
             targetMarker = L.circleMarker([candidate.lat, candidate.lng], {
-                radius: 9, fillColor: '#FF3B30', fillOpacity: 1, color: '#fff', weight: 2
+                radius: 9, fillColor: '#fff', fillOpacity: 1, color: '#000', weight: 3
             }).addTo(map);
 
             if (routeData && routeData.routes && routeData.routes.length > 0) {
                 const route = routeData.routes[0];
                 
-                // ВАУ-ЭФФЕКТ: Рендеринг красивой двухслойной неоновой линии пути
-                // Слой 1: Широкое неоновое размытое облако (Glow)
+                // Стильный черно-белый маршрут для цветной карты
                 routeGlow = L.geoJSON(route.geometry, {
-                    style: { color: '#00f0ff', weight: 10, opacity: 0.35, lineCap: 'round', lineJoin: 'round' }
+                    style: { color: '#000000', weight: 8, opacity: 0.6, lineCap: 'round', lineJoin: 'round' }
                 }).addTo(map);
 
-                // Слой 2: Яркое контрастное белое ядро луча (Core)
                 routeCore = L.geoJSON(route.geometry, {
-                    style: { color: '#ffffff', weight: 3, opacity: 0.95, lineCap: 'round', lineJoin: 'round' }
+                    style: { color: '#ffffff', weight: 3, opacity: 1, lineCap: 'round', lineJoin: 'round' }
                 }).addTo(map);
 
                 hudDistance.innerText = (route.distance / 1000).toFixed(1) + ' км';
                 hudTime.innerText = Math.round(route.duration / 60) + ' мин';
             } else {
-                // Если API лег, чертим неоновый пунктир направления
                 routeCore = L.polyline([selectedLocation, [candidate.lat, candidate.lng]], {
-                    color: '#00f0ff', weight: 3, dashArray: '6, 6', opacity: 0.8
+                    color: '#000', weight: 4, dashArray: '8, 8', opacity: 0.8
                 }).addTo(map);
                 
                 const d = map.distance(selectedLocation, [candidate.lat, candidate.lng]);
@@ -549,7 +546,6 @@
             map.fitBounds(boundsGroup.getBounds().pad(0.35), { animate: true, duration: 0.5 });
         });
 
-        // Геолокация на старте
         map.locate({setView: true, maxZoom: 14});
         map.on('locationfound', function(e) {
             selectedLocation = e.latlng;
