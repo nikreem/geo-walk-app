@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GeoRandomizer - Premium Tech Edition</title>
+    
+    <!-- Подключение Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.65);
+            --chrome-glow: rgba(255, 255, 255, 0.9);
+            --shadow-dark: rgba(0, 0, 0, 0.12);
+            --apple-blue: #007AFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: var(--font-apple);
+            background-color: #f5f5f7;
+            overflow: hidden;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* Элегантный Apple-фильтр для карты */
+        .leaflet-layer {
+            filter: saturate(40%) brightness(102%) contrast(92%);
+            transition: filter 0.5s ease;
+        }
+
+        /* Адаптивный контейнер интерфейса */
+        .ui-container {
+            position: absolute;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            pointer-events: none;
+            animation: interfaceAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 420px;
+        }
+
+        /* Компьютерная верстка (Плавающий левый виджет) */
+        @media (min-width: 768px) {
+            .ui-container {
+                top: 30px;
+                left: 30px;
+                bottom: auto;
+                transform: none;
+                width: 380px;
+            }
+        }
+
+        /* Стеклянная UI панель */
+        .ui-panel {
+            pointer-events: auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px) saturate(210%);
+            -webkit-backdrop-filter: blur(30px) saturate(210%);
+            border-radius: 24px;
+            border: 1.5px solid var(--glass-border);
+            box-shadow: 
+                0 4px 30px rgba(0, 0, 0, 0.02),
+                0 30px 60px var(--shadow-dark),
+                inset 0 2px 3px rgba(255, 255, 255, 0.6),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .text-group {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .text-changing {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1d1d1f;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            font-size: 13.5px;
+            color: #515154;
+            line-height: 1.5;
+            margin-bottom: 4px;
+        }
+
+        /* Слайдер радиуса */
+        .slider-container {
+            margin-top: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: left;
+        }
+
+        .slider-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1d1d1f;
+            display: flex;
+            justify-content: space-between;
+            letter-spacing: -0.1px;
+        }
+
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 3px;
+            outline: none;
+            margin: 8px 0;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 0.5px solid rgba(0,0,0,0.15);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15), inset 0 1px 1px #fff;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .range-slider::-webkit-slider-thumb:hover { transform: scale(1.1); }
+        .range-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
+
+        /* Кнопка жидкого стекла (Liquid Glass) */
+        .glass-btn {
+            pointer-events: auto;
+            width: 100%;
+            padding: 18px 24px;
+            font-family: var(--font-apple);
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            color: #1d1d1f;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.2) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.06),
+                inset 0 3px 6px var(--chrome-glow), 
+                inset 0 -2px 4px rgba(0, 0, 0, 0.02),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 50%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 100%);
+            pointer-events: none;
+        }
+
+        .glass-btn.scanning::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -150%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+            animation: liquidShimmer 1.4s infinite linear;
+        }
+
+        .glass-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.25) 100%);
+            box-shadow: 0 16px 35px rgba(0, 0, 0, 0.1), inset 0 4px 8px var(--chrome-glow);
+            transform: translateY(-2px);
+        }
+
+        .glass-btn:active:not(:disabled) { transform: scale(0.96) translateY(0); }
+        .glass-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .ui-panel.scanning-pulse {
+            animation: panelPulse 1.4s infinite ease-in-out;
+            border-color: rgba(0, 122, 255, 0.4);
+        }
+
+        /* Анимации появления и переливов */
+        @keyframes interfaceAppear {
+            from { opacity: 0; transform: translate(-50%, 40px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        @media (min-width: 768px) {
+            @keyframes interfaceAppear {
+                from { opacity: 0; transform: translate(-30px, 0); }
+                to { opacity: 1; transform: translate(0, 0); }
+            }
+        }
+
+        @keyframes liquidShimmer {
+            0% { left: -150%; }
+            100% { left: 150%; }
+        }
+
+        @keyframes panelPulse {
+            0% { box-shadow: 0 30px 60px rgba(0,0,0,0.12); }
+            50% { box-shadow: 0 30px 60px rgba(0, 122, 255, 0.15), 0 0 20px rgba(0, 122, 255, 0.05); }
+            100% { box-shadow: 0 30px 60px rgba(0,0,0,0.12); }
+        }
+
+        .leaflet-control-zoom {
+            border: 1px solid rgba(255,255,255,0.5) !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06) !important;
+            border-radius: 14px !important;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) {
+            .leaflet-control-zoom { margin-top: 30px !important; margin-right: 30px !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <div class="ui-container">
+        <div class="ui-panel" id="mainPanel">
+            <div class="text-group" id="textGroup">
+                <h1 id="panelTitle">Маршрут приключений</h1>
+                <p id="panelDesc">Кликни на карту для выбора точки старта.</p>
+            </div>
+            
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span>Радиус прогулки</span>
+                    <span id="radiusVal">3.0 км</span>
+                </div>
+                <input type="range" id="radiusSlider" class="range-slider" min="500" max="5000" step="100" value="3000">
+            </div>
+        </div>
+
+        <button class="glass-btn" id="searchBtn" disabled>Сгенерировать точку</button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        const sounds = {
+            click() {
+                initAudio();
+                const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+            },
+            radarTick() {
+                initAudio();
+                const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+            },
+            successChime() {
+                initAudio();
+                const now = audioCtx.currentTime;
+                [659.25, 987.77].forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+                    gain.gain.setValueAtTime(0.07, now + idx * 0.06);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.5);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.06); osc.stop(now + idx * 0.06 + 0.5);
+                });
+            }
+        };
+
+        const map = L.map('map', { 
+            zoomControl: true, attributionControl: false, zoomAnimation: true, fadeAnimation: true
+        }).setView([55.7558, 37.6173], 12);
+
+        if (window.innerWidth >= 768) map.zoomControl.setPosition('topright');
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+        let startMarker = null, targetMarker = null, radiusCircle = null, routeLine = null, selectedLocation = null;
+        let currentRadius = 3000;
+
+        const searchBtn = document.getElementById('searchBtn');
+        const radiusSlider = document.getElementById('radiusSlider');
+        const radiusVal = document.getElementById('radiusVal');
+        const mainPanel = document.getElementById('mainPanel');
+        const textGroup = document.getElementById('textGroup');
+        const panelTitle = document.getElementById('panelTitle');
+        const panelDesc = document.getElementById('panelDesc');
+
+        function updatePanelText(title, desc) {
+            textGroup.classList.add('text-changing');
+            setTimeout(() => {
+                panelTitle.innerText = title;
+                panelDesc.innerText = desc;
+                textGroup.classList.remove('text-changing');
+            }, 250);
+        }
+
+        radiusSlider.addEventListener('input', function(e) {
+            currentRadius = parseInt(e.target.value);
+            radiusVal.innerText = (currentRadius / 1000).toFixed(1) + ' км';
+            if (radiusCircle && selectedLocation) {
+                radiusCircle.setRadius(currentRadius);
+                map.fitBounds(radiusCircle.getBounds(), { animate: true, duration: 0.5 });
+            }
+        });
+
+        map.on('click', function(e) {
+            sounds.click();
+            selectedLocation = e.latlng;
+            updateStartAndRadius();
+        });
+
+        function updateStartAndRadius() {
+            if (!selectedLocation) return;
+            if (startMarker) map.removeLayer(startMarker);
+            if (targetMarker) map.removeLayer(targetMarker);
+            if (radiusCircle) map.removeLayer(radiusCircle);
+            if (routeLine) map.removeLayer(routeLine); // Очищаем старый путь
+
+            startMarker = L.circleMarker(selectedLocation, {
+                radius: 9, fillColor: '#007AFF', fillOpacity: 1, color: '#fff', weight: 3
+            }).addTo(map);
+
+            radiusCircle = L.circle(selectedLocation, {
+                radius: currentRadius, color: '#007AFF', weight: 2, fillColor: '#007AFF', fillOpacity: 0.04, dashArray: '6, 12'
+            }).addTo(map);
+
+            map.fitBounds(radiusCircle.getBounds(), { animate: true, duration: 0.6 });
+            searchBtn.disabled = false;
+            updatePanelText("Точка старта задана", "Нажми кнопку ниже для запуска умного сканирования местности.");
+        }
+
+        function getRandomPointInRadius(center, radiusInMeters) {
+            const r = radiusInMeters * Math.sqrt(Math.random());
+            const theta = Math.random() * 2 * Math.PI;
+            const deltaLat = (r * Math.cos(theta)) / 111320;
+            const deltaLng = (r * Math.sin(theta)) / (111320 * Math.cos(center.lat * Math.PI / 180));
+            return { lat: center.lat + deltaLat, lng: center.lng + deltaLng };
+        }
+
+        async function isValidTerrain(lat, lng) {
+            const query = `[out:json][timeout:3];(way(around:15,${lat},${lng})["building"];way(around:15,${lat},${lng})["natural"="water"];way(around:15,${lat},${lng})["waterway"];);out tags;`;
+            const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) return true;
+                const data = await response.json();
+                return data.elements.length === 0;
+            } catch (e) { return true; }
+        }
+
+        searchBtn.addEventListener('click', async function() {
+            if (!selectedLocation) return;
+
+            searchBtn.disabled = true;
+            searchBtn.classList.add('scanning');
+            mainPanel.classList.add('scanning-pulse');
+            searchBtn.innerText = "Анализ секторов...";
+            updatePanelText("Сканирование ландшафта", "Исключаем водоемы, проверяем доступность пешеходных дорог.");
+
+            const radarInterval = setInterval(() => sounds.radarTick(), 300);
+
+            if (targetMarker) map.removeLayer(targetMarker);
+            if (routeLine) map.removeLayer(routeLine);
+
+            let validPoint = null;
+            let attempts = 0;
+            const maxAttempts = 6;
+
+            while (!validPoint && attempts < maxAttempts) {
+                attempts++;
+                let candidate = getRandomPointInRadius(selectedLocation, currentRadius);
+                let isOK = await isValidTerrain(candidate.lat, candidate.lng);
+                if (isOK) validPoint = candidate;
+            }
+
+            if (!validPoint) validPoint = getRandomPointInRadius(selectedLocation, currentRadius);
+
+            // НОВАЯ ФИЧА: Запрос реального пешеходного маршрута через бесплатный OSRM API
+            const routingUrl = `https://router.project-osrm.org/route/v1/walking/${selectedLocation.lng},${selectedLocation.lat};${validPoint.lng},${validPoint.lat}?overview=full&geometries=geojson`;
+            
+            let routeData = null;
+            try {
+                const routeResponse = await fetch(routingUrl);
+                if (routeResponse.ok) {
+                    routeData = await routeResponse.json();
+                }
+            } catch (e) { console.error("Ошибка построения маршрута:", e); }
+
+            // Выключаем анимации сканирования
+            clearInterval(radarInterval);
+            searchBtn.classList.remove('scanning');
+            mainPanel.classList.remove('scanning-pulse');
+            searchBtn.innerText = "Сгенерировать точку";
+            searchBtn.disabled = false;
+            sounds.successChime();
+
+            // Создаем маркер цели
+            targetMarker = L.circleMarker([validPoint.lat, validPoint.lng], {
+                radius: 11, fillColor: '#FF3B30', fillOpacity: 1, color: '#fff', weight: 3
+            }).addTo(map);
+
+            // Если маршрут успешно построен движком OSRM
+            if (routeData && routeData.routes && routeData.routes.length > 0) {
+                const route = routeData.routes[0];
+                const distanceMeters = route.distance; // Дистанция в метрах
+                const durationSeconds = route.duration; // Время пешком в секундах
+
+                // Рендерим красивую неоновую линию пути в стиле Apple Maps
+                routeLine = L.geoJSON(route.geometry, {
+                    style: {
+                        color: '#007AFF',
+                        weight: 5,
+                        opacity: 0.7,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    }
+                }).addTo(map);
+
+                // Расчет красивого вывода времени и расстояния
+                const walkMinutes = Math.round(durationSeconds / 60);
+                const walkDistanceKm = (distanceMeters / 1000).toFixed(1);
+
+                updatePanelText(
+                    `Маршрут построен!`, 
+                    `Пешком: ~${walkMinutes} мин (${walkDistanceKm} км). Путь проложен синей линией в обход препятствий.`
+                );
+            } else {
+                // Если API маршрутов упало, рисуем запасную прямую пунктирную линию, чтобы юзер видел направление
+                routeLine = L.polyline([selectedLocation, [validPoint.lat, validPoint.lng]], {
+                    color: '#007AFF', weight: 3, dashArray: '8, 8', opacity: 0.5
+                }).addTo(map);
+                
+                // Рассчитываем приблизительное время по прямой (средняя скорость пешехода ~4.5 км/ч)
+                const straightDist = map.distance(selectedLocation, [validPoint.lat, validPoint.lng]);
+                const approxMinutes = Math.round((straightDist / 4500) * 60);
+                const approxKm = (straightDist / 1000).toFixed(1);
+
+                updatePanelText(`Цель найдена!`, `Примерно ~${approxMinutes} мин по прямой (${approxKm} км). Направление указано пунктиром.`);
+            }
+
+            // Центрируем камеру так, чтобы весь проложенный путь идеально помещался на экране
+            const group = new L.featureGroup([startMarker, targetMarker]);
+            map.fitBounds(group.getBounds().pad(0.25), { animate: true, duration: 0.8 });
+        });
+
+        // Автопозиционирование на старте
+        map.locate({setView: true, maxZoom: 13});
+        map.on('locationfound', function(e) {
+            selectedLocation = e.latlng;
+            updateStartAndRadius();
+        });
+    </script>
+</body>
+</html>
