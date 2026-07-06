@@ -20,6 +20,7 @@
             --accent-black: #000000;
             --text-main: #ffffff;
             --text-muted: #999999;
+            --admin-color: #ff3b30;
         }
 
         * {
@@ -41,7 +42,6 @@
             overflow: hidden;
         }
 
-        /* Адаптация под жесткий формат 9:16 */
         .app-container {
             width: 100%;
             max-width: 430px; 
@@ -115,6 +115,7 @@
             justify-content: center;
             font-weight: 800;
             font-size: 16px;
+            cursor: pointer;
         }
 
         .user-name {
@@ -135,6 +136,12 @@
             text-transform: uppercase;
         }
 
+        .right-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .wallet-selector {
             background: var(--card-inner);
             border: 1px solid var(--border-glow);
@@ -145,6 +152,79 @@
             gap: 6px;
             font-size: 11px;
             font-weight: 600;
+        }
+
+        /* Кнопка переключения тест-функций */
+        .admin-toggle-btn {
+            background: var(--admin-color);
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: none; /* Видна только админу */
+            box-shadow: 0 0 10px rgba(255, 59, 48, 0.4);
+            text-transform: uppercase;
+        }
+
+        /* ТЕСТОВАЯ АДМИН ПАНЕЛЬ */
+        .admin-panel-popup {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            z-index: 2000;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--admin-color);
+            border-radius: 18px;
+            padding: 14px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
+
+        .admin-panel-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--admin-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: rgba(255,255,255,0.04);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .admin-input {
+            background: #000;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .admin-sub-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
             cursor: pointer;
         }
 
@@ -203,7 +283,6 @@
             color: var(--accent-white);
         }
 
-        /* Ползунок */
         .slider-wrapper {
             background: rgba(255, 255, 255, 0.04);
             border-radius: 12px;
@@ -238,7 +317,6 @@
             cursor: pointer;
         }
 
-        /* Монохромная Кнопка CONFIRM */
         .action-btn {
             width: 100%;
             background: linear-gradient(180deg, #444444 0%, #1a1a1a 100%);
@@ -263,7 +341,6 @@
             cursor: not-allowed;
         }
 
-        /* Энергия Создателя */
         .energy-bar-row {
             display: flex;
             justify-content: space-between;
@@ -290,7 +367,6 @@
             gap: 4px;
         }
 
-        /* Обновленное Нижнее меню на 3 вкладки */
         .footer-tabs {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -324,7 +400,6 @@
             to { border-color: rgba(255, 255, 255, 0.6); }
         }
 
-        /* МОДИФИКАЦИИ ДЛЯ ПОЛНОЭКРАННОЙ КАРТЫ */
         .back-btn {
             position: absolute;
             top: 16px;
@@ -347,12 +422,6 @@
             transition: all 0.2s ease;
         }
 
-        .back-btn:active {
-            transform: scale(0.9);
-            background: rgba(30, 30, 30, 0.9);
-        }
-
-        /* Класс-триггер для изменения состояния контейнера */
         .app-container.fullscreen-map .top-hud {
             transform: translate(-50%, -150%);
             opacity: 0;
@@ -369,7 +438,6 @@
             display: flex;
         }
 
-        /* СТИЛИ ДЛЯ СПИСКОВ ВНУТРИ ВКЛАДОК */
         .list-item {
             display: flex;
             align-items: center;
@@ -432,18 +500,32 @@
 
         <div id="map"></div>
 
+        <div class="admin-panel-popup" id="adminPanel">
+            <div class="admin-panel-title">🛠️ Тест функции (Admin)</div>
+            <button class="action-btn" id="adminCompleteBtn" style="background: linear-gradient(180deg, #ff453a 0%, #b3160e 100%); border-color: #ff5b52; padding: 10px; font-size: 11px;">
+                ⚡ Завершить маршрут
+            </button>
+            
+            <div class="admin-input-group">
+                <span style="font-size: 10px; color: var(--text-muted); font-weight:700;">НАЧИСЛИТЬ ЭНЕРГИЮ:</span>
+                <input type="text" id="adminNickInput" class="admin-input" placeholder="@username">
+                <input type="number" id="adminEnergyAmount" class="admin-input" placeholder="Количество" value="100">
+                <button class="admin-sub-btn" id="adminGiveEnergyBtn">Выдать энергию</button>
+            </div>
+        </div>
+
         <div class="top-hud">
             <div class="profile-row">
                 <div class="user-meta">
-                    <div class="avatar-frame" id="userAvatar">K</div>
+                    <div class="avatar-frame" id="userAvatar">U</div>
                     <div>
-                        <div class="user-name" id="userName">@kirushapross <span class="lvl-badge">Creator</span></div>
-                        <div style="font-size: 11px; color: var(--text-muted);">Ранг: Создатель</div>
+                        <div class="user-name" id="userName">@user <span class="lvl-badge" id="roleBadge">User</span></div>
+                        <div style="font-size: 11px; color: var(--text-muted);" id="rankLabel">Ранг: Пешеход</div>
                     </div>
                 </div>
-                <div class="wallet-selector">
-                    <span>💎 GrandTon</span>
-                    <span style="font-size: 10px; color: var(--text-muted);">▼</span>
+                <div class="right-controls">
+                    <div class="wallet-selector">💎 GrandTon</div>
+                    <button class="admin-toggle-btn" id="adminToggle">🛠️ Тест</button>
                 </div>
             </div>
         </div>
@@ -481,8 +563,7 @@
             <div id="tab-friends" class="tab-panel" style="display: none;">
                 <div class="main-panel">
                     <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Ваша команда</div>
-                    <div class="friends-list">
-                        </div>
+                    <div class="friends-list"></div>
                 </div>
                 <button class="action-btn" id="inviteBtn" style="margin-top: 10px; padding: 12px; font-size: 12px;">+ Пригласить друга</button>
             </div>
@@ -490,15 +571,14 @@
             <div id="tab-history" class="tab-panel" style="display: none;">
                 <div class="main-panel">
                     <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">История вылазок</div>
-                    <div id="historyList">
-                        </div>
+                    <div id="historyList"></div>
                 </div>
             </div>
 
             <div class="energy-bar-row">
                 <div class="energy-info">
                     <span>⚡</span>
-                    <span>1000 / 1000</span>
+                    <span id="energyText">200 / 200</span>
                 </div>
                 <div class="boost-link">🚀 Буст</div>
             </div>
@@ -555,7 +635,11 @@
         let userLocation = null, liveLocationMarker = null, initialLocationSet = false;
         let currentRadius = 3000;
 
-        // Базы данных приложения (State)
+        // РОЛЕВАЯ МОДЕЛЬ И СИСТЕМА ЭНЕРГИИ
+        let isAdmin = false;
+        let maxEnergy = 200;
+        let currentEnergy = 200;
+
         let routeHistory = []; 
         let friendsData = [
             { name: "@alex_ton", dist: "14.2 км", active: true },
@@ -573,10 +657,42 @@
         const hudDistance = document.getElementById('hudDistance');
         const hudTime = document.getElementById('hudTime');
         const hudPanel = document.getElementById('hudPanel');
+        const energyText = document.getElementById('energyText');
+
+        // Подсчет кастомной стоимости энергии: 1 энергия на 0.5 км, 0.7км = 2, 1.2км = 2
+        function getEnergyCost(meters) {
+            let km = meters / 1000;
+            if (km <= 0.5) return 1;
+            if (km <= 1.2) return 2; // Перекрывает твои примеры (0.7 и 1.2)
+            return Math.ceil(km / 0.5);
+        }
+
+        function updateEnergyUI() {
+            if (isAdmin) {
+                energyText.innerText = "∞ / ∞";
+            } else {
+                energyText.innerText = `${currentEnergy} / ${maxEnergy}`;
+            }
+            updateButtonLabel();
+        }
+
+        function updateButtonLabel() {
+            if (!selectedLocation) {
+                generateBtn.innerText = "Укажите точку центра";
+                return;
+            }
+            const cost = getEnergyCost(currentRadius);
+            if (isAdmin) {
+                generateBtn.innerText = "СГЕНЕРИРОВАТЬ МАРШРУТ (⚡ 0)";
+            } else {
+                generateBtn.innerText = `СГЕНЕРИРОВАТЬ МАРШРУТ (⚡ ${cost})`;
+            }
+        }
 
         radiusSlider.addEventListener('input', function(e) {
             currentRadius = parseInt(e.target.value);
             radiusLabel.innerText = (currentRadius / 1000).toFixed(1) + ' км';
+            updateButtonLabel();
             if (radiusCircle && selectedLocation) {
                 radiusCircle.setRadius(currentRadius);
                 map.fitBounds(radiusCircle.getBounds(), { animate: true, duration: 0.4 });
@@ -626,7 +742,7 @@
 
             map.fitBounds(radiusCircle.getBounds(), { animate: true, duration: 0.4 });
             generateBtn.disabled = false;
-            generateBtn.innerText = "СГЕНЕРИРОВАТЬ МАРШРУТ";
+            updateButtonLabel();
         }
 
         function getRandomPointInRadius(center, radiusInMeters) {
@@ -639,6 +755,14 @@
 
         generateBtn.addEventListener('click', async function() {
             if (!selectedLocation) return;
+
+            const cost = getEnergyCost(currentRadius);
+            if (!isAdmin && currentEnergy < cost) {
+                const tg = window.Telegram ? window.Telegram.WebApp : null;
+                if (tg) tg.showAlert("Недостаточно энергии для сканирования!");
+                else alert("Недостаточно энергии!");
+                return;
+            }
 
             generateBtn.disabled = true;
             hudPanel.classList.add('radar-pulse');
@@ -661,8 +785,13 @@
 
             hudPanel.classList.remove('radar-pulse');
             generateBtn.disabled = false;
-            generateBtn.innerText = "СГЕНЕРИРОВАТЬ МАРШРУТ";
             haptics.success();
+
+            // Списание энергии у обычных игроков
+            if (!isAdmin) {
+                currentEnergy -= cost;
+                updateEnergyUI();
+            }
 
             targetMarker = L.circleMarker([candidate.lat, candidate.lng], {
                 radius: 9, fillColor: '#fff', fillOpacity: 1, color: '#000', weight: 3
@@ -696,8 +825,8 @@
 
             hudDistance.innerText = finalDistance;
             hudTime.innerText = finalTime;
+            updateButtonLabel();
 
-            // АВТОМАТИЧЕСКАЯ ЗАПИСЬ В ИСТОРИЮ
             routeHistory.unshift({
                 timeCreated: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 distance: finalDistance,
@@ -709,7 +838,7 @@
             map.fitBounds(bounds.pad(0.35), { animate: true, duration: 0.5 });
         });
 
-        // ГЕОПОЗИЦИЯ ИГРОКА
+        // ГЕОПОЗИЦИЯ
         map.locate({setView: false, watch: true, enableHighAccuracy: true});
         map.on('locationfound', function(e) {
             userLocation = e.latlng;
@@ -728,27 +857,23 @@
             }
         });
 
-        // ЛОГИКА НАВИГАЦИИ ПО ВКЛАДКАМ
+        // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
         const tabs = document.querySelectorAll('.tab-item');
         const panels = document.querySelectorAll('.tab-panel');
 
         tabs.forEach((tab, index) => {
             tab.addEventListener('click', () => {
                 haptics.tap();
-                
                 tabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-
                 panels.forEach(p => p.style.display = 'none');
                 panels[index].style.display = 'block';
 
-                // Инициализация рендеринга при открытии вкладок
                 if (index === 1) renderFriends();
                 if (index === 2) renderHistory();
             });
         });
 
-        // ФУНКЦИИ ДЛЯ ВКЛАДКИ «ДРУЗЬЯ»
         function renderFriends() {
             const container = document.querySelector('.friends-list');
             container.innerHTML = friendsData.map(f => `
@@ -768,32 +893,21 @@
         window.sendEnergy = function(friendName) {
             haptics.success();
             const tg = window.Telegram ? window.Telegram.WebApp : null;
-            if (tg) {
-                tg.showAlert(`Вы успешно отправили +50⚡ энергии другу ${friendName}!`);
-            } else {
-                alert(`Вы успешно отправили +50⚡ энергии другу ${friendName}!`);
-            }
+            if (tg) tg.showAlert(`Вы успешно отправили +50⚡ энергии другу ${friendName}!`);
+            else alert(`Вы успешно отправили +50⚡ энергии другу ${friendName}!`);
         };
 
         document.getElementById('inviteBtn').addEventListener('click', () => {
             haptics.tap();
             const tg = window.Telegram ? window.Telegram.WebApp : null;
-            if (tg) {
-                // Вызов официального меню ТГ для шаринга вашей реф-ссылки Mini App
-                tg.openTelegramLink('https://t.me/share/url?url=https://t.me/your_bot_username/app?startapp=ref_123&text=Эй!%20Пойдем%20гулять%20по%20случайным%20маршрутам%20и%20майнить%20GrandTon!');
-            } else {
-                alert('Реферальная ссылка скопирована в буфер обмена браузера!');
-            }
+            if (tg) tg.openTelegramLink('https://t.me/share/url?url=https://t.me/your_bot_username/app?startapp=ref_123&text=Эй!%20Погнали%20гулять!');
+            else alert('Реферальная ссылка скопирована!');
         });
 
-        // ФУНКЦИИ ДЛЯ ВКЛАДКИ «ИСТОРИЯ»
         function renderHistory() {
             const container = document.getElementById('historyList');
             if (routeHistory.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; color: var(--text-muted); font-size: 11px; padding: 25px 0; line-height: 1.5;">
-                        История вылазок пока пуста.<br>Сгенерируйте и пройдите свой первый случайный маршрут во вкладке Main!
-                    </div>`;
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 11px; padding: 25px 0;">История вылазок пока пуста.</div>`;
                 return;
             }
             container.innerHTML = routeHistory.map((h, i) => `
@@ -807,7 +921,108 @@
             `).join('');
         }
 
-        // ИНТЕГРАЦИЯ ТЕЛЕГРАМ-АККАУНТА ПРИ СТАРТЕ
+        // УПРАВЛЕНИЕ АДМИН-ПАНЕЛЬЮ (ТЕСТ ФУНКЦИИ)
+        const adminToggle = document.getElementById('adminToggle');
+        const adminPanel = document.getElementById('adminPanel');
+
+        adminToggle.addEventListener('click', () => {
+            haptics.tap();
+            if (adminPanel.style.display === 'flex') {
+                adminPanel.style.display = 'none';
+                adminToggle.style.background = 'var(--admin-color)';
+            } else {
+                adminPanel.style.display = 'flex';
+                adminToggle.style.background = '#fff';
+                adminToggle.style.color = '#000';
+            }
+        });
+
+        // Админ-функция 1: Завершить маршрут
+        document.getElementById('adminCompleteBtn').addEventListener('click', () => {
+            if (!routeCore) {
+                alert("Нет активного маршрута для завершения!");
+                return;
+            }
+            haptics.success();
+            
+            // Записываем в историю с пометкой админа
+            routeHistory.unshift({
+                timeCreated: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                distance: hudDistance.innerText,
+                duration: hudTime.innerText + " (Админ)"
+            });
+
+            // Очищаем слои
+            if (targetMarker) map.removeLayer(targetMarker);
+            if (routeCore) map.removeLayer(routeCore);
+            if (routeGlow) map.removeLayer(routeGlow);
+            routeCore = null; routeGlow = null; targetMarker = null;
+
+            hudDistance.innerText = "0.0 км";
+            hudTime.innerText = "0 мин";
+            
+            generateBtn.disabled = true;
+            updateButtonLabel();
+            
+            if (isMapFullscreen) {
+                appContainer.classList.remove('fullscreen-map');
+                isMapFullscreen = false;
+            }
+
+            adminPanel.style.display = 'none';
+            adminToggle.style.background = 'var(--admin-color)';
+            adminToggle.style.color = '#fff';
+
+            const tg = window.Telegram ? window.Telegram.WebApp : null;
+            if (tg) tg.showAlert("Маршрут успешно завершен администратором и сохранен в историю!");
+            else alert("Маршрут завершен!");
+        });
+
+        // Админ-функция 2: Выдать энергию по нику
+        document.getElementById('adminGiveEnergyBtn').addEventListener('click', () => {
+            const nick = document.getElementById('adminNickInput').value.trim();
+            const amount = document.getElementById('adminEnergyAmount').value.trim();
+            
+            if (!nick) {
+                alert("Введите никнейм пользователя!");
+                return;
+            }
+            haptics.success();
+            
+            const msg = `Команда выполнена! Начислено ⚡ ${amount || 100} энергии пользователю ${nick}`;
+            const tg = window.Telegram ? window.Telegram.WebApp : null;
+            if (tg) tg.showAlert(msg);
+            else alert(msg);
+
+            document.getElementById('adminNickInput').value = "";
+            adminPanel.style.display = 'none';
+            adminToggle.style.background = 'var(--admin-color)';
+            adminToggle.style.color = '#fff';
+        });
+
+        // АКТИВАЦИЯ РОЛИ И ИНТЕГРАЦИЯ С TELEGRAM
+        function activateAdminMode() {
+            isAdmin = true;
+            currentEnergy = Infinity;
+            maxEnergy = Infinity;
+            document.getElementById('roleBadge').innerText = "Creator";
+            document.getElementById('roleBadge').style.background = 'var(--admin-color)';
+            document.getElementById('roleBadge').style.color = '#fff';
+            document.getElementById('rankLabel').innerText = "Ранг: Разработчик";
+            adminToggle.style.display = 'block';
+            updateEnergyUI();
+        }
+
+        // Пасхалка для тестирования в браузере (3 клика на аватарку включают Админа)
+        let devClicks = 0;
+        document.getElementById('userAvatar').addEventListener('click', () => {
+            devClicks++;
+            if (devClicks === 3 && !isAdmin) {
+                activateAdminMode();
+                alert("Лаборатория Создателя активирована (Режим разработчика)!");
+            }
+        });
+
         const tg = window.Telegram ? window.Telegram.WebApp : null;
         if (tg) {
             tg.ready();
@@ -816,11 +1031,22 @@
             const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
             if (user) {
                 const username = user.username ? '@' + user.username : `${user.first_name || 'User'}`;
-                document.getElementById('userName').innerHTML = `${username} <span class="lvl-badge">Creator</span>`;
+                document.getElementById('userName').innerHTML = `${username} <span class="lvl-badge" id="roleBadge">User</span>`;
                 
                 const firstLetter = user.first_name ? user.first_name.charAt(0).toUpperCase() : 'U';
                 document.getElementById('userAvatar').innerText = firstLetter;
+
+                // Проверка на твой ник админа
+                if (user.username === 'kirushapross') {
+                    activateAdminMode();
+                } else {
+                    updateEnergyUI();
+                }
+            } else {
+                updateEnergyUI();
             }
+        } else {
+            updateEnergyUI();
         }
     </script>
 </body>
