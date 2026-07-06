@@ -89,7 +89,6 @@
             padding: 10px 14px;
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         }
 
         .profile-row {
@@ -167,7 +166,7 @@
             text-transform: uppercase;
         }
 
-        /* ТЕСТОВАЯ ПАНЕЛЬ АДМИНА */
+        /* ТЕСТОВАЯ ПАНЕЛЬ РАЗРАБОТЧИКА */
         .admin-panel-popup {
             position: absolute;
             top: 80px;
@@ -194,36 +193,6 @@
             text-transform: uppercase;
         }
 
-        .admin-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            background: rgba(255,255,255,0.04);
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        .admin-input {
-            background: #000;
-            border: 1px solid #333;
-            color: #fff;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            outline: none;
-        }
-
-        .admin-sub-btn {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
         /* НИЖНИЙ HUD */
         .bottom-hud {
             position: absolute;
@@ -236,7 +205,6 @@
             flex-direction: column;
             gap: 10px;
             background: linear-gradient(to top, rgba(0,0,0,0.95) 75%, rgba(0,0,0,0));
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         }
 
         .main-panel {
@@ -331,14 +299,20 @@
             border-color: #222;
             color: #555;
             cursor: not-allowed;
+            box-shadow: none;
         }
 
-        /* Кнопка успешного прибытия */
+        /* Кнопка прибытия */
         .arrive-btn {
-            background: linear-gradient(180deg, #30d158 0%, #1c7c32 100%) !important;
-            border-color: #30d158 !important;
+            background: linear-gradient(180deg, #555 0%, #222 100%);
+            border-color: #444;
             margin-top: 8px;
             display: none;
+        }
+        .arrive-btn.unlocked {
+            background: linear-gradient(180deg, #30d158 0%, #1c7c32 100%) !important;
+            border-color: #30d158 !important;
+            color: #fff !important;
         }
 
         .energy-bar-row {
@@ -396,21 +370,20 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.92);
+            background: rgba(0, 0, 0, 0.94);
             z-index: 5000;
             display: none;
             align-items: center;
             justify-content: center;
             flex-direction: column;
             padding: 20px;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
-        /* Анимация падения кейса сверху */
         .case-box {
-            width: 160px;
-            height: 160px;
+            width: 150px;
+            height: 150px;
             background: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
             border: 2px solid var(--case-gold);
             border-radius: 24px;
@@ -418,7 +391,7 @@
             align-items: center;
             justify-content: center;
             font-size: 70px;
-            box-shadow: 0 0 30px rgba(255, 179, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 179, 0, 0.25);
             cursor: pointer;
             transform: translateY(-100vh);
             transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -434,34 +407,35 @@
 
         @keyframes caseExplode {
             0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); filter: brightness(2); box-shadow: 0 0 50px #fff; }
+            50% { transform: scale(1.15); filter: brightness(1.8); box-shadow: 0 0 40px #fff; }
             100% { transform: scale(0); opacity: 0; display: none; }
         }
 
         .case-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
-            margin-top: 20px;
+            margin-top: 24px;
             color: #fff;
             text-align: center;
+            max-width: 280px;
+            line-height: 1.4;
         }
 
-        /* РУЛЕТКА */
+        /* РУЛЕТКА (CS2 ЛЕНТА) */
         .roulette-container {
             width: 100%;
-            height: 130px;
-            background: #0d0d0c;
-            border-top: 2px solid #2c2c2e;
-            border-bottom: 2px solid #2c2c2e;
+            height: 120px;
+            background: #0a0a0a;
+            border-top: 2px solid #222;
+            border-bottom: 2px solid #222;
             position: relative;
             overflow: hidden;
             display: none;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
-        /* Красный маркер по центру */
         .roulette-marker {
             position: absolute;
             left: 50%;
@@ -471,7 +445,7 @@
             height: 100%;
             background: #ff3b30;
             z-index: 10;
-            box-shadow: 0 0 10px #ff3b30;
+            box-shadow: 0 0 8px #ff3b30;
         }
 
         .roulette-track {
@@ -487,32 +461,32 @@
             width: 90px;
             height: 100%;
             flex-shrink: 0;
-            border-right: 2px solid #1c1c1e;
+            border-right: 2px solid #141414;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 18px;
+            font-size: 17px;
             position: relative;
         }
 
-        /* Цвета редкостей из CS2 */
-        .rare-blue { background: linear-gradient(to top, #4b69ff, #1c1c1e); border-bottom: 5px solid #4b69ff; }
-        .rare-purple { background: linear-gradient(to top, #8847ff, #1c1c1e); border-bottom: 5px solid #8847ff; }
-        .rare-pink { background: linear-gradient(to top, #d32ce6, #1c1c1e); border-bottom: 5px solid #d32ce6; }
-        .rare-red { background: linear-gradient(to top, #eb4b4b, #1c1c1e); border-bottom: 5px solid #eb4b4b; }
-        .rare-gold { background: linear-gradient(to top, #caab05, #1c1c1e); border-bottom: 5px solid #caab05; }
+        /* Цвета редкостей */
+        .rare-blue { background: linear-gradient(to top, #4b69ff 0%, #111 80%); border-bottom: 4px solid #4b69ff; }
+        .rare-purple { background: linear-gradient(to top, #8847ff 0%, #111 80%); border-bottom: 4px solid #8847ff; }
+        .rare-pink { background: linear-gradient(to top, #d32ce6 0%, #111 80%); border-bottom: 4px solid #d32ce6; }
+        .rare-red { background: linear-gradient(to top, #eb4b4b 0%, #111 80%); border-bottom: 4px solid #eb4b4b; }
+        .rare-gold { background: linear-gradient(to top, #caab05 0%, #111 80%); border-bottom: 4px solid #caab05; }
 
         .item-subtext {
             font-size: 9px;
-            color: #ccc;
+            color: #aaa;
             text-transform: uppercase;
             margin-top: 4px;
             font-weight: 600;
         }
 
-        /* Окно выигрыша */
+        /* ЭКРАН ВЫИГРЫША */
         .win-screen {
             display: none;
             flex-direction: column;
@@ -521,13 +495,13 @@
         }
 
         .win-glow {
-            font-size: 64px;
-            text-shadow: 0 0 30px var(--case-gold);
-            animation: pulseGlow 1.5s infinite alternate;
+            font-size: 60px;
+            text-shadow: 0 0 25px var(--case-gold);
+            animation: pulseGlow 1.2s infinite alternate;
         }
 
         @keyframes pulseGlow {
-            from { transform: scale(1); } to { transform: scale(1.08); }
+            from { transform: scale(1); } to { transform: scale(1.06); }
         }
 
         #historyList, .friends-list {
@@ -546,25 +520,22 @@
         <div id="map"></div>
 
         <div class="admin-panel-popup" id="adminPanel">
-            <div class="admin-panel-title">🛠️ Тест функции (Admin)</div>
-            <button class="action-btn" id="adminCompleteBtn" style="background: linear-gradient(180deg, #ff453a 0%, #b3160e 100%); border-color: #ff5b52; padding: 10px; font-size: 11px;">
-                ⚡ Симулировать финиш (Кейс)
+            <div class="admin-panel-title">🛠️ Лаборатория создателя</div>
+            <button class="action-btn" id="adminTeleportBtn" style="background: #ff9500; font-size: 11px; padding: 10px;">
+                📍 Симулировать прибытие к цели (Тест 30м)
             </button>
-            <div class="admin-input-group">
-                <span style="font-size: 10px; color: var(--text-muted); font-weight:700;">НАЧИСЛИТЬ ЭНЕРГИЮ:</span>
-                <input type="text" id="adminNickInput" class="admin-input" placeholder="@username">
-                <input type="number" id="adminEnergyAmount" class="admin-input" placeholder="Количество" value="100">
-                <button class="admin-sub-btn" id="adminGiveEnergyBtn">Выдать энергию</button>
-            </div>
+            <button class="action-btn" id="adminResetAll" style="background: #ff3b30; font-size: 11px; padding: 10px; margin-top: 5px;">
+                🗑️ Сбросить всё сохранение (Обнулить)
+            </button>
         </div>
 
         <div class="top-hud">
             <div class="profile-row">
                 <div class="user-meta">
-                    <div class="avatar-frame" id="userAvatar">U</div>
+                    <div class="avatar-frame" id="userAvatar">K</div>
                     <div>
-                        <div class="user-name" id="userName">@user <span class="lvl-badge" id="roleBadge">User</span></div>
-                        <div style="font-size: 11px; color: var(--text-muted);" id="rankLabel">Ранг: Пешеход</div>
+                        <div class="user-name" id="userName">@kirushapross <span class="lvl-badge" id="roleBadge">Creator</span></div>
+                        <div style="font-size: 11px; color: var(--text-muted);" id="rankLabel">Ранг: Создатель</div>
                     </div>
                 </div>
                 <div class="right-controls">
@@ -575,9 +546,9 @@
         </div>
 
         <div class="case-overlay" id="caseOverlay">
-            <div id="caseOpeningStage">
+            <div id="caseOpeningStage" style="display: flex; flex-direction: column; align-items: center;">
                 <div class="case-box" id="caseBox">📦</div>
-                <div class="case-title" id="caseStatusTitle">Вы дошли! Нажмите, чтобы открыть кейс вылазки</div>
+                <div class="case-title" id="caseStatusTitle">Вы дошли до секретной зоны! Нажмите на кейс, чтобы открыть его</div>
             </div>
 
             <div class="roulette-container" id="rouletteContainer">
@@ -587,9 +558,9 @@
 
             <div class="win-screen" id="winScreen">
                 <div class="win-glow">⚡</div>
-                <h2 style="font-size: 24px; font-weight: 800; margin: 15px 0 5px 0;" id="winAmountText">+50 ⚡</h2>
-                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Энергия зачислена на ваш баланс</p>
-                <button class="action-btn" id="claimRewardBtn" style="width: 180px;">Забрать</button>
+                <h2 style="font-size: 24px; font-weight: 800; margin: 15px 0 4px 0;" id="winAmountText">+0 ⚡</h2>
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Энергия успешно сохранена в хранилище</p>
+                <button class="action-btn" id="claimRewardBtn" style="width: 160px;">Забрать</button>
             </div>
         </div>
 
@@ -619,23 +590,24 @@
                         <input type="range" id="radiusSlider" class="cyber-slider" min="500" max="5000" step="100" value="3000">
                     </div>
                 </div>
-                <button class="action-btn" id="generateBtn" style="margin-top: 10px;" disabled>Укажите точку центра</button>
-                <button class="action-btn arrive-btn" id="arriveBtn">🏁 Я на месте (Получить кейс)</button>
+                
+                <button class="action-btn" id="generateBtn" style="margin-top: 10px;" disabled>Ожидание GPS 📍</button>
+                <button class="action-btn arrive-btn" id="arriveBtn">🏁 Расчет дистанции...</button>
             </div>
 
             <div id="tab-friends" class="tab-panel" style="display: none;">
                 <div class="main-panel">
                     <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px;">Команда</div>
                     <div class="friends-list">
-                        <div class="list-item"><span>@alex_ton (14.2 км)</span><button class="admin-sub-btn" style="padding:4px 8px;">⚡ Дать</button></div>
-                        <div class="list-item"><span>@crypto_mario (8.5 км)</span><button class="admin-sub-btn" style="padding:4px 8px;">⚡ Дать</button></div>
+                        <div class="list-item"><span>@alex_ton (14.2 км)</span><span style="color:#30d158; font-weight:700;">В сети</span></div>
+                        <div class="list-item"><span>@crypto_mario (8.5 км)</span><span style="color:var(--text-muted);">Оффлайн</span></div>
                     </div>
                 </div>
             </div>
 
             <div id="tab-history" class="tab-panel" style="display: none;">
                 <div class="main-panel">
-                    <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px;">История вылазок</div>
+                    <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px;">Выполненные контракты</div>
                     <div id="historyList"></div>
                 </div>
             </div>
@@ -679,8 +651,8 @@
             tick() {
                 initAudio();
                 const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(120, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(130, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.015);
                 osc.connect(gain); gain.connect(audioCtx.destination);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.015);
@@ -708,14 +680,14 @@
         let startMarker = null, targetMarker = null, radiusCircle = null, routeCore = null, routeGlow = null, selectedLocation = null;
         let userLocation = null, liveLocationMarker = null, initialLocationSet = false;
         let currentRadius = 3000;
+        let isGeoEnabled = false;
 
-        // РОЛИ И ЭНЕРГИЯ
-        let isAdmin = false;
+        // СОСТОЯНИЕ ИЗ LOCALSTORAGE (Защита от сброса)
         let maxEnergy = 200;
-        let currentEnergy = 200;
-        let spentEnergyInCurrentRoute = 0; // Запоминаем траты под кейс
-
-        let routeHistory = [];
+        let currentEnergy = localStorage.getItem('gr_energy') !== null ? parseInt(localStorage.getItem('gr_energy')) : 200;
+        let routeHistory = JSON.parse(localStorage.getItem('gr_history')) || [];
+        let activeRouteState = JSON.parse(localStorage.getItem('gr_active_route')) || null;
+        let isAdmin = localStorage.getItem('gr_is_admin') === 'true' || false;
 
         const generateBtn = document.getElementById('generateBtn');
         const arriveBtn = document.getElementById('arriveBtn');
@@ -726,12 +698,21 @@
         const hudPanel = document.getElementById('hudPanel');
         const energyText = document.getElementById('energyText');
 
-        // Твоя математика цены: 0.7 км = 2 энергии, 1.2 км = 2 энергии
         function getEnergyCost(meters) {
             let km = meters / 1000;
             if (km <= 0.5) return 1;
             if (km <= 1.2) return 2;
             return Math.ceil(km / 0.5);
+        }
+
+        function saveUserData() {
+            localStorage.setItem('gr_energy', currentEnergy);
+            localStorage.setItem('gr_history', JSON.stringify(routeHistory));
+            if (activeRouteState) {
+                localStorage.setItem('gr_active_route', JSON.stringify(activeRouteState));
+            } else {
+                localStorage.removeItem('gr_active_route');
+            }
         }
 
         function updateEnergyUI() {
@@ -740,10 +721,16 @@
             } else {
                 energyText.innerText = `${currentEnergy} / ${maxEnergy}`;
             }
+            saveUserData();
             updateButtonLabel();
         }
 
         function updateButtonLabel() {
+            if (!isGeoEnabled && !activeRouteState) {
+                generateBtn.disabled = true;
+                generateBtn.innerText = "ВКЛЮЧИТЕ GPS 📍";
+                return;
+            }
             const cost = getEnergyCost(currentRadius);
             if (isAdmin) {
                 generateBtn.innerText = `СГЕНЕРИРОВАТЬ МАРШРУТ (⚡ 0)`;
@@ -753,6 +740,7 @@
         }
 
         radiusSlider.addEventListener('input', function(e) {
+            if (activeRouteState) return; // во время пути менять радиус нельзя
             currentRadius = parseInt(e.target.value);
             radiusLabel.innerText = (currentRadius / 1000).toFixed(1) + ' км';
             updateButtonLabel();
@@ -763,11 +751,10 @@
         });
 
         map.on('click', function(e) {
+            if (activeRouteState || !isGeoEnabled) return;
             haptics.tap();
-            if (!routeCore) {
-                selectedLocation = e.latlng;
-                resetLayoutAndDrawStart();
-            }
+            selectedLocation = e.latlng;
+            resetLayoutAndDrawStart();
         });
 
         function resetLayoutAndDrawStart() {
@@ -800,7 +787,7 @@
         }
 
         generateBtn.addEventListener('click', async function() {
-            if (!selectedLocation) return;
+            if (!selectedLocation || !isGeoEnabled) return;
             const cost = getEnergyCost(currentRadius);
 
             if (!isAdmin && currentEnergy < cost) {
@@ -826,64 +813,136 @@
             hudPanel.classList.remove('radar-pulse');
             haptics.success();
 
-            // Списание энергии
             if (!isAdmin) {
                 currentEnergy -= cost;
-                spentEnergyInCurrentRoute = cost;
-            } else {
-                spentEnergyInCurrentRoute = cost || 2; // для админа по умолчанию
             }
+            
+            // Запоминаем состояние маршрута в глобальный объект
+            activeRouteState = {
+                target: candidate,
+                start: { lat: routeStart.lat, lng: routeStart.lng },
+                spentEnergy: cost || 2,
+                geometry: routeData && routeData.routes ? routeData.routes[0].geometry : null,
+                distanceText: routeData && routeData.routes ? (routeData.routes[0].distance / 1000).toFixed(1) + ' км' : (map.distance(routeStart, candidate)/1000).toFixed(1) + ' км',
+                durationText: routeData && routeData.routes ? Math.round(routeData.routes[0].duration / 60) + ' мин' : Math.round((map.distance(routeStart, candidate)/4500)*60) + ' мин'
+            };
+            
+            saveUserData();
             updateEnergyUI();
+            renderActiveRoute();
+        });
 
-            targetMarker = L.circleMarker([candidate.lat, candidate.lng], {
+        // ОТРИСОВКА МАРШРУТА ИЗ ТЕКУЩЕГО СОСТОЯНИЯ
+        function renderActiveRoute() {
+            if (!activeRouteState) return;
+
+            const tLatLng = [activeRouteState.target.lat, activeRouteState.target.lng];
+            const sLatLng = [activeRouteState.start.lat, activeRouteState.start.lng];
+
+            if (startMarker) map.removeLayer(startMarker);
+            if (targetMarker) map.removeLayer(targetMarker);
+            if (radiusCircle) map.removeLayer(radiusCircle);
+            if (routeCore) map.removeLayer(routeCore);
+            if (routeGlow) map.removeLayer(routeGlow);
+
+            startMarker = L.circleMarker(sLatLng, {
+                radius: 7, fillColor: '#000', fillOpacity: 1, color: '#fff', weight: 2
+            }).addTo(map);
+
+            targetMarker = L.circleMarker(tLatLng, {
                 radius: 9, fillColor: '#fff', fillOpacity: 1, color: '#000', weight: 3
             }).addTo(map);
 
-            if (routeData && routeData.routes && routeData.routes.length > 0) {
-                const route = routeData.routes[0];
-                routeGlow = L.geoJSON(route.geometry, {
+            if (activeRouteState.geometry) {
+                routeGlow = L.geoJSON(activeRouteState.geometry, {
                     style: { color: '#000000', weight: 8, opacity: 0.6 }
                 }).addTo(map);
-                routeCore = L.geoJSON(route.geometry, {
+                routeCore = L.geoJSON(activeRouteState.geometry, {
                     style: { color: '#ffffff', weight: 3, opacity: 1 }
                 }).addTo(map);
-                hudDistance.innerText = (route.distance / 1000).toFixed(1) + ' км';
-                hudTime.innerText = Math.round(route.duration / 60) + ' мин';
             } else {
-                routeCore = L.polyline([routeStart, [candidate.lat, candidate.lng]], {
+                routeCore = L.polyline([sLatLng, tLatLng], {
                     color: '#000', weight: 4, dashArray: '8, 8'
                 }).addTo(map);
-                const d = map.distance(routeStart, [candidate.lat, candidate.lng]);
-                hudDistance.innerText = (d / 1000).toFixed(1) + ' км';
-                hudTime.innerText = Math.round((d / 4500) * 60) + ' мин';
             }
+
+            hudDistance.innerText = activeRouteState.distanceText;
+            hudTime.innerText = activeRouteState.durationText;
 
             generateBtn.style.display = 'none';
             arriveBtn.style.display = 'block';
 
-            const bounds = L.latLngBounds([selectedLocation, [candidate.lat, candidate.lng]]);
-            map.fitBounds(bounds.pad(0.35), { animate: true, duration: 0.5 });
-        });
+            // Первичный расчет дистанции до цели
+            if (userLocation) {
+                checkGeofenceDistance();
+            } else {
+                arriveBtn.disabled = true;
+                arriveBtn.className = "action-btn arrive-btn";
+                arriveBtn.innerText = "⏳ Ожидание сигнала GPS...";
+            }
 
-        // ГЕОПОЗИЦИЯ
+            const bounds = L.latLngBounds([sLatLng, tLatLng]);
+            map.fitBounds(bounds.pad(0.35), { animate: true, duration: 0.5 });
+        }
+
+        // ПРОВЕРКА ДИСТАНЦИИ ДЛЯ РАЗБЛОКИРОВКИ КЕЙСА
+        function checkGeofenceDistance() {
+            if (!activeRouteState || !userLocation) return;
+            
+            const targetLatLng = L.latLng(activeRouteState.target.lat, activeRouteState.target.lng);
+            const dist = map.distance(userLocation, targetLatLng); // Дистанция в метрах
+
+            if (dist <= 30) {
+                arriveBtn.disabled = false;
+                arriveBtn.classList.add('unlocked');
+                arriveBtn.innerText = "🏁 Я НА МЕСТЕ (ОТКРЫТЬ КЕЙС)";
+            } else {
+                arriveBtn.disabled = true;
+                arriveBtn.classList.remove('unlocked');
+                arriveBtn.innerText = `⏳ ДО ЦЕЛИ: ${Math.round(dist)} м`;
+            }
+        }
+
+        // ЖИВОЙ ТРЕКИНГ ГЕОПОЗИЦИИ
         map.locate({setView: false, watch: true, enableHighAccuracy: true});
+
         map.on('locationfound', function(e) {
             userLocation = e.latlng;
+            isGeoEnabled = true;
+
             if (liveLocationMarker) liveLocationMarker.setLatLng(userLocation);
             else {
                 liveLocationMarker = L.circleMarker(userLocation, {
                     radius: 6, fillColor: '#ffffff', color: '#000', weight: 2.5
                 }).addTo(map);
             }
+
             if (!initialLocationSet) {
-                map.setView(userLocation, 14);
-                selectedLocation = userLocation;
-                resetLayoutAndDrawStart();
+                if (!activeRouteState) {
+                    map.setView(userLocation, 14);
+                    selectedLocation = userLocation;
+                    resetLayoutAndDrawStart();
+                }
                 initialLocationSet = true;
+            }
+
+            updateButtonLabel();
+            if (activeRouteState) {
+                checkGeofenceDistance();
             }
         });
 
-        // ЛОГИКА КЕЙСА В СТИЛЕ CS2
+        map.on('locationerror', function(e) {
+            isGeoEnabled = false;
+            updateButtonLabel();
+            if (activeRouteState) {
+                arriveBtn.disabled = true;
+                arriveBtn.classList.remove('unlocked');
+                arriveBtn.innerText = "📍 GPS ОТКЛЮЧЕН (ВКЛЮЧИТЕ ДЛЯ ПРОВЕРКИ)";
+            }
+        });
+
+        // МЕХАНИКА CS2 КЕЙСА И РУЛЕТКИ
         const caseOverlay = document.getElementById('caseOverlay');
         const caseBox = document.getElementById('caseBox');
         const caseOpeningStage = document.getElementById('caseOpeningStage');
@@ -895,7 +954,10 @@
 
         let finalRewardAmount = 0;
 
-        arriveBtn.addEventListener('click', triggerCaseReward);
+        arriveBtn.addEventListener('click', () => {
+            if (arriveBtn.disabled) return;
+            triggerCaseReward();
+        });
 
         function triggerCaseReward() {
             haptics.success();
@@ -904,17 +966,17 @@
             rouletteContainer.style.display = 'none';
             winScreen.style.display = 'none';
             caseBox.className = "case-box";
+            document.getElementById('caseStatusTitle').innerText = "Вы дошли до секретной зоны! Нажмите на кейс, чтобы открыть его";
             
-            // Дроп сверху через таймаут для запуска CSS-анимации
             setTimeout(() => {
                 caseBox.classList.add('dropped');
-            }, 50);
+            }, 60);
         }
 
         caseBox.addEventListener('click', () => {
             haptics.tap();
             caseBox.classList.add('opened');
-            document.getElementById('caseStatusTitle').innerText = "Распаковка...";
+            document.getElementById('caseStatusTitle').innerText = "Распаковка контейнера энергии...";
             
             setTimeout(() => {
                 caseOpeningStage.style.display = 'none';
@@ -928,14 +990,16 @@
             rouletteTrack.style.transition = 'none';
             rouletteTrack.style.transform = 'translateX(0px)';
 
-            // Расчет диапазона от затраченной/2 до затраченной*2
-            let minEnergy = Math.max(1, Math.floor(spentEnergyInCurrentRoute / 2));
-            let maxEnergyReward = Math.floor(spentEnergyInCurrentRoute * 2);
-            finalRewardAmount = Math.floor(Math.random() * (maxEnergyReward - minEnergy + 1)) + minEnergy;
+            // Математика приза: от затраченной / 2 до затраченной * 2
+            let spent = activeRouteState ? activeRouteState.spentEnergy : 2;
+            let minReward = Math.max(1, Math.floor(spent / 2));
+            let maxReward = Math.floor(spent * 2);
+            
+            finalRewardAmount = Math.floor(Math.random() * (maxReward - minReward + 1)) + minReward;
 
-            const totalItems = 35; // длина прокрутки
-            const itemWidth = 92;  // 90px + 2px border
-            const targetIdx = 28;  // на каком элементе остановимся
+            const totalItems = 32; 
+            const itemWidth = 92;  // 90px + 2px граница
+            const targetIdx = 25;  // ячейка остановки ленты
 
             const rarities = ['rare-blue', 'rare-purple', 'rare-pink', 'rare-red', 'rare-gold'];
 
@@ -943,24 +1007,24 @@
                 let cell = document.createElement('div');
                 let isWinner = (i === targetIdx);
                 
-                let val = isWinner ? finalRewardAmount : Math.floor(Math.random() * (maxEnergyReward + 10)) + 1;
+                let val = isWinner ? finalRewardAmount : Math.floor(Math.random() * (maxReward + 8)) + 1;
                 let rarity = rarities[Math.floor(Math.random() * rarities.length)];
                 
-                if (isWinner) rarity = 'rare-gold'; // Победителю топовый цвет
+                if (isWinner) rarity = 'rare-gold';
 
                 cell.className = `roulette-item ${rarity}`;
                 cell.innerHTML = `<div>⚡ ${val}</div><div class="item-subtext">Энергия</div>`;
                 rouletteTrack.appendChild(cell);
             }
 
-            // Вычисляем точную позицию остановки по центру
             let containerWidth = rouletteContainer.offsetWidth;
             let centerOffset = containerWidth / 2;
             let targetLeftPosition = (targetIdx * itemWidth) + (itemWidth / 2);
-            let randomInnerShift = Math.floor(Math.random() * 40) - 20; // Органика CS2, чтоб не строго по центру
+            // Органический сдвиг CS2 рулетки внутри ячейки
+            let randomInnerShift = Math.floor(Math.random() * 50) - 25; 
             let finalTranslate = -(targetLeftPosition - centerOffset + randomInnerShift);
 
-            // Таймер для звуковых щелчков ленты рулетки
+            // Аудио-клики при смещении ленты
             let currentX = 0;
             let interval = setInterval(() => {
                 if (!rouletteTrack) return;
@@ -972,19 +1036,18 @@
                         currentX = posX;
                     }
                 }
-            }, 30);
+            }, 25);
 
             setTimeout(() => {
                 rouletteTrack.style.transition = 'transform 4.5s cubic-bezier(0.1, 1, 0.15, 1)';
                 rouletteTrack.style.transform = `translateX(${finalTranslate}px)`;
-            }, 100);
+            }, 800);
 
-            // Конец крутки
+            // Остановка прокрутки
             setTimeout(() => {
                 clearInterval(interval);
                 haptics.success();
                 
-                // Переход к окну победы
                 setTimeout(() => {
                     rouletteContainer.style.display = 'none';
                     winScreen.style.display = 'flex';
@@ -995,18 +1058,19 @@
 
         claimRewardBtn.addEventListener('click', () => {
             haptics.tap();
+            
             if (!isAdmin) {
                 currentEnergy = Math.min(maxEnergy, currentEnergy + finalRewardAmount);
             }
-            
-            // Сохраняем в историю вылазок
+
+            // Добавляем в историю
             routeHistory.unshift({
                 timeCreated: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 distance: hudDistance.innerText,
                 duration: hudTime.innerText + ` (+${finalRewardAmount}⚡)`
             });
 
-            // Зачищаем карту
+            // Полное очищение активного состояния маршрута
             if (targetMarker) map.removeLayer(targetMarker);
             if (routeCore) map.removeLayer(routeCore);
             if (routeGlow) map.removeLayer(routeGlow);
@@ -1017,13 +1081,21 @@
 
             arriveBtn.style.display = 'none';
             generateBtn.style.display = 'block';
-            generateBtn.disabled = true;
+            generateBtn.disabled = false;
 
+            activeRouteState = null;
             caseOverlay.style.display = 'none';
+            
+            saveUserData();
             updateEnergyUI();
+            
+            if (userLocation) {
+                selectedLocation = userLocation;
+                resetLayoutAndDrawStart();
+            }
         });
 
-        // АДМИН ПАНЕЛЬ И ТАБЫ
+        // АДМИН ТЕСТИРОВАНИЕ И ПАСХАЛКА КЛИКАМИ
         const adminToggle = document.getElementById('adminToggle');
         const adminPanel = document.getElementById('adminPanel');
 
@@ -1032,23 +1104,27 @@
             adminPanel.style.display = adminPanel.style.display === 'flex' ? 'none' : 'flex';
         });
 
-        document.getElementById('adminCompleteBtn').addEventListener('click', () => {
+        document.getElementById('adminTeleportBtn').addEventListener('click', () => {
+            if (!activeRouteState) {
+                alert("Сначала сгенерируйте маршрут!");
+                return;
+            }
+            haptics.success();
+            // Симулируем перемещение юзера к цели
+            userLocation = L.latLng(activeRouteState.target.lat, activeRouteState.target.lng);
+            if (liveLocationMarker) liveLocationMarker.setLatLng(userLocation);
+            checkGeofenceDistance();
             adminPanel.style.display = 'none';
-            triggerCaseReward();
         });
 
-        document.getElementById('adminGiveEnergyBtn').addEventListener('click', () => {
-            const nick = document.getElementById('adminNickInput').value.trim();
-            const amount = document.getElementById('adminEnergyAmount').value.trim();
-            if(nick) {
-                haptics.success();
-                alert(`Игроку ${nick} отправлено ⚡ ${amount || 100} энергии!`);
-                adminPanel.style.display = 'none';
-            }
+        document.getElementById('adminResetAll').addEventListener('click', () => {
+            localStorage.clear();
+            location.reload();
         });
 
         function activateAdminMode() {
             isAdmin = true;
+            localStorage.setItem('gr_is_admin', 'true');
             currentEnergy = Infinity;
             document.getElementById('roleBadge').innerText = "Creator";
             document.getElementById('roleBadge').style.background = 'var(--admin-color)';
@@ -1061,13 +1137,13 @@
         let devClicks = 0;
         document.getElementById('userAvatar').addEventListener('click', () => {
             devClicks++;
-            if (devClicks === 3 && !isAdmin) {
+            if (devClicks === 3) {
                 activateAdminMode();
                 alert("Лаборатория Создателя активирована!");
             }
         });
 
-        // ТАБЫ
+        // МЕНЮ ТАБОВ
         const tabs = document.querySelectorAll('.tab-item');
         const panels = document.querySelectorAll('.tab-panel');
         tabs.forEach((tab, idx) => {
@@ -1090,15 +1166,15 @@
             container.innerHTML = routeHistory.map((h, i) => `
                 <div class="list-item">
                     <div>
-                        <div style="font-weight:600;">Рандом Трек #${routeHistory.length - i}</div>
-                        <div style="color:var(--text-muted); font-size:10px;">${h.timeCreated} • Время: ${h.duration}</div>
+                        <div style="font-weight:600;">Рандом Контракт #${routeHistory.length - i}</div>
+                        <div style="color:var(--text-muted); font-size:10px;">${h.timeCreated} • Заняло: ${h.duration}</div>
                     </div>
                     <div style="font-weight:700;">${h.distance}</div>
                 </div>
             `).join('');
         }
 
-        // Интеграция Телеграм
+        // ИНТЕГРАЦИЯ С TELEGRAM WEBAPP
         const tg = window.Telegram ? window.Telegram.WebApp : null;
         if (tg) {
             tg.ready(); tg.expand();
@@ -1107,10 +1183,19 @@
                 const username = user.username ? '@' + user.username : 'User';
                 document.getElementById('userName').innerHTML = `${username} <span class="lvl-badge" id="roleBadge">User</span>`;
                 if(user.first_name) document.getElementById('userAvatar').innerText = user.first_name.charAt(0).toUpperCase();
-                if (user.username === 'kirushapross') activateAdminMode();
+                if (user.username === 'kirushapross' || isAdmin) activateAdminMode();
                 else updateEnergyUI();
-            } else updateEnergyUI();
-        } else updateEnergyUI();
+            } else {
+                if (isAdmin) activateAdminMode(); else updateEnergyUI();
+            }
+        } else {
+            if (isAdmin) activateAdminMode(); else updateEnergyUI();
+        }
+
+        // Авто-восстановление сессии при перезапуске страницы
+        if (activeRouteState) {
+            renderActiveRoute();
+        }
     </script>
 </body>
 </html>
