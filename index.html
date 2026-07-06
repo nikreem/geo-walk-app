@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GeoRandomizer - Creator Edition</title>
     
-    <!-- Подключение Leaflet CSS -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
@@ -87,6 +88,7 @@
             padding: 10px 14px;
             display: flex;
             flex-direction: column;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         }
 
         .profile-row {
@@ -158,6 +160,7 @@
             flex-direction: column;
             gap: 10px;
             background: linear-gradient(to top, rgba(0,0,0,0.95) 75%, rgba(0,0,0,0));
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         }
 
         .main-panel {
@@ -320,21 +323,66 @@
             from { border-color: rgba(255,255,255,0.1); }
             to { border-color: rgba(255, 255, 255, 0.6); }
         }
+
+        /* МОДИФИКАЦИИ ДЛЯ ПОЛНОЭКРАННОЙ КАРТЫ */
+        .back-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 1010;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--panel-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border-glow);
+            color: var(--text-main);
+            font-size: 20px;
+            display: none; /* Скрыта в обычном режиме */
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:active {
+            transform: scale(0.9);
+            background: rgba(30, 30, 30, 0.9);
+        }
+
+        /* Класс-триггер для изменения состояния контейнера */
+        .app-container.fullscreen-map .top-hud {
+            transform: translate(-50%, -150%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .app-container.fullscreen-map .bottom-hud {
+            transform: translateY(100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .app-container.fullscreen-map .back-btn {
+            display: flex;
+        }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- Полноцветная карта OpenStreetMap -->
+        <button class="back-btn" id="backBtn">←</button>
+
         <div id="map"></div>
 
-        <!-- Верхний профиль -->
         <div class="top-hud">
             <div class="profile-row">
                 <div class="user-meta">
-                    <div class="avatar-frame">K</div>
+                    <div class="avatar-frame" id="userAvatar">K</div>
                     <div>
-                        <div class="user-name">@kirushapross <span class="lvl-badge">Creator</span></div>
+                        <div class="user-name" id="userName">@kirushapross <span class="lvl-badge">Creator</span></div>
                         <div style="font-size: 11px; color: var(--text-muted);">Ранг: Создатель</div>
                     </div>
                 </div>
@@ -345,7 +393,6 @@
             </div>
         </div>
 
-        <!-- Нижний блок -->
         <div class="bottom-hud">
             <div class="main-panel" id="hudPanel">
                 
@@ -375,7 +422,6 @@
 
             <button class="action-btn" id="generateBtn" disabled>Укажите точку старта</button>
 
-            <!-- Энергия Создателя -->
             <div class="energy-bar-row">
                 <div class="energy-info">
                     <span>⚡</span>
@@ -384,7 +430,6 @@
                 <div class="boost-link">🚀 Буст</div>
             </div>
 
-            <!-- Обновленные вкладки -->
             <div class="footer-tabs">
                 <div class="tab-item active">🏠<br>Main</div>
                 <div class="tab-item">👥<br>Friends</div>
@@ -437,6 +482,11 @@
         let startMarker = null, targetMarker = null, radiusCircle = null, routeCore = null, routeGlow = null, selectedLocation = null;
         let currentRadius = 3000;
 
+        // Переменные для управления полноэкранным режимом карты
+        const appContainer = document.querySelector('.app-container');
+        const backBtn = document.getElementById('backBtn');
+        let isMapFullscreen = false;
+
         const generateBtn = document.getElementById('generateBtn');
         const radiusSlider = document.getElementById('radiusSlider');
         const radiusLabel = document.getElementById('radiusLabel');
@@ -453,10 +503,36 @@
             }
         });
 
+        // ИСПРАВЛЕННЫЙ КЛИК ПО КАРТЕ (Без багов удаления маршрута)
         map.on('click', function(e) {
             haptics.tap();
-            selectedLocation = e.latlng;
-            resetLayoutAndDrawStart();
+
+            if (!isMapFullscreen) {
+                // Если карта была маленькой, просто плавно разворачиваем её
+                appContainer.classList.add('fullscreen-map');
+                isMapFullscreen = true;
+                
+                // Если точка старта ещё вообще не выбрана, ставим её
+                if (!selectedLocation) {
+                    selectedLocation = e.latlng;
+                    resetLayoutAndDrawStart();
+                }
+            } else {
+                // Если карта УЖЕ большая, разрешаем менять точку старта, 
+                // ТОЛЬКО если маршрут еще не сгенерирован, чтобы избежать случайных удалений
+                if (!routeCore) {
+                    selectedLocation = e.latlng;
+                    resetLayoutAndDrawStart();
+                }
+            }
+        });
+
+        // Кнопка возврата возвращает HUD на место
+        backBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Предотвращаем срабатывание клика по самой карте
+            haptics.tap();
+            appContainer.classList.remove('fullscreen-map');
+            isMapFullscreen = false;
         });
 
         function resetLayoutAndDrawStart() {
@@ -521,7 +597,6 @@
             if (routeData && routeData.routes && routeData.routes.length > 0) {
                 const route = routeData.routes[0];
                 
-                // Стильный черно-белый маршрут для цветной карты
                 routeGlow = L.geoJSON(route.geometry, {
                     style: { color: '#000000', weight: 8, opacity: 0.6, lineCap: 'round', lineJoin: 'round' }
                 }).addTo(map);
@@ -551,6 +626,23 @@
             selectedLocation = e.latlng;
             resetLayoutAndDrawStart();
         });
+
+        // ИНТЕГРАЦИЯ С ТЕЛЕГРАМ АККАУНТОМ
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
+        if (tg) {
+            tg.ready();
+            tg.expand(); // Разворачивает Mini App на максимум в Telegram
+            
+            // Получаем реальные данные профиля
+            const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
+            if (user) {
+                const username = user.username ? '@' + user.username : `${user.first_name || 'User'}`;
+                document.getElementById('userName').innerHTML = `${username} <span class="lvl-badge">Creator</span>`;
+                
+                const firstLetter = user.first_name ? user.first_name.charAt(0).toUpperCase() : 'U';
+                document.getElementById('userAvatar').innerText = firstLetter;
+            }
+        }
     </script>
 </body>
 </html>
