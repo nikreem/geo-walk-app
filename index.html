@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GeoRandomizer - Creator Edition</title>
+    <title>GeoRandomizer - Professional Edition</title>
     
+    <!-- Подключение Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
+    <!-- Подключение Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
@@ -127,6 +129,21 @@
             gap: 6px;
         }
 
+        /* Радужный перелив для VIP */
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .rainbow-text {
+            background: linear-gradient(to right, #ff3b30, #ff9500, #ffcc00, #4cd964, #5ac8fa, #5856d6, #ff2d55);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow 5s ease infinite;
+            font-weight: 800;
+        }
+
         .lvl-badge {
             font-size: 10px;
             color: var(--accent-black);
@@ -166,7 +183,7 @@
             text-transform: uppercase;
         }
 
-        /* ТЕСТОВАЯ ПАНЕЛЬ РАЗРАБОТЧИКА */
+        /* ПАНЕЛЬ РАЗРАБОТЧИКА */
         .admin-panel-popup {
             position: absolute;
             top: 80px;
@@ -174,7 +191,7 @@
             transform: translateX(-50%);
             width: 92%;
             z-index: 2000;
-            background: rgba(20, 20, 20, 0.95);
+            background: rgba(20, 20, 20, 0.98);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--admin-color);
@@ -190,6 +207,35 @@
             font-size: 12px;
             font-weight: 800;
             color: var(--admin-color);
+            text-transform: uppercase;
+        }
+
+        .admin-sub-section {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 10px;
+            margin-top: 4px;
+        }
+
+        .admin-input {
+            width: 100%;
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            outline: none;
+            margin-bottom: 6px;
+        }
+        .admin-input:focus { border-color: #666; }
+
+        .admin-mini-btn {
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
             text-transform: uppercase;
         }
 
@@ -302,7 +348,6 @@
             box-shadow: none;
         }
 
-        /* Кнопка прибытия */
         .arrive-btn {
             background: linear-gradient(180deg, #555 0%, #222 100%);
             border-color: #444;
@@ -355,55 +400,34 @@
             font-weight: 700;
         }
 
-        .radar-pulse {
-            animation: cyberPulse 0.8s infinite alternate;
-        }
+        .radar-pulse { animation: cyberPulse 0.8s infinite alternate; }
         @keyframes cyberPulse {
             from { border-color: rgba(255,255,255,0.1); }
             to { border-color: rgba(255, 255, 255, 0.6); }
         }
 
-        /* ЭКРАН КЕЙСА (CS2 МОДАЛКА) */
+        /* ЭКРАН КЕЙСА */
         .case-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.94);
-            z-index: 5000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 20px;
-            backdrop-filter: blur(12px);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.94); z-index: 5000;
+            display: none; align-items: center; justify-content: center;
+            flex-direction: column; padding: 20px; backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
 
         .case-box {
-            width: 150px;
-            height: 150px;
+            width: 150px; height: 150px;
             background: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
-            border: 2px solid var(--case-gold);
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 70px;
-            box-shadow: 0 0 30px rgba(255, 179, 0, 0.25);
-            cursor: pointer;
+            border: 2px solid var(--case-gold); border-radius: 24px;
+            display: flex; align-items: center; justify-content: center; font-size: 70px;
+            box-shadow: 0 0 30px rgba(255, 179, 0, 0.25); cursor: pointer;
             transform: translateY(-100vh);
             transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .case-box.dropped {
-            transform: translateY(0);
-        }
-
-        .case-box.opened {
-            animation: caseExplode 0.5s ease forwards;
-        }
+        .case-box.dropped { transform: translateY(0); }
+        .case-box.opened { animation: caseExplode 0.5s ease forwards; }
 
         @keyframes caseExplode {
             0% { transform: scale(1); opacity: 1; }
@@ -412,101 +436,44 @@
         }
 
         .case-title {
-            font-size: 15px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-top: 24px;
-            color: #fff;
-            text-align: center;
-            max-width: 280px;
-            line-height: 1.4;
+            font-size: 15px; font-weight: 800; letter-spacing: 0.5px;
+            text-transform: uppercase; margin-top: 24px; color: #fff;
+            text-align: center; max-width: 280px; line-height: 1.4;
         }
 
-        /* РУЛЕТКА (CS2 ЛЕНТА) */
+        /* РУЛЕТКА */
         .roulette-container {
-            width: 100%;
-            height: 120px;
-            background: #0a0a0a;
-            border-top: 2px solid #222;
-            border-bottom: 2px solid #222;
-            position: relative;
-            overflow: hidden;
-            display: none;
-            margin-top: 20px;
+            width: 100%; height: 120px; background: #0a0a0a;
+            border-top: 2px solid #222; border-bottom: 2px solid #222;
+            position: relative; overflow: hidden; display: none; margin-top: 20px;
         }
 
         .roulette-marker {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 100%;
-            background: #ff3b30;
-            z-index: 10;
-            box-shadow: 0 0 8px #ff3b30;
+            position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+            width: 4px; height: 100%; background: #ff3b30; z-index: 10; box-shadow: 0 0 8px #ff3b30;
         }
 
-        .roulette-track {
-            display: flex;
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            will-change: transform;
-        }
-
+        .roulette-track { display: flex; height: 100%; position: absolute; left: 0; top: 0; will-change: transform; }
         .roulette-item {
-            width: 90px;
-            height: 100%;
-            flex-shrink: 0;
-            border-right: 2px solid #141414;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 17px;
-            position: relative;
+            width: 90px; height: 100%; flex-shrink: 0; border-right: 2px solid #141414;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 17px; position: relative;
         }
 
-        /* Цвета редкостей */
         .rare-blue { background: linear-gradient(to top, #4b69ff 0%, #111 80%); border-bottom: 4px solid #4b69ff; }
         .rare-purple { background: linear-gradient(to top, #8847ff 0%, #111 80%); border-bottom: 4px solid #8847ff; }
         .rare-pink { background: linear-gradient(to top, #d32ce6 0%, #111 80%); border-bottom: 4px solid #d32ce6; }
         .rare-red { background: linear-gradient(to top, #eb4b4b 0%, #111 80%); border-bottom: 4px solid #eb4b4b; }
         .rare-gold { background: linear-gradient(to top, #caab05 0%, #111 80%); border-bottom: 4px solid #caab05; }
 
-        .item-subtext {
-            font-size: 9px;
-            color: #aaa;
-            text-transform: uppercase;
-            margin-top: 4px;
-            font-weight: 600;
-        }
+        .item-subtext { font-size: 9px; color: #aaa; text-transform: uppercase; margin-top: 4px; font-weight: 600; }
 
-        /* ЭКРАН ВЫИГРЫША */
-        .win-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            animation: fadeIn 0.4s ease;
-        }
+        .win-screen { display: none; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; }
+        .win-glow { font-size: 60px; text-shadow: 0 0 25px var(--case-gold); animation: pulseGlow 1.2s infinite alternate; }
 
-        .win-glow {
-            font-size: 60px;
-            text-shadow: 0 0 25px var(--case-gold);
-            animation: pulseGlow 1.2s infinite alternate;
-        }
+        @keyframes pulseGlow { from { transform: scale(1); } to { transform: scale(1.06); } }
 
-        @keyframes pulseGlow {
-            from { transform: scale(1); } to { transform: scale(1.06); }
-        }
-
-        #historyList, .friends-list {
-            max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
-        }
+        #historyList, .friends-list { max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         .list-item {
             display: flex; align-items: center; justify-content: space-between;
             background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
@@ -519,23 +486,50 @@
     <div class="app-container">
         <div id="map"></div>
 
+        <!-- ЛАБОРАТОРИЯ СОЗДАТЕЛЯ (Только для @kirushapross) -->
         <div class="admin-panel-popup" id="adminPanel">
             <div class="admin-panel-title">🛠️ Лаборатория создателя</div>
             <button class="action-btn" id="adminTeleportBtn" style="background: #ff9500; font-size: 11px; padding: 10px;">
                 📍 Симулировать прибытие к цели (Тест 30м)
             </button>
-            <button class="action-btn" id="adminResetAll" style="background: #ff3b30; font-size: 11px; padding: 10px; margin-top: 5px;">
-                🗑️ Сбросить всё сохранение (Обнулить)
+            
+            <!-- Секция поиска и редактирования игроков -->
+            <div class="admin-sub-section">
+                <div style="font-size: 11px; font-weight: 800; margin-bottom: 6px; color: #aaa;">УПРАВЛЕНИЕ ИГРОКАМИ 👥</div>
+                <input type="text" id="playerSearchTag" class="admin-input" placeholder="Введите тег, например @alex_ton">
+                <button class="action-btn" id="searchPlayerBtn" style="padding: 8px; font-size: 11px; background: #fff; color: #000;">Найти профиль</button>
+                
+                <!-- Результаты поиска и карточка действий -->
+                <div id="searchProfileCard" style="display: none; margin-top: 10px; background: rgba(255,255,255,0.06); padding: 10px; border-radius: 10px; border: 1px dashed #444;">
+                    <div id="cardTargetName" style="font-weight: 700; font-size: 13px; color: #fff; margin-bottom: 2px;">-</div>
+                    <div id="cardTargetStats" style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Категория: Игрок | Лимит: 200</div>
+                    
+                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                        <button class="admin-mini-btn" id="cardGiveVip" style="background: #30d158; color: #fff;">Выдать VIP</button>
+                        <button class="admin-mini-btn" id="cardDemote" style="background: #ff3b30; color: #fff;">Понизить</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <input type="number" id="cardEnergyAddValue" class="admin-input" placeholder="+100" style="margin-bottom:0; flex: 1; padding: 6px;">
+                        <button class="admin-mini-btn" id="cardAddEnergyBtn" style="background: var(--case-gold); color: #000; height: 32px; flex: 2;">Зарядить (+сверх лимита)</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="action-btn" id="adminResetAll" style="background: #222; border-color:#333; font-size: 11px; padding: 8px; margin-top: 5px;">
+                🗑️ Полный сброс приложения
             </button>
         </div>
 
+        <!-- ВЕРХНИЙ HUD -->
         <div class="top-hud">
             <div class="profile-row">
                 <div class="user-meta">
-                    <div class="avatar-frame" id="userAvatar">K</div>
+                    <div class="avatar-frame" id="userAvatar">?</div>
                     <div>
-                        <div class="user-name" id="userName">@kirushapross <span class="lvl-badge" id="roleBadge">Creator</span></div>
-                        <div style="font-size: 11px; color: var(--text-muted);" id="rankLabel">Ранг: Создатель</div>
+                        <!-- Значения по умолчанию изменены на рядового игрока -->
+                        <div class="user-name" id="userName">Загрузка...</div>
+                        <div style="font-size: 11px; color: var(--text-muted);" id="rankLabel">Ранг: Игрок</div>
                     </div>
                 </div>
                 <div class="right-controls">
@@ -545,6 +539,7 @@
             </div>
         </div>
 
+        <!-- CS2 КЕЙС ОВЕРЛЕЙ -->
         <div class="case-overlay" id="caseOverlay">
             <div id="caseOpeningStage" style="display: flex; flex-direction: column; align-items: center;">
                 <div class="case-box" id="caseBox">📦</div>
@@ -564,6 +559,7 @@
             </div>
         </div>
 
+        <!-- НИЖНИЙ HUD -->
         <div class="bottom-hud">
             <div id="tab-main" class="tab-panel">
                 <div class="main-panel" id="hudPanel">
@@ -682,12 +678,14 @@
         let currentRadius = 3000;
         let isGeoEnabled = false;
 
-        // СОСТОЯНИЕ ИЗ LOCALSTORAGE (Защита от сброса)
-        let maxEnergy = 200;
+        // ДИНАМИЧЕСКИЕ НАСТРОЙКИ СЕССИИ ТЕКУЩЕГО ИГРОКА
+        let myUsername = "Игрок";
+        let myRole = localStorage.getItem('gr_my_role') || "User"; // "User", "VIP", "Admin"
+        let maxEnergy = localStorage.getItem('gr_max_energy') ? parseInt(localStorage.getItem('gr_max_energy')) : 200;
         let currentEnergy = localStorage.getItem('gr_energy') !== null ? parseInt(localStorage.getItem('gr_energy')) : 200;
+        
         let routeHistory = JSON.parse(localStorage.getItem('gr_history')) || [];
         let activeRouteState = JSON.parse(localStorage.getItem('gr_active_route')) || null;
-        let isAdmin = localStorage.getItem('gr_is_admin') === 'true' || false;
 
         const generateBtn = document.getElementById('generateBtn');
         const arriveBtn = document.getElementById('arriveBtn');
@@ -707,6 +705,8 @@
 
         function saveUserData() {
             localStorage.setItem('gr_energy', currentEnergy);
+            localStorage.setItem('gr_max_energy', maxEnergy);
+            localStorage.setItem('gr_my_role', myRole);
             localStorage.setItem('gr_history', JSON.stringify(routeHistory));
             if (activeRouteState) {
                 localStorage.setItem('gr_active_route', JSON.stringify(activeRouteState));
@@ -716,11 +716,7 @@
         }
 
         function updateEnergyUI() {
-            if (isAdmin) {
-                energyText.innerText = "∞ / ∞";
-            } else {
-                energyText.innerText = `${currentEnergy} / ${maxEnergy}`;
-            }
+            energyText.innerText = `${currentEnergy} / ${maxEnergy}`;
             saveUserData();
             updateButtonLabel();
         }
@@ -732,15 +728,38 @@
                 return;
             }
             const cost = getEnergyCost(currentRadius);
-            if (isAdmin) {
-                generateBtn.innerText = `СГЕНЕРИРОВАТЬ МАРШРУТ (⚡ 0)`;
+            generateBtn.innerText = `СГЕНЕРИРОВАТЬ МАРШРУТ (⚡ ${cost})`;
+        }
+
+        // ОБНОВЛЕНИЕ СТИЛЕЙ И РОЛЕЙ В ИНТЕРФЕЙСЕ
+        function applyRoleVisuals() {
+            const nameContainer = document.getElementById('userName');
+            const badge = document.getElementById('roleBadge');
+            const rankLabel = document.getElementById('rankLabel');
+            const toggleAdmin = document.getElementById('adminToggle');
+
+            nameContainer.className = "user-name"; // очистка
+            
+            if (myRole === "Admin") {
+                nameContainer.innerHTML = `${myUsername} <span class="lvl-badge" id="roleBadge" style="background:#ff3b30; color:#fff;">Создатель</span>`;
+                rankLabel.innerText = "Ранг: Разработчик";
+                toggleAdmin.style.display = "block";
+            } else if (myRole === "VIP") {
+                nameContainer.innerHTML = `<span class="rainbow-text">${myUsername}</span> <span class="lvl-badge" id="roleBadge" style="background:#ffb300; color:#000;">VIP</span>`;
+                rankLabel.innerText = "Ранг: Элита";
+                toggleAdmin.style.display = "none";
+                maxEnergy = 400;
             } else {
-                generateBtn.innerText = `СГЕНЕРИРОВАТЬ МАРШРУТ (⚡ ${cost})`;
+                nameContainer.innerHTML = `${myUsername} <span class="lvl-badge" id="roleBadge" style="background:#fff; color:#000;">Игрок</span>`;
+                rankLabel.innerText = "Ранг: Новичок";
+                toggleAdmin.style.display = "none";
+                if(maxEnergy > 200 && maxEnergy === 400) maxEnergy = 200; 
             }
+            updateEnergyUI();
         }
 
         radiusSlider.addEventListener('input', function(e) {
-            if (activeRouteState) return; // во время пути менять радиус нельзя
+            if (activeRouteState) return;
             currentRadius = parseInt(e.target.value);
             radiusLabel.innerText = (currentRadius / 1000).toFixed(1) + ' км';
             updateButtonLabel();
@@ -790,7 +809,7 @@
             if (!selectedLocation || !isGeoEnabled) return;
             const cost = getEnergyCost(currentRadius);
 
-            if (!isAdmin && currentEnergy < cost) {
+            if (currentEnergy < cost) {
                 alert("Недостаточно энергии!");
                 return;
             }
@@ -813,11 +832,8 @@
             hudPanel.classList.remove('radar-pulse');
             haptics.success();
 
-            if (!isAdmin) {
-                currentEnergy -= cost;
-            }
+            currentEnergy -= cost;
             
-            // Запоминаем состояние маршрута в глобальный объект
             activeRouteState = {
                 target: candidate,
                 start: { lat: routeStart.lat, lng: routeStart.lng },
@@ -832,7 +848,6 @@
             renderActiveRoute();
         });
 
-        // ОТРИСОВКА МАРШРУТА ИЗ ТЕКУЩЕГО СОСТОЯНИЯ
         function renderActiveRoute() {
             if (!activeRouteState) return;
 
@@ -872,7 +887,6 @@
             generateBtn.style.display = 'none';
             arriveBtn.style.display = 'block';
 
-            // Первичный расчет дистанции до цели
             if (userLocation) {
                 checkGeofenceDistance();
             } else {
@@ -885,12 +899,11 @@
             map.fitBounds(bounds.pad(0.35), { animate: true, duration: 0.5 });
         }
 
-        // ПРОВЕРКА ДИСТАНЦИИ ДЛЯ РАЗБЛОКИРОВКИ КЕЙСА
         function checkGeofenceDistance() {
             if (!activeRouteState || !userLocation) return;
             
             const targetLatLng = L.latLng(activeRouteState.target.lat, activeRouteState.target.lng);
-            const dist = map.distance(userLocation, targetLatLng); // Дистанция в метрах
+            const dist = map.distance(userLocation, targetLatLng);
 
             if (dist <= 30) {
                 arriveBtn.disabled = false;
@@ -903,7 +916,6 @@
             }
         }
 
-        // ЖИВОЙ ТРЕКИНГ ГЕОПОЗИЦИИ
         map.locate({setView: false, watch: true, enableHighAccuracy: true});
 
         map.on('locationfound', function(e) {
@@ -942,7 +954,7 @@
             }
         });
 
-        // МЕХАНИКА CS2 КЕЙСА И РУЛЕТКИ
+        // МЕХАНИКА CS2 КЕЙСА
         const caseOverlay = document.getElementById('caseOverlay');
         const caseBox = document.getElementById('caseBox');
         const caseOpeningStage = document.getElementById('caseOpeningStage');
@@ -990,7 +1002,6 @@
             rouletteTrack.style.transition = 'none';
             rouletteTrack.style.transform = 'translateX(0px)';
 
-            // Математика приза: от затраченной / 2 до затраченной * 2
             let spent = activeRouteState ? activeRouteState.spentEnergy : 2;
             let minReward = Math.max(1, Math.floor(spent / 2));
             let maxReward = Math.floor(spent * 2);
@@ -998,8 +1009,8 @@
             finalRewardAmount = Math.floor(Math.random() * (maxReward - minReward + 1)) + minReward;
 
             const totalItems = 32; 
-            const itemWidth = 92;  // 90px + 2px граница
-            const targetIdx = 25;  // ячейка остановки ленты
+            const itemWidth = 92;  
+            const targetIdx = 25;  
 
             const rarities = ['rare-blue', 'rare-purple', 'rare-pink', 'rare-red', 'rare-gold'];
 
@@ -1020,11 +1031,9 @@
             let containerWidth = rouletteContainer.offsetWidth;
             let centerOffset = containerWidth / 2;
             let targetLeftPosition = (targetIdx * itemWidth) + (itemWidth / 2);
-            // Органический сдвиг CS2 рулетки внутри ячейки
             let randomInnerShift = Math.floor(Math.random() * 50) - 25; 
             let finalTranslate = -(targetLeftPosition - centerOffset + randomInnerShift);
 
-            // Аудио-клики при смещении ленты
             let currentX = 0;
             let interval = setInterval(() => {
                 if (!rouletteTrack) return;
@@ -1043,7 +1052,6 @@
                 rouletteTrack.style.transform = `translateX(${finalTranslate}px)`;
             }, 800);
 
-            // Остановка прокрутки
             setTimeout(() => {
                 clearInterval(interval);
                 haptics.success();
@@ -1059,18 +1067,17 @@
         claimRewardBtn.addEventListener('click', () => {
             haptics.tap();
             
-            if (!isAdmin) {
+            // Если баланс энергии уже выше лимита благодаря админу, сохраняем его и не режем при получении наград
+            if (currentEnergy < maxEnergy) {
                 currentEnergy = Math.min(maxEnergy, currentEnergy + finalRewardAmount);
             }
 
-            // Добавляем в историю
             routeHistory.unshift({
                 timeCreated: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 distance: hudDistance.innerText,
                 duration: hudTime.innerText + ` (+${finalRewardAmount}⚡)`
             });
 
-            // Полное очищение активного состояния маршрута
             if (targetMarker) map.removeLayer(targetMarker);
             if (routeCore) map.removeLayer(routeCore);
             if (routeGlow) map.removeLayer(routeGlow);
@@ -1095,9 +1102,12 @@
             }
         });
 
-        // АДМИН ТЕСТИРОВАНИЕ И ПАСХАЛКА КЛИКАМИ
+        // МОДЕРНИЗИРОВАННАЯ АДМИН-ПАНЕЛЬ С СИСТЕМОЙ ПОИСКА И МОДИФИКАЦИИ ПРОФИЛЕЙ
         const adminToggle = document.getElementById('adminToggle');
         const adminPanel = document.getElementById('adminPanel');
+        
+        // Симулируемая база данных пользователей в localStorage для тестирования функций админа
+        let mockUsersDB = JSON.parse(localStorage.getItem('gr_mock_db')) || {};
 
         adminToggle.addEventListener('click', () => {
             haptics.tap();
@@ -1110,36 +1120,117 @@
                 return;
             }
             haptics.success();
-            // Симулируем перемещение юзера к цели
             userLocation = L.latLng(activeRouteState.target.lat, activeRouteState.target.lng);
             if (liveLocationMarker) liveLocationMarker.setLatLng(userLocation);
             checkGeofenceDistance();
             adminPanel.style.display = 'none';
         });
 
+        // Поиск профиля по никнейму
+        const searchInput = document.getElementById('playerSearchTag');
+        const searchCard = document.getElementById('searchProfileCard');
+        let currentSearchedUser = null;
+
+        document.getElementById('searchPlayerBtn').addEventListener('click', () => {
+            let rawTag = searchInput.value.trim();
+            if (!rawTag) return alert("Введите корректный никнейм");
+            if (!rawTag.startsWith('@')) rawTag = '@' + rawTag;
+
+            let cleanKey = rawTag.toLowerCase();
+
+            // Если админ ищет самого себя, загружаем его живое состояние
+            if (cleanKey === myUsername.toLowerCase()) {
+                currentSearchedUser = {
+                    username: myUsername,
+                    role: myRole,
+                    energy: currentEnergy,
+                    maxEnergy: maxEnergy,
+                    isSelf: true
+                };
+            } else {
+                // Ищет стороннего игрока в симулируемой локальной БД
+                if (!mockUsersDB[cleanKey]) {
+                    mockUsersDB[cleanKey] = {
+                        username: rawTag,
+                        role: "User",
+                        energy: 150,
+                        maxEnergy: 200,
+                        isSelf: false
+                    };
+                    localStorage.setItem('gr_mock_db', JSON.stringify(mockUsersDB));
+                }
+                currentSearchedUser = mockUsersDB[cleanKey];
+            }
+
+            // Вывод данных в карточку
+            document.getElementById('cardTargetName').innerText = `Игрок: ${currentSearchedUser.username}`;
+            document.getElementById('cardTargetStats').innerText = `Категория: ${currentSearchedUser.role} | Энергия: ${currentSearchedUser.energy}/${currentSearchedUser.maxEnergy}`;
+            searchCard.style.display = "flex";
+        });
+
+        // Действие: Выдать VIP
+        document.getElementById('cardGiveVip').addEventListener('click', () => {
+            if (!currentSearchedUser) return;
+            currentSearchedUser.role = "VIP";
+            currentSearchedUser.maxEnergy = 400;
+            
+            syncAndSaveSearchedUser();
+            alert(`Статус VIP для ${currentSearchedUser.username} успешно активирован!`);
+        });
+
+        // Действие: Понизить до игрока
+        document.getElementById('cardDemote').addEventListener('click', () => {
+            if (!currentSearchedUser) return;
+            currentSearchedUser.role = "User";
+            currentSearchedUser.maxEnergy = 200;
+            if (currentSearchedUser.energy > 200) currentSearchedUser.energy = 200;
+            
+            syncAndSaveSearchedUser();
+            alert(`Игрок ${currentSearchedUser.username} понижен до обычной категории.`);
+        });
+
+        // Действие: Начислить энергию сверх лимита
+        document.getElementById('cardAddEnergyBtn').addEventListener('click', () => {
+            if (!currentSearchedUser) return;
+            let val = parseInt(document.getElementById('cardEnergyAddValue').value);
+            if (isNaN(val) || val <= 0) return alert("Введите положительное число");
+
+            currentSearchedUser.energy += val; // зачисление без Math.min, прямое превышение лимита
+            
+            syncAndSaveSearchedUser();
+            alert(`Начислено +${val} ⚡ игроку ${currentSearchedUser.username} сверх установленного лимита!`);
+        });
+
+        function syncAndSaveSearchedUser() {
+            if (currentSearchedUser.isSelf) {
+                myRole = currentSearchedUser.role;
+                maxEnergy = currentSearchedUser.maxEnergy;
+                currentEnergy = currentSearchedUser.energy;
+                applyRoleVisuals();
+            } else {
+                let cleanKey = currentSearchedUser.username.toLowerCase();
+                mockUsersDB[cleanKey] = currentSearchedUser;
+                localStorage.setItem('gr_mock_db', JSON.stringify(mockUsersDB));
+            }
+            // Обновляем текст в карточке
+            document.getElementById('cardTargetStats').innerText = `Категория: ${currentSearchedUser.role} | Энергия: ${currentSearchedUser.energy}/${currentSearchedUser.maxEnergy}`;
+        }
+
         document.getElementById('adminResetAll').addEventListener('click', () => {
             localStorage.clear();
             location.reload();
         });
 
-        function activateAdminMode() {
-            isAdmin = true;
-            localStorage.setItem('gr_is_admin', 'true');
-            currentEnergy = Infinity;
-            document.getElementById('roleBadge').innerText = "Creator";
-            document.getElementById('roleBadge').style.background = 'var(--admin-color)';
-            document.getElementById('roleBadge').style.color = '#fff';
-            document.getElementById('rankLabel').innerText = "Ранг: Разработчик";
-            adminToggle.style.display = 'block';
-            updateEnergyUI();
-        }
-
+        // ИНИЦИАЛИЗАЦИЯ И ТЕСТИРОВАНИЕ КЛИКАМИ (Пасхалка для локального теста)
         let devClicks = 0;
         document.getElementById('userAvatar').addEventListener('click', () => {
+            if (myRole === "Admin") return;
             devClicks++;
             if (devClicks === 3) {
-                activateAdminMode();
-                alert("Лаборатория Создателя активирована!");
+                myUsername = "@kirushapross";
+                myRole = "Admin";
+                applyRoleVisuals();
+                alert("Вход по секретному ключу Создателя выполнен!");
             }
         });
 
@@ -1174,25 +1265,33 @@
             `).join('');
         }
 
-        // ИНТЕГРАЦИЯ С TELEGRAM WEBAPP
+        // ИНТЕГРАЦИЯ С TELEGRAM WEBAPP С УЧЕТОМ ТВОИХ ПРАВИЛ РОЛЕЙ
         const tg = window.Telegram ? window.Telegram.WebApp : null;
         if (tg) {
             tg.ready(); tg.expand();
             const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
-            if (user) {
-                const username = user.username ? '@' + user.username : 'User';
-                document.getElementById('userName').innerHTML = `${username} <span class="lvl-badge" id="roleBadge">User</span>`;
+            if (user && user.username) {
+                myUsername = '@' + user.username;
                 if(user.first_name) document.getElementById('userAvatar').innerText = user.first_name.charAt(0).toUpperCase();
-                if (user.username === 'kirushapross' || isAdmin) activateAdminMode();
-                else updateEnergyUI();
+                
+                // Проверка: Админ ТОЛЬКО ты. Если это твой ник — выдаем полные права
+                if (user.username.toLowerCase() === 'kirushapross') {
+                    myRole = "Admin";
+                } else {
+                    // Все остальные пользователи сохраняют свой сохраненный статус (например VIP), но не могут быть админами
+                    if(myRole === "Admin") myRole = "User"; 
+                }
             } else {
-                if (isAdmin) activateAdminMode(); else updateEnergyUI();
+                // Резервный запуск вне TG client
+                if(myRole === "Admin" && myUsername === "Игрок") myUsername = "@kirushapross";
             }
         } else {
-            if (isAdmin) activateAdminMode(); else updateEnergyUI();
+            if(myRole === "Admin" && myUsername === "Игрок") myUsername = "@kirushapross";
         }
 
-        // Авто-восстановление сессии при перезапуске страницы
+        // Рендерим визуал ролей и восстанавливаем сессию
+        applyRoleVisuals();
+
         if (activeRouteState) {
             renderActiveRoute();
         }
