@@ -2,915 +2,175 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GeoRandomizer - Developer Edition</title>
-    
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo Walk App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-            --bg-space: #000000;
-            --panel-bg: rgba(15, 15, 15, 0.75);
-            --card-inner: rgba(30, 30, 30, 0.6);
-            --border-glow: rgba(255, 255, 255, 0.15);
-            --accent-white: #ffffff;
-            --accent-black: #000000;
-            --text-main: #ffffff;
-            --text-muted: #999999;
-            
-            /* Неоновые Dev-цвета */
-            --neon-purple: #a855f7;
-            --neon-glow: rgba(168, 85, 247, 0.6);
-        }
-
-        * {
-            box-sizing: border-box;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #1a1a1a);
+            color: var(--tg-theme-text-color, #ffffff);
             margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
-            font-family: var(--font-apple);
-            background-color: var(--bg-space);
-            color: var(--text-main);
+            padding: 20px;
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            min-height: 80vh;
         }
 
-        .app-container {
-            width: 100%;
-            max-width: 430px; 
-            height: 100%;
-            max-height: 932px;
-            position: relative;
-            background: var(--bg-space);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+        .profile-card {
+            background-color: var(--tg-theme-secondary-bg-color, #2d2d2d);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 80%;
+            max-width: 350px;
         }
 
-        @media (min-width: 440px) {
-            .app-container {
-                height: 90vh;
-                border-radius: 40px;
-                border: 4px solid #222;
-            }
+        .avatar-container {
+            margin-bottom: 15px;
         }
 
-        #map {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        .top-hud {
-            position: absolute;
-            top: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            z-index: 1000;
-            background: var(--panel-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border-glow);
-            border-radius: 18px;
-            padding: 10px 14px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .profile-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .user-meta {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .avatar-frame {
-            width: 36px;
-            height: 36px;
+        .avatar {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            background: var(--accent-white);
-            color: var(--accent-black);
-            border: 2px solid #555;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 16px;
-            transition: all 0.3s ease;
+            object-fit: cover;
+            border: 3px solid var(--tg-theme-button-color, #2481cc);
+            background-color: #444;
         }
 
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .username {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
         }
 
-        /* ЭФФЕКТ ПЕРЕЛИВАНИЯ НИКА РАЗРАБОТЧИКА */
-        .developer-glow {
-            background: linear-gradient(
-                45deg, 
-                #ff00ff, #a855f7, #00ffff, #a855f7, #ff00ff
-            );
-            background-size: 400% 400%;
+        /* Анимация переливающегося ника для VIP */
+        .vip-nick {
+            background: linear-gradient(270deg, #ff007f, #7f00ff, #00f0ff, #ff007f);
+            background-size: 600% 600%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: auroraBorealis 8s ease infinite;
-            text-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+            animation: vipShimmer 4s ease infinite;
+            font-weight: 900;
         }
 
-        @keyframes auroraBorealis {
+        @keyframes vipShimmer {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        .lvl-badge {
-            font-size: 10px;
-            color: var(--accent-black);
-            background: var(--accent-white);
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .badge-developer {
-            background: var(--neon-purple) !important;
-            color: #fff !important;
-            box-shadow: 0 0 10px var(--neon-glow);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .right-meta-block {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 4px;
-        }
-
-        .version-tag {
-            font-size: 9px;
-            color: var(--text-muted);
-            font-weight: 700;
-            background: rgba(255, 255, 255, 0.07);
-            padding: 1px 5px;
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .wallet-selector {
-            background: var(--card-inner);
-            border: 1px solid var(--border-glow);
-            padding: 6px 10px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .bottom-hud {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 12px 16px 20px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 75%, rgba(0,0,0,0));
-        }
-
-        .main-panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 20px;
-            border: 1px solid var(--border-glow);
-            padding: 14px;
-        }
-
-        .crypto-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .crypto-card {
-            background: var(--card-inner);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            padding: 10px 4px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
-        .crypto-card .title {
-            font-size: 9px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .crypto-card .value {
+        .status-badge {
             font-size: 14px;
-            font-weight: 700;
-            color: var(--accent-white);
-        }
-
-        .slider-wrapper {
-            background: rgba(255, 255, 255, 0.04);
+            padding: 5px 12px;
             border-radius: 12px;
-            padding: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: rgba(255, 255, 255, 0.1);
+            display: inline-block;
+            margin-top: 5px;
+            color: #aaa;
         }
 
-        .slider-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .cyber-slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            outline: none;
-        }
-
-        .cyber-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--accent-white);
-            box-shadow: 0 0 10px rgba(255,255,255,0.5);
-            cursor: pointer;
-        }
-
-        .action-btn {
-            width: 100%;
-            background: linear-gradient(180deg, #444444 0%, #1a1a1a 100%);
-            border: 1px solid #555;
-            border-radius: 14px;
-            padding: 14px;
-            color: var(--accent-white);
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-            text-transform: uppercase;
-            transition: all 0.2s ease;
-        }
-
-        .action-btn:disabled {
-            background: #111;
-            border-color: #222;
-            color: #555;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        .dev-panel-trigger {
-            background: linear-gradient(180deg, #2e1065 0%, #0f052d 100%);
-            border: 1px solid var(--neon-purple);
-            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
-            margin-top: 2px;
-        }
-
-        .energy-bar-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 6px;
-            font-size: 12px;
-        }
-
-        .energy-info {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 700;
-            color: var(--accent-white);
-        }
-
-        .boost-link {
-            color: var(--text-muted);
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .footer-tabs {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            background: #0a0a0a;
-            border: 1px solid var(--border-glow);
-            border-radius: 14px;
-            padding: 4px;
-        }
-
-        .tab-item {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 11px;
-            padding: 8px 0;
-            font-weight: 500;
-            cursor: pointer;
-            border-radius: 10px;
-        }
-
-        .tab-item.active {
-            color: var(--accent-black);
-            background: var(--accent-white);
-            font-weight: 700;
-        }
-
-        /* АДМИН МОДАЛКА */
-        .dev-modal {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .dev-modal-content {
-            background: #0f0f13;
-            border: 1px solid var(--neon-purple);
-            box-shadow: 0 0 30px var(--neon-glow);
-            border-radius: 24px;
-            width: 100%;
-            max-width: 360px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .dev-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
-        }
-
-        .dev-modal-header h3 {
-            font-size: 16px;
+        .vip-badge {
+            background: linear-gradient(45deg, #ff007f, #7f00ff);
             color: #fff;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .close-modal-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .dev-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .dev-input-group label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .dev-input {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            padding: 10px 12px;
-            color: #fff;
-            font-family: var(--font-apple);
-            font-size: 14px;
-            outline: none;
-        }
-
-        .dev-input:focus {
-            border-color: var(--neon-purple);
-        }
-
-        .dev-submit-btn {
-            background: var(--neon-purple);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            padding: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 0.5px;
-        }
-
-        .dev-submit-btn:active {
-            background: #9333ea;
-        }
-
-        .radar-pulse {
-            animation: cyberPulse 0.8s infinite alternate;
-        }
-        @keyframes cyberPulse {
-            from { border-color: rgba(255,255,255,0.1); }
-            to { border-color: rgba(255, 255, 255, 0.6); }
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(255, 0, 127, 0.4);
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div id="map"></div>
-
-        <div class="top-hud">
-            <div class="profile-row">
-                <div class="user-meta">
-                    <div class="avatar-frame" id="userAvatar">?</div>
-                    <div>
-                        <div class="user-name" id="displayUsername">Загрузка...</div>
-                        <div style="font-size: 11px; color: var(--text-muted);" id="roleText">Ранг: Определение...</div>
-                    </div>
-                </div>
-                <div class="right-meta-block">
-                    <span class="version-tag">v1.0.4</span>
-                    <div class="wallet-selector">
-                        <span>💎 GrandTon</span>
-                        <span style="font-size: 10px; color: var(--text-muted);">▼</span>
-                    </div>
-                </div>
-            </div>
+    <div class="profile-card">
+        <div class="avatar-container">
+            <img id="user-avatar" class="avatar" src="https://ui-avatars.com/api/?name=Guest&background=444&color=fff" alt="Avatar">
         </div>
-
-        <div class="bottom-hud">
-            <div class="main-panel" id="hudPanel">
-                <div class="crypto-grid">
-                    <div class="crypto-card">
-                        <span class="title">Шаг / Тап</span>
-                        <span class="value">+1.5 КМ</span>
-                    </div>
-                    <div class="crypto-card">
-                        <span class="title">Дистанция</span>
-                        <span class="value" id="hudDistance">0.0 км</span>
-                    </div>
-                    <div class="crypto-card">
-                        <span class="title">Время</span>
-                        <span class="value" id="hudTime">0 мин</span>
-                    </div>
-                </div>
-
-                <div class="slider-wrapper">
-                    <div class="slider-info">
-                        <span>Радиус сканирования</span>
-                        <span id="radiusLabel" style="color: var(--accent-white); font-weight: 700;">3.0 км</span>
-                    </div>
-                    <input type="range" id="radiusSlider" class="cyber-slider" min="500" max="5000" step="100" value="3000">
-                </div>
-            </div>
-
-            <button class="action-btn" id="generateBtn" disabled>Укажите точку старта</button>
-            <button class="action-btn dev-panel-trigger" id="devPanelBtn" style="display: none;">⚙️ Dev Panel</button>
-
-            <div class="energy-bar-row">
-                <div class="energy-info">
-                    <span>⚡</span>
-                    <span id="energyValue">1000 / 1000</span>
-                </div>
-                <div class="boost-link">🚀 Буст</div>
-            </div>
-
-            <div class="footer-tabs">
-                <div class="tab-item active">🏠<br>Main</div>
-                <div class="tab-item">👥<br>Friends</div>
-                <div class="tab-item">📜<br>История</div>
-            </div>
-        </div>
-
-        <div class="dev-modal" id="devModal">
-            <div class="dev-modal-content">
-                <div class="dev-modal-header">
-                    <h3>Управление энергией</h3>
-                    <button class="close-modal-btn" id="closeModalBtn">&times;</button>
-                </div>
-                
-                <div class="dev-input-group">
-                    <label for="targetUser">Юзернейм (с @ или id)</label>
-                    <input type="text" id="targetUser" class="dev-input" placeholder="@username или @id12345">
-                </div>
-
-                <div class="dev-input-group">
-                    <label for="energyAmount">Количество энергии</label>
-                    <input type="number" id="energyAmount" class="dev-input" placeholder="Например: 5000" value="1000">
-                </div>
-
-                <button class="dev-submit-btn" id="submitEnergyBtn">Выдать энергию</button>
-            </div>
-        </div>
+        <div id="user-name" class="username">Загрузка...</div>
+        <div id="user-status" class="status-badge">Определение...</div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        const SERVER_URL = "https://geo-walk-app.onrender.com"; 
-        const ALLOWED_TELEGRAM_ID = 5434932796; 
+        document.addEventListener("DOMContentLoaded", async () => {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand(); // Разворачиваем приложение на весь экран телефона
 
-        let myUsername = "Гость";
-        let myTelegramId = null;
-        let myRole = "Player";
-        let currentEnergy = 1000;
-        let maxEnergy = 1000;
+            // Данные по умолчанию (если зашли через обычный браузер)
+            let userData = {
+                id: null,
+                username: "",
+                first_name: "Гость",
+                photo_url: "https://ui-avatars.com/api/?name=Guest&background=444&color=fff"
+            };
 
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        let audioCtx = null;
-
-        function initAudio() {
-            if (!audioCtx) audioCtx = new AudioCtx();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-        }
-
-        const haptics = {
-            tap() {
-                initAudio();
-                const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-                osc.type = 'sine'; osc.frequency.setValueAtTime(850, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.04);
-            },
-            success() {
-                initAudio();
-                const now = audioCtx.currentTime;
-                [523.25, 659.25, 783.99].forEach((f, i) => {
-                    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + i * 0.04);
-                    gain.gain.setValueAtTime(0.04, now + i * 0.04);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 0.25);
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.start(now + i * 0.04); osc.stop(now + i * 0.04 + 0.25);
-                });
-            }
-        };
-
-        const map = L.map('map', { 
-            zoomControl: false, attributionControl: false, zoomAnimation: true, fadeAnimation: true
-        }).setView([55.7558, 37.6173], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-
-        let startMarker = null, targetMarker = null, radiusCircle = null, routeCore = null, routeGlow = null, selectedLocation = null;
-        let currentRadius = 3000;
-
-        const generateBtn = document.getElementById('generateBtn');
-        const radiusSlider = document.getElementById('radiusSlider');
-        const radiusLabel = document.getElementById('radiusLabel');
-        const hudDistance = document.getElementById('hudDistance');
-        const hudTime = document.getElementById('hudTime');
-        const hudPanel = document.getElementById('hudPanel');
-        
-        const devPanelBtn = document.getElementById('devPanelBtn');
-        const devModal = document.getElementById('devModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const submitEnergyBtn = document.getElementById('submitEnergyBtn');
-        const targetUserInput = document.getElementById('targetUser');
-        const energyAmountInput = document.getElementById('energyAmount');
-
-        function checkIsDeveloper() {
-            const matchUsername = (myUsername.toLowerCase() === "@kirushapross");
-            return matchUsername && (myTelegramId === ALLOWED_TELEGRAM_ID);
-        }
-
-        function updateProfileUI() {
-            const nameEl = document.getElementById('displayUsername');
-            const roleTextEl = document.getElementById('roleText');
-            const avatarEl = document.getElementById('userAvatar');
-            const energyValueEl = document.getElementById('energyValue');
-
-            if (checkIsDeveloper()) {
-                myRole = "Developer"; 
-                nameEl.innerHTML = `<span class="developer-glow">${myUsername}</span> <span class="lvl-badge badge-developer">${myRole}</span>`;
-                roleTextEl.innerText = `Ранг: Разработчик систем`;
-                avatarEl.style.borderColor = "#a855f7";
-                avatarEl.style.boxShadow = "0 0 10px rgba(168, 85, 247, 0.5)";
-                devPanelBtn.style.display = "block";
-            } else {
-                nameEl.innerHTML = `${myUsername} <span class="lvl-badge">${myRole}</span>`;
-                roleTextEl.innerText = myUsername === "Гость" ? `Ранг: Нет авторизации` : `Ранг: Пользователь`;
-                avatarEl.style.borderColor = "#555";
-                avatarEl.style.boxShadow = "none";
-                devPanelBtn.style.display = "none";
-            }
-
-            let firstLetter = "?";
-            if (myUsername === "Гость") {
-                firstLetter = "Г";
-            } else if (myUsername && myUsername.length > 0) {
-                let cleanName = myUsername.startsWith('@') ? myUsername.slice(1) : myUsername;
-                if (cleanName.length > 0) {
-                    firstLetter = cleanName.charAt(0).toUpperCase();
-                }
-            }
-            avatarEl.innerText = firstLetter;
-            energyValueEl.innerText = `${currentEnergy} / ${maxEnergy}`;
-        }
-
-        async function loadProfileFromServer() {
-            if (myUsername === "Гость") {
-                updateProfileUI();
-                return;
-            }
-            try {
-                const response = await fetch(`${SERVER_URL}/get_player?username=${encodeURIComponent(myUsername)}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (!checkIsDeveloper()) {
-                        myRole = data.role || "Player";
-                    }
-                    maxEnergy = data.maxEnergy || 1000;
-                    currentEnergy = data.energy !== undefined ? data.energy : 1000;
-                }
-            } catch (e) {
-                console.error("Ошибка при работе с Render API:", e);
-            }
-            updateProfileUI();
-        }
-
-        async function saveProfileToServer() {
-            if (myUsername === "Гость") return;
-            try {
-                await fetch(`${SERVER_URL}/update_player`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username: myUsername,
-                        role: myRole,
-                        energy: currentEnergy,
-                        maxEnergy: maxEnergy
-                    })
-                });
-            } catch (e) {
-                console.error("Ошибка синхронизации данных с сервером:", e);
-            }
-        }
-
-        devPanelBtn.addEventListener('click', () => { haptics.tap(); devModal.style.display = "flex"; });
-        closeModalBtn.addEventListener('click', () => { haptics.tap(); devModal.style.display = "none"; });
-
-        submitEnergyBtn.addEventListener('click', async () => {
-            haptics.tap();
-            let targetUser = targetUserInput.value.trim();
-            const amount = parseInt(energyAmountInput.value);
-
-            if (!targetUser || isNaN(amount) || amount <= 0) {
-                alert("Введите корректный никнейм и объем энергии!");
-                return;
-            }
-
-            if (!targetUser.startsWith('@')) {
-                targetUser = '@' + targetUser;
-            }
-
-            submitEnergyBtn.disabled = true;
-            submitEnergyBtn.innerText = "ОТПРАВКА...";
-
-            try {
-                const getRes = await fetch(`${SERVER_URL}/get_player?username=${encodeURIComponent(targetUser)}`);
-                let targetMaxEnergy = 1000;
-                let targetRole = "Player";
+            // Проверяем, открыто ли приложение внутри Telegram
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const tgUser = tg.initDataUnsafe.user;
+                userData.id = tgUser.id;
+                userData.username = tgUser.username || "";
+                userData.first_name = tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "");
                 
-                if (getRes.ok) {
-                    const targetData = await getRes.json();
-                    targetMaxEnergy = targetData.maxEnergy || 1000;
-                    targetRole = targetData.role || "Player";
-                }
-
-                const newMaxEnergy = amount > targetMaxEnergy ? amount : targetMaxEnergy;
-
-                const response = await fetch(`${SERVER_URL}/update_player`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username: targetUser,
-                        role: targetRole,
-                        energy: amount,
-                        maxEnergy: newMaxEnergy
-                    })
-                });
-
-                if (response.ok) {
-                    alert(`Энергия (${amount} ⚡) успешно начислена пользователю ${targetUser}`);
-                    devModal.style.display = "none";
-                    targetUserInput.value = "";
-                    
-                    if (targetUser.toLowerCase() === myUsername.toLowerCase()) {
-                        currentEnergy = amount;
-                        maxEnergy = newMaxEnergy;
-                        updateProfileUI();
-                    }
+                // Если у пользователя есть аватарка в TG
+                if (tgUser.photo_url) {
+                    userData.photo_url = tgUser.photo_url;
                 } else {
-                    alert("Ошибка при сохранении на сервере.");
+                    userData.photo_url = `https://ui-avatars.com/api/?name=${encodeURIComponent(tgUser.first_name)}&background=2481cc&color=fff`;
                 }
-            } catch (e) {
-                console.error(e);
-                alert("Не удалось связаться с сервером.");
-            } finally {
-                submitEnergyBtn.disabled = false;
-                submitEnergyBtn.innerText = "Выдать энергию";
             }
-        });
 
-        radiusSlider.addEventListener('input', function(e) {
-            currentRadius = parseInt(e.target.value);
-            radiusLabel.innerText = (currentRadius / 1000).toFixed(1) + ' км';
-            if (radiusCircle && selectedLocation) {
-                radiusCircle.setRadius(currentRadius);
-                map.fitBounds(radiusCircle.getBounds(), { animate: true, duration: 0.4 });
-            }
-        });
+            // Сразу выводим базовые данные (чтобы интерфейс не мигал)
+            const nameElem = document.getElementById("user-name");
+            const avatarElem = document.getElementById("user-avatar");
+            const statusElem = document.getElementById("user-status");
 
-        map.on('click', function(e) {
-            haptics.tap();
-            selectedLocation = e.latlng;
-            resetLayoutAndDrawStart();
-        });
+            nameElem.textContent = userData.first_name;
+            avatarElem.src = userData.photo_url;
 
-        function resetLayoutAndDrawStart() {
-            if (!selectedLocation) return;
-            if (startMarker) map.removeLayer(startMarker);
-            if (targetMarker) map.removeLayer(targetMarker);
-            if (radiusCircle) map.removeLayer(radiusCircle);
-            if (routeCore) map.removeLayer(routeCore);
-            if (routeGlow) map.removeLayer(routeGlow);
-
-            startMarker = L.circleMarker(selectedLocation, {
-                radius: 7, fillColor: '#000', fillOpacity: 1, color: '#fff', weight: 2
-            }).addTo(map);
-
-            radiusCircle = L.circle(selectedLocation, {
-                radius: currentRadius, color: '#000', weight: 1.5, fillColor: '#000', fillOpacity: 0.03, dashArray: '4, 8'
-            }).addTo(map);
-
-            map.fitBounds(radiusCircle.getBounds(), { animate: true, duration: 0.4 });
-            generateBtn.disabled = false;
-            generateBtn.innerText = "СГЕНЕРИРОВАТЬ МАРШРУТ";
-        }
-
-        function getRandomPointInRadius(center, radiusInMeters) {
-            const r = radiusInMeters * Math.sqrt(Math.random());
-            const theta = Math.random() * 2 * Math.PI;
-            const deltaLat = (r * Math.cos(theta)) / 111320;
-            const deltaLng = (r * Math.sin(theta)) / (111320 * Math.cos(center.lat * Math.PI / 180));
-            return { lat: center.lat + deltaLat, lng: center.lng + deltaLng };
-        }
-
-        generateBtn.addEventListener('click', async function() {
-            if (!selectedLocation) return;
-            
-            if (currentEnergy < 50) {
-                alert("Недостаточно энергии! Нужно минимум 50 ⚡");
+            // Если это просто гость из браузера
+            if (!userData.id) {
+                statusElem.textContent = "Браузерный гость";
                 return;
             }
 
-            generateBtn.disabled = true;
-            hudPanel.classList.add('radar-pulse');
-            generateBtn.innerText = "ПОИСК ТОЧЕК...";
-
-            if (targetMarker) map.removeLayer(targetMarker);
-            if (routeCore) map.removeLayer(routeCore);
-            if (routeGlow) map.removeLayer(routeGlow);
-
-            let candidate = getRandomPointInRadius(selectedLocation, currentRadius);
-            const routingUrl = `https://router.project-osrm.org/route/v1/walking/${selectedLocation.lng},${selectedLocation.lat};${candidate.lng},${candidate.lat}?overview=full&geometries=geojson`;
-            
-            let routeData = null;
+            // Отправляем данные на твой сервер Render для проверки VIP и сохранения в БД
             try {
-                const response = await fetch(routingUrl);
-                if (response.ok) routeData = await response.json();
-            } catch (e) { console.error(e); }
+                const response = await fetch("https://geo-walk-app.onrender.com/api/user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(userData)
+                });
 
-            hudPanel.classList.remove('radar-pulse');
-            generateBtn.disabled = false;
-            generateBtn.innerText = "СГЕНЕРИРОВАТЬ МАРШРУТ";
-            haptics.success();
-
-            targetMarker = L.circleMarker([candidate.lat, candidate.lng], {
-                radius: 9, fillColor: '#fff', fillOpacity: 1, color: '#000', weight: 3
-            }).addTo(map);
-
-            if (routeData && routeData.routes && routeData.routes.length > 0) {
-                const route = routeData.routes[0];
-                
-                routeGlow = L.geoJSON(route.geometry, {
-                    style: { color: '#000000', weight: 8, opacity: 0.6, lineCap: 'round', lineJoin: 'round' }
-                }).addTo(map);
-
-                routeCore = L.geoJSON(route.geometry, {
-                    style: { color: '#ffffff', weight: 3, opacity: 1, lineCap: 'round', lineJoin: 'round' }
-                }).addTo(map);
-
-                hudDistance.innerText = (route.distance / 1000).toFixed(1) + ' км';
-                hudTime.innerText = Math.round(route.duration / 60) + ' мин';
-            } else {
-                routeCore = L.polyline([selectedLocation, [candidate.lat, candidate.lng]], {
-                    color: '#000', weight: 4, dashArray: '8, 8', opacity: 0.8
-                }).addTo(map);
-                
-                const d = map.distance(selectedLocation, [candidate.lat, center.lng]);
-                hudDistance.innerText = (d / 1000).toFixed(1) + ' км';
-                hudTime.innerText = Math.round((d / 4500) * 60) + ' мин';
-            }
-
-            currentEnergy = Math.max(0, currentEnergy - 50);
-            updateProfileUI();
-            await saveProfileToServer();
-
-            const boundsGroup = new L.featureGroup([startMarker, targetMarker]);
-            map.fitBounds(boundsGroup.getBounds().pad(0.35), { animate: true, duration: 0.5 });
-        });
-
-        function initApp() {
-            setTimeout(async () => {
-                const tg = window.Telegram ? window.Telegram.WebApp : null;
-                
-                if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    try {
-                        tg.ready(); 
-                        tg.expand();
-                    } catch(e) { console.log("Telegram API методы не поддерживаются в полной мере"); }
-
-                    const user = tg.initDataUnsafe.user;
+                if (response.ok) {
+                    const result = await response.json();
                     
-                    if (user.username) {
-                        myUsername = '@' + user.username;
+                    // Если сервер подтвердил VIP статус
+                    if (result.is_vip) {
+                        nameElem.classList.add("vip-nick");
+                        statusElem.textContent = "VIP Пользователь";
+                        statusElem.classList.add("vip-badge");
                     } else {
-                        myUsername = user.first_name || ("id" + user.id);
+                        statusElem.textContent = "Пользователь";
                     }
-                    myTelegramId = user.id; 
                 } else {
-                    myUsername = "Гость"; 
-                    myTelegramId = null;
+                    statusElem.textContent = "Ошибка сервера";
                 }
-
-                await loadProfileFromServer();
-                map.locate({setView: true, maxZoom: 14});
-            }, 250); 
-        }
-
-        map.on('locationfound', function(e) {
-            selectedLocation = e.latlng;
-            resetLayoutAndDrawStart();
+            } catch (error) {
+                console.error("Ошибка при запросе к бэкенду:", error);
+                // Резервный локальный метод проверки (если сервер временно «спит» на Render)
+                if (userData.id === 5434932796 || userData.username.toLowerCase() === "kirushapross") {
+                    nameElem.classList.add("vip-nick");
+                    statusElem.textContent = "VIP (Резерв)";
+                    statusElem.classList.add("vip-badge");
+                } else {
+                    statusElem.textContent = "Офлайн-режим";
+                }
+            }
         });
-
-        initApp();
     </script>
 </body>
 </html>
