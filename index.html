@@ -559,8 +559,363 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        const SERVER_URL = "https://geo-walk-app.onrender.com"; 
+        const ALLOWED_TELEGRAM_ID = 5434932796; 
+
+        let myUsername = "Гость";
+        let myTelegramId = null;
+        let myRole = "Player";
+        let currentEnergy = 1000;
+        let maxEnergy = 1000;
+
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        const haptics = {
+            tap() {
+                initAudio();
+                const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(850, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.04);
+            },
+            success() {
+                initAudio();
+                const now = audioCtx.currentTime;
+                [523.25, 659.25, 783.99].forEach((f, i) => {
+                    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(f, now + i * 0.04);
+                    gain.gain.setValueAtTime(0.04, now + i * 0.04);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 0.25);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(now + i * 0.04); osc.stop(now + i * 0.04 + 0.25);
+                });
+            }
+        };
+
+        const map = L.map('map', { 
+            zoomControl: false, attributionControl: false, zoomAnimation: true, fadeAnimation: true
+        }).setView([55.7558, 37.6173], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+        let startMarker = null, targetMarker = null, radiusCircle = null, routeCore = null, routeGlow = null, selectedLocation = null;
+        let currentRadius = 3000;
+
+        const generateBtn = document.getElementById('generateBtn');
+        const radiusSlider = document.getElementById('radiusSlider');
+        const radiusLabel = document.getElementById('radiusLabel');
+        const hudDistance = document.getElementById('hudDistance');
+        const hudTime = document.getElementById('hudTime');
+        const hudPanel = document.getElementById('hudPanel');
+        
+        const devPanelBtn = document.getElementById('devPanelBtn');
+        const devModal = document.getElementById('devModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const submitEnergyBtn = document.getElementById('submitEnergyBtn');
+        const targetUserInput = document.getElementById('targetUser');
+        const energyAmountInput = document.getElementById('energyAmount');
+
+        function checkIsDeveloper() {
+            const matchUsername = (myUsername.toLowerCase() === "@kirushapross");
+            return matchUsername && (myTelegramId === ALLOWED_TELEGRAM_ID);
+        }
+
+        function updateProfileUI() {
+            const nameEl = document.getElementById('displayUsername');
+            const roleTextEl = document.getElementById('roleText');
+            const avatarEl = document.getElementById('userAvatar');
+            const energyValueEl = document.getElementById('energyValue');
+
+            if (checkIsDeveloper()) {
+                myRole = "Developer"; 
+                nameEl.innerHTML = `<span class="developer-glow">${myUsername}</span> <span class="lvl-badge badge-developer">${myRole}</span>`;
+                roleTextEl.innerText = `Ранг: Разработчик систем`;
+                avatarEl.style.borderColor = "#a855f7";
+                avatarEl.style.boxShadow = "0 0 10px rgba(168, 85, 247, 0.5)";
+                devPanelBtn.style.display = "block";
+            } else {
+                nameEl.innerHTML = `${myUsername} <span class="lvl-badge">${myRole}</span>`;
+                roleTextEl.innerText = myUsername === "Гость" ? `Ранг: Нет авторизации` : `Ранг: Пользователь`;
+                avatarEl.style.borderColor = "#555";
+                avatarEl.style.boxShadow = "none";
+                devPanelBtn.style.display = "none";
+            }
+
+            let firstLetter = "?";
+            if (myUsername === "Гость") {
+                firstLetter = "Г";
+            } else if (myUsername && myUsername.length > 0) {
+                let cleanName = myUsername.startsWith('@') ? myUsername.slice(1) : myUsername;
+                if (cleanName.length > 0) {
+                    firstLetter = cleanName.charAt(0).toUpperCase();
+                }
+            }
+            avatarEl.innerText = firstLetter;
+            energyValueEl.innerText = `${currentEnergy} / ${maxEnergy}`;
+        }
+
+        async function loadProfileFromServer() {
+            if (myUsername === "Гость") {
+                updateProfileUI();
+                return;
+            }
+            try {
+                const response = await fetch(`${SERVER_URL}/get_player?username=${encodeURIComponent(myUsername)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (!checkIsDeveloper()) {
+                        myRole = data.role || "Player";
+                    }
+                    maxEnergy = data.maxEnergy || 1000;
+                    currentEnergy = data.energy !== undefined ? data.energy : 1000;
+                }
+            } catch (e) {
+                console.error("Ошибка при работе с Render API:", e);
+            }
+            updateProfileUI();
+        }
+
+        async function saveProfileToServer() {
+            if (myUsername === "Гость") return;
+            try {
+                await fetch(`${SERVER_URL}/update_player`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: myUsername,
+                        role: myRole,
+                        energy: currentEnergy,
+                        maxEnergy: maxEnergy
+                    })
+                });
+            } catch (e) {
+                console.error("Ошибка синхронизации данных с сервером:", e);
+            }
+        }
+
+        devPanelBtn.addEventListener('click', () => { haptics.tap(); devModal.style.display = "flex"; });
+        closeModalBtn.addEventListener('click', () => { haptics.tap(); devModal.style.display = "none"; });
+
+        submitEnergyBtn.addEventListener('click', async () => {
+            haptics.tap();
+            let targetUser = targetUserInput.value.trim();
+            const amount = parseInt(energyAmountInput.value);
+
+            if (!targetUser || isNaN(amount) || amount <= 0) {
+                alert("Введите корректный никнейм и объем энергии!");
+                return;
+            }
+
+            if (!targetUser.startsWith('@')) {
+                targetUser = '@' + targetUser;
+            }
+
+            submitEnergyBtn.disabled = true;
+            submitEnergyBtn.innerText = "ОТПРАВКА...";
+
+            try {
+                const getRes = await fetch(`${SERVER_URL}/get_player?username=${encodeURIComponent(targetUser)}`);
+                let targetMaxEnergy = 1000;
+                let targetRole = "Player";
+                
+                if (getRes.ok) {
+                    const targetData = await getRes.json();
+                    targetMaxEnergy = targetData.maxEnergy || 1000;
+                    targetRole = targetData.role || "Player";
+                }
+
+                const newMaxEnergy = amount > targetMaxEnergy ? amount : targetMaxEnergy;
+
+                const response = await fetch(`${SERVER_URL}/update_player`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: targetUser,
+                        role: targetRole,
+                        energy: amount,
+                        maxEnergy: newMaxEnergy
+                    })
+                });
+
+                if (response.ok) {
+                    alert(`Энергия (${amount} ⚡) успешно начислена пользователю ${targetUser}`);
+                    devModal.style.display = "none";
+                    targetUserInput.value = "";
+                    
+                    if (targetUser.toLowerCase() === myUsername.toLowerCase()) {
+                        currentEnergy = amount;
+                        maxEnergy = newMaxEnergy;
+                        updateProfileUI();
+                    }
+                } else {
+                    alert("Ошибка при сохранении на сервере.");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Не удалось связаться с сервером.");
+            } finally {
+                submitEnergyBtn.disabled = false;
+                submitEnergyBtn.innerText = "Выдать энергию";
+            }
+        });
+
+        radiusSlider.addEventListener('input', function(e) {
+            currentRadius = parseInt(e.target.value);
+            radiusLabel.innerText = (currentRadius / 1000).toFixed(1) + ' км';
+            if (radiusCircle && selectedLocation) {
+                radiusCircle.setRadius(currentRadius);
+                map.fitBounds(radiusCircle.getBounds(), { animate: true, duration: 0.4 });
+            }
+        });
+
+        map.on('click', function(e) {
+            haptics.tap();
+            selectedLocation = e.latlng;
+            resetLayoutAndDrawStart();
+        });
+
+        function resetLayoutAndDrawStart() {
+            if (!selectedLocation) return;
+            if (startMarker) map.removeLayer(startMarker);
+            if (targetMarker) map.removeLayer(targetMarker);
+            if (radiusCircle) map.removeLayer(radiusCircle);
+            if (routeCore) map.removeLayer(routeCore);
+            if (routeGlow) map.removeLayer(routeGlow);
+
+            startMarker = L.circleMarker(selectedLocation, {
+                radius: 7, fillColor: '#000', fillOpacity: 1, color: '#fff', weight: 2
+            }).addTo(map);
+
+            radiusCircle = L.circle(selectedLocation, {
+                radius: currentRadius, color: '#000', weight: 1.5, fillColor: '#000', fillOpacity: 0.03, dashArray: '4, 8'
+            }).addTo(map);
+
+            map.fitBounds(radiusCircle.getBounds(), { animate: true, duration: 0.4 });
+            generateBtn.disabled = false;
+            generateBtn.innerText = "СГЕНЕРИРОВАТЬ МАРШРУТ";
+        }
+
+        function getRandomPointInRadius(center, radiusInMeters) {
+            const r = radiusInMeters * Math.sqrt(Math.random());
+            const theta = Math.random() * 2 * Math.PI;
+            const deltaLat = (r * Math.cos(theta)) / 111320;
+            const deltaLng = (r * Math.sin(theta)) / (111320 * Math.cos(center.lat * Math.PI / 180));
+            return { lat: center.lat + deltaLat, lng: center.lng + deltaLng };
+        }
+
+        generateBtn.addEventListener('click', async function() {
+            if (!selectedLocation) return;
+            
+            if (currentEnergy < 50) {
+                alert("Недостаточно энергии! Нужно минимум 50 ⚡");
+                return;
+            }
+
+            generateBtn.disabled = true;
+            hudPanel.classList.add('radar-pulse');
+            generateBtn.innerText = "ПОИСК ТОЧЕК...";
+
+            if (targetMarker) map.removeLayer(targetMarker);
+            if (routeCore) map.removeLayer(routeCore);
+            if (routeGlow) map.removeLayer(routeGlow);
+
+            let candidate = getRandomPointInRadius(selectedLocation, currentRadius);
+            const routingUrl = `https://router.project-osrm.org/route/v1/walking/${selectedLocation.lng},${selectedLocation.lat};${candidate.lng},${candidate.lat}?overview=full&geometries=geojson`;
+            
+            let routeData = null;
+            try {
+                const response = await fetch(routingUrl);
+                if (response.ok) routeData = await response.json();
+            } catch (e) { console.error(e); }
+
+            hudPanel.classList.remove('radar-pulse');
+            generateBtn.disabled = false;
+            generateBtn.innerText = "СГЕНЕРИРОВАТЬ МАРШРУТ";
+            haptics.success();
+
+            targetMarker = L.circleMarker([candidate.lat, candidate.lng], {
+                radius: 9, fillColor: '#fff', fillOpacity: 1, color: '#000', weight: 3
+            }).addTo(map);
+
+            if (routeData && routeData.routes && routeData.routes.length > 0) {
+                const route = routeData.routes[0];
+                
+                routeGlow = L.geoJSON(route.geometry, {
+                    style: { color: '#000000', weight: 8, opacity: 0.6, lineCap: 'round', lineJoin: 'round' }
+                }).addTo(map);
+
+                routeCore = L.geoJSON(route.geometry, {
+                    style: { color: '#ffffff', weight: 3, opacity: 1, lineCap: 'round', lineJoin: 'round' }
+                }).addTo(map);
+
+                hudDistance.innerText = (route.distance / 1000).toFixed(1) + ' км';
+                hudTime.innerText = Math.round(route.duration / 60) + ' мин';
+            } else {
+                routeCore = L.polyline([selectedLocation, [candidate.lat, candidate.lng]], {
+                    color: '#000', weight: 4, dashArray: '8, 8', opacity: 0.8
+                }).addTo(map);
+                
+                const d = map.distance(selectedLocation, [candidate.lat, candidate.lng]);
+                hudDistance.innerText = (d / 1000).toFixed(1) + ' км';
+                hudTime.innerText = Math.round((d / 4500) * 60) + ' мин';
+            }
+
+            currentEnergy = Math.max(0, currentEnergy - 50);
+            updateProfileUI();
+            await saveProfileToServer();
+
+            const boundsGroup = new L.featureGroup([startMarker, targetMarker]);
+            map.fitBounds(boundsGroup.getBounds().pad(0.35), { animate: true, duration: 0.5 });
+        });
+
+        // ОБНОВЛЕННАЯ ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ С ТАЙМАУТОМ ДЛЯ TELEGRAM DESKTOP
+        function initApp() {
+            setTimeout(async () => {
+                const tg = window.Telegram ? window.Telegram.WebApp : null;
+                
+                // Проверяем существование объекта WebApp и данных пользователя
+                if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    try {
+                        tg.ready(); 
+                        tg.expand();
+                    } catch(e) { console.log("Telegram API методы не поддерживаются в полной мере"); }
+
+                    const user = tg.initDataUnsafe.user;
+                    
+                    if (user.username) {
+                        myUsername = '@' + user.username;
+                    } else {
+                        myUsername = user.first_name || ("id" + user.id);
+                    }
+                    myTelegramId = user.id; 
+                } else {
+                    // Если все-таки открыли через обычный Хром/Сафари
+                    myUsername = "Гость"; 
+                    myTelegramId = null;
+                }
+
+                await loadProfileFromServer();
+                map.locate({setView: true, maxZoom: 14});
+            }, 250); // 250мс задержки гарантируют, что SDK Telegram на ПК успеет прогрузиться
+        }
+
+        map.on('locationfound', function(e) {
+            selectedLocation = e.latlng;
+            resetLayoutAndDrawStart();
+        });
+
+        initApp();
+    </script>
         const SERVER_URL = "https://geo-walk-app.onrender.com"; 
         const ALLOWED_TELEGRAM_ID = 5434932796; 
 
