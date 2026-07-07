@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Geo Walk App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -17,7 +17,7 @@
             --text-dark: #0F172A; 
             --text-muted: #64748B; 
             --shadow-sm: 0 4px 12px rgba(74, 58, 255, 0.03);
-            --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 10px 25px rgba(15, 23, 42, 0.05);
         }
 
         body {
@@ -25,24 +25,27 @@
             background-color: var(--bg-color);
             color: var(--text-dark);
             margin: 0;
-            padding: 16px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            min-height: 100vh;
+            gap: 10px;
+            height: 100vh;
+            max-height: 100vh;
             box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
+            overflow: hidden; /* Запрещаем общий скролл страницы */
         }
 
         /* Шапка профиля */
         .header-card {
             background: var(--card-bg);
-            border-radius: 24px;
-            padding: 12px 16px;
+            border-radius: 18px;
+            padding: 10px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--shadow-sm);
+            flex-shrink: 0;
         }
 
         .profile-box {
@@ -52,12 +55,12 @@
         }
 
         .avatar {
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #FFFFFF;
-            box-shadow: 0 4px 10px rgba(74, 58, 255, 0.15);
+            box-shadow: 0 3px 8px rgba(74, 58, 255, 0.15);
         }
 
         .profile-meta {
@@ -90,17 +93,16 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            gap: 4px;
         }
 
         .coin-badge {
             background: #FFF9E6;
             color: #D4A373;
             border: 1px solid #FFEAA7;
-            font-weight: 700;
-            font-size: 14px;
+            font-weight: 800;
+            font-size: 13px;
             padding: 4px 10px;
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             gap: 4px;
@@ -108,26 +110,28 @@
 
         .app-version {
             color: var(--text-muted);
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
+            margin-top: 2px;
         }
 
-        /* Навигация между вкладками приложения */
+        /* Навигационные вкладки */
         .app-tabs {
             display: flex;
             background: #EBEFF8;
-            padding: 4px;
-            border-radius: 16px;
+            padding: 3px;
+            border-radius: 14px;
             gap: 4px;
+            flex-shrink: 0;
         }
 
         .tab-btn {
             flex: 1;
             border: none;
             background: transparent;
-            padding: 10px;
-            border-radius: 12px;
-            font-size: 14px;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
@@ -144,23 +148,25 @@
         .view-section {
             display: none;
             flex-direction: column;
-            gap: 14px;
+            gap: 10px;
             flex-grow: 1;
+            overflow: hidden;
         }
 
         .view-section.active {
             display: flex;
         }
 
-        /* Главная карточка генератора */
+        /* Главная карточка управления */
         .main-card {
             background: var(--card-bg);
-            border-radius: 28px;
-            padding: 20px;
+            border-radius: 22px;
+            padding: 14px;
             box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
+            flex-shrink: 0;
         }
 
         .section-header {
@@ -170,59 +176,62 @@
         }
 
         .section-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
             margin: 0;
         }
 
         .radius-display {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--primary-purple);
             background: #F0EEFF;
-            padding: 4px 10px;
-            border-radius: 10px;
+            padding: 3px 8px;
+            border-radius: 8px;
+        }
+
+        .slider-wrapper {
+            padding: 2px 0;
         }
 
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 8px;
+            height: 6px;
             border-radius: 20px;
             background: #E2E8F0; 
             outline: none;
-            cursor: pointer;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             background: #FFFFFF;
-            border: 4px solid var(--primary-purple);
-            box-shadow: 0 4px 10px rgba(74, 58, 255, 0.25);
+            border: 3.5px solid var(--primary-purple);
+            box-shadow: 0 3px 8px rgba(74, 58, 255, 0.2);
         }
 
         .energy-container {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             background: #F8FAFC;
-            padding: 10px 14px;
-            border-radius: 14px;
+            padding: 8px 12px;
+            border-radius: 12px;
         }
 
         .energy-meta {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
         }
 
         .energy-bar-bg {
             background: #E2E8F0;
-            height: 6px;
+            height: 5px;
             border-radius: 10px;
             overflow: hidden;
         }
@@ -238,12 +247,12 @@
             background: var(--primary-purple);
             color: #FFFFFF;
             border: none;
-            padding: 14px;
-            border-radius: 16px;
-            font-size: 14px;
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(74, 58, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(74, 58, 255, 0.15);
         }
 
         .action-button:disabled {
@@ -253,44 +262,46 @@
 
         .log-panel {
             background: #F8FAFC;
-            border-radius: 14px;
-            padding: 12px 14px;
-            font-size: 12px;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 11px;
             color: var(--text-muted);
-            line-height: 1.4;
+            line-height: 1.3;
             border-left: 3px solid var(--primary-purple);
         }
 
+        /* Интерактивная карта забирает все оставшееся место */
         .map-wrapper {
             background: var(--card-bg);
-            border-radius: 28px;
-            padding: 8px;
+            border-radius: 22px;
+            padding: 6px;
             box-shadow: var(--shadow-md);
-            flex-grow: 1;
-            min-height: 260px;
+            flex-grow: 1; 
             display: flex;
+            overflow: hidden;
+            position: relative;
         }
 
         #map {
             width: 100%;
             height: 100%;
-            border-radius: 20px;
+            border-radius: 16px;
             z-index: 1;
         }
 
-        /* Стили подвкладок магазина скинов */
+        /* Премиальный магазин скинов со скроллом внутри */
         .shop-subtabs {
             display: flex;
-            gap: 8px;
-            margin-bottom: 4px;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
         .subtab-btn {
             background: #E2E8F0;
             border: none;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 100px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
@@ -304,49 +315,71 @@
         .skins-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            overflow-y: auto;
+            gap: 10px;
+            overflow-y: auto; /* Разрешаем скролл только внутри сетки магазина */
+            padding-bottom: 20px;
+            flex-grow: 1;
         }
 
+        /* Премиальные стеклянные карточки скинов */
         .skin-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 16px;
+            background: #FFFFFF;
+            border-radius: 18px;
+            padding: 12px;
             box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
-            border: 2px solid transparent;
-            text-align: center;
+            gap: 8px;
+            border: 1.5px solid rgba(226, 232, 240, 0.8);
+            position: relative;
+            overflow: hidden;
         }
 
         .skin-card.applied {
             border-color: var(--primary-purple);
+            background: linear-gradient(180deg, #FFFFFF 0%, #F5F3FF 100%);
         }
 
+        /* Тег редкости */
+        .skin-rarity {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            font-size: 8px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 100px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+        .rarity-epic { background: #FDF2F8; color: #DB2777; }
+        .rarity-legend { background: #FEF3C7; color: #D97706; }
+        .rarity-rare { background: #ECFDF5; color: #059669; }
+
         .skin-preview-box {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
             background: #F8FAFC;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-top: 10px;
         }
 
         .skin-name {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 700;
         }
 
         .skin-btn {
             width: 100%;
             border: none;
-            padding: 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 6px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
             cursor: pointer;
             background: #F0EEFF;
             color: var(--primary-purple);
@@ -362,12 +395,12 @@
             color: #FFFFFF;
         }
 
-        /* Стили фильтров для скинов карты */
+        /* Премиальные фильтры карт */
         .map-beige-filter {
-            filter: sepia(0.55) hue-rotate(-10deg) saturate(120%) contrast(95%) brightness(102%) !important;
+            filter: sepia(0.55) hue-rotate(-10deg) saturate(120%) contrast(96%) brightness(102%) !important;
         }
 
-        /* Анимации для SVG-скинов человечка */
+        /* Эффекты скинов */
         @keyframes rgbPegman {
             0% { fill: #FF0000; } 20% { fill: #00FF00; } 40% { fill: #0000FF; }
             60% { fill: #FFFF00; } 80% { fill: #00FFFF; } 100% { fill: #FF0000; }
@@ -378,11 +411,12 @@
         .skin-path-water { fill: url(#waterGrad); }
         .skin-path-default { fill: #F4B400; }
 
+        .pegman-marker-container { background: transparent; border: none; }
         .target-glow-marker {
             background: #FF007F;
-            border: 2.5px solid #FFFFFF;
+            border: 2px solid #FFFFFF;
             border-radius: 50%;
-            box-shadow: 0 0 15px #FF007F;
+            box-shadow: 0 0 12px #FF007F;
         }
     </style>
 </head>
@@ -393,7 +427,7 @@
             <img id="user-avatar" class="avatar" src="https://ui-avatars.com/api/?name=Guest&background=EBEFF8&color=4A3AFF" alt="Avatar">
             <div class="profile-meta">
                 <h4 id="user-name" class="user-title">Гость</h4>
-                <span id="user-version-label" class="app-version">v1.4.0</span>
+                <span id="user-version-label" class="app-version">v1.5.0</span>
             </div>
         </div>
         <div class="header-right">
@@ -426,9 +460,10 @@
             </div>
             <button class="action-button" id="btn-generate">Сгенерировать точку (⚡ 10)</button>
             <div class="log-panel" id="status-text">
-                Перетащите человечка или кликните по карте для изменения центра зоны.
+                Перетащите человечка для изменения центра зоны.
             </div>
         </div>
+        
         <div class="map-wrapper">
             <div id="map"></div>
         </div>
@@ -439,7 +474,6 @@
             <button class="subtab-btn active" id="subtab-char" onclick="switchSubTab('char')">👤 Персонаж</button>
             <button class="subtab-btn" id="subtab-map" onclick="switchSubTab('map')">🗺️ Карта</button>
         </div>
-        
         <div class="skins-grid" id="shop-items-container"></div>
     </div>
 
@@ -452,18 +486,15 @@
         const maxEnergy = 100;
         let currentCost = 10;
 
-        // ЭКОНОМИКА И СКИДКИ
         let userCoins = 1000;
         let isVip = false;
 
-        // Системные данные скинов
         let db = {
             activeChar: 'default',
             activeMap: 'bright',
             unlocked: ['default', 'bright']
         };
 
-        // Загрузка сохранений локально
         if(localStorage.getItem('geo_walk_save')) {
             try { db = JSON.parse(localStorage.getItem('geo_walk_save')); } catch(e){}
         }
@@ -477,6 +508,9 @@
             setupControls();
             startEnergyRegen();
             renderShop();
+            
+            // Защита от кривого рендеринга Leaflet при старте внутри iframe
+            setTimeout(() => { if(map) map.invalidateSize(); }, 350);
         });
 
         function setupProfile(tg) {
@@ -498,21 +532,16 @@
 
         function updateCoinUI() {
             const counter = document.getElementById("coin-counter");
-            if (isVip) {
-                counter.innerHTML = "🪙 ∞";
-            } else {
-                counter.innerHTML = `🪙 ${userCoins}`;
-            }
+            counter.innerHTML = isVip ? "🪙 ∞" : `🪙 ${userCoins}`;
         }
 
         function saveGame() {
             localStorage.setItem('geo_walk_save', JSON.stringify(db));
         }
 
-        // Рендеринг SVG-кода кастомных человечков
         function getPegmanSVG(skinClass) {
             return `
-                <svg width="36" height="46" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3))">
+                <svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.25))">
                     <defs>
                         <linearGradient id="fireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                             <stop offset="0%" stop-color="#FF8C00"/><stop offset="100%" stop-color="#FF0000"/>
@@ -530,14 +559,30 @@
             `;
         }
 
+        // Премиальные векторные миниатюры карт для витрины магазина
+        function getMapPreviewSVG(mapId) {
+            let colorA = "#E2E8F0", colorB = "#CBD5E1", roadColor = "#FFFFFF";
+            if (mapId === 'dark') { colorA = "#0F172A"; colorB = "#1E293B"; roadColor = "#334155"; }
+            if (mapId === 'beige') { colorA = "#F5EBE6"; colorB = "#E6DCD2"; roadColor = "#FFFBF7"; }
+
+            return `
+                <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius:10px; box-shadow: inset 0 0 6px rgba(0,0,0,0.1)">
+                    <rect width="44" height="44" fill="${colorA}"/>
+                    <circle cx="12" cy="32" r="8" fill="${colorB}" opacity="0.6"/>
+                    <circle cx="34" cy="12" r="10" fill="${colorB}" opacity="0.4"/>
+                    <path d="M-5 14H50M-5 30H50M16 -5V50M32 -5V50" stroke="${roadColor}" stroke-width="3.5" stroke-linejoin="round"/>
+                    <path d="M-5 -5L50 50" stroke="${roadColor}" stroke-width="2" opacity="0.7"/>
+                </svg>
+            `;
+        }
+
         function initMap() {
             map = L.map('map', { zoomControl: false }).setView(centerCoords, 14);
             applyMapSkin(db.activeMap);
-
             updatePegmanIcon();
             
             searchCircle = L.circle(centerCoords, {
-                radius: currentRadius, color: '#4A3AFF', fillColor: '#4A3AFF', fillOpacity: 0.08, weight: 2.5
+                radius: currentRadius, color: '#4A3AFF', fillColor: '#4A3AFF', fillOpacity: 0.06, weight: 2
             }).addTo(map);
         }
 
@@ -546,7 +591,7 @@
 
             const iconHtml = getPegmanSVG(`skin-path-${db.activeChar}`);
             const pegmanIcon = L.divIcon({
-                html: iconHtml, className: 'pegman-marker-container', iconSize: [36, 46], iconAnchor: [18, 44]
+                html: iconHtml, className: 'pegman-marker-container', iconSize: [32, 42], iconAnchor: [16, 40]
             });
 
             centerMarker = L.marker(centerCoords, { draggable: true, icon: pegmanIcon }).addTo(map);
@@ -572,20 +617,20 @@
             currentTileLayer = L.tileLayer(url, { attribution: '© OpenStreetMap' }).addTo(map);
         }
 
-        // СИСТЕМА МАГАЗИНА СКИНОВ
+        // ДАННЫЕ МАГАЗИНА СКИНОВ С РЕДКОСТЬЮ
         let currentShopTab = 'char';
         const skinsData = {
             char: [
-                { id: 'default', name: 'Дефолтный', cls: 'skin-path-default' },
-                { id: 'fire', name: 'Огненный', cls: 'skin-path-fire' },
-                { id: 'galaxy', name: 'Галактический', cls: 'skin-path-galaxy' },
-                { id: 'rgb', name: 'РГБ Скин', cls: 'skin-path-rgb' },
-                { id: 'water', name: 'Водный', cls: 'skin-path-water' }
+                { id: 'default', name: 'Обычный пешеход', cls: 'skin-path-default', rarity: 'rare', rarityText: 'Базовый' },
+                { id: 'water', name: 'Водный неон', cls: 'skin-path-water', rarity: 'rare', rarityText: 'Редкий' },
+                { id: 'fire', name: 'Огненный лорд', cls: 'skin-path-fire', rarity: 'epic', rarityText: 'Епический' },
+                { id: 'galaxy', name: 'Космо-атлас', cls: 'skin-path-galaxy', rarity: 'legend', rarityText: 'Легенда' },
+                { id: 'rgb', name: 'РГБ Геймер', cls: 'skin-path-rgb', rarity: 'legend', rarityText: 'Анимация' }
             ],
             map: [
-                { id: 'bright', name: 'Яркая карта', preview: '#E2E8F0' },
-                { id: 'dark', name: 'Черная карта', preview: '#1E1B4B' },
-                { id: 'beige', name: 'Бежевая карта', preview: '#F5EBE6' }
+                { id: 'bright', name: 'Voyager Светлая', mapId: 'bright', rarity: 'rare', rarityText: 'Базовый' },
+                { id: 'dark', name: 'Dark Matter Ночь', mapId: 'dark', rarity: 'epic', rarityText: 'Особый' },
+                { id: 'beige', name: 'Ретро Сепия', mapId: 'beige', rarity: 'legend', rarityText: 'Винтаж' }
             ]
         };
 
@@ -600,12 +645,7 @@
                 const isUnlocked = db.unlocked.includes(item.id);
                 const isApplied = item.id === activeId;
                 
-                let previewContent = "";
-                if (currentShopTab === 'char') {
-                    previewContent = getPegmanSVG(item.cls);
-                } else {
-                    previewContent = `<div style="width:40px; height:40px; border-radius:50%; background:${item.preview}; border:2px solid #ccc"></div>`;
-                }
+                let previewContent = currentShopTab === 'char' ? getPegmanSVG(item.cls) : getMapPreviewSVG(item.mapId);
 
                 let btnText = "Купить 100";
                 let btnCls = "skin-btn buy";
@@ -623,6 +663,7 @@
                 const card = document.createElement("div");
                 card.className = `skin-card ${isApplied ? 'applied' : ''}`;
                 card.innerHTML = `
+                    <span class="skin-rarity rarity-${item.rarity}">${item.rarityText}</span>
                     <div class="skin-preview-box">${previewContent}</div>
                     <div class="skin-name">${item.name}</div>
                     <button class="${btnCls}" onclick="handleSkinAction('${item.id}')">${btnText}</button>
@@ -645,15 +686,14 @@
                 saveGame();
                 renderShop();
             } else {
-                // Логика покупки
                 if (userCoins >= 100) {
                     userCoins -= 100;
                     db.unlocked.push(id);
                     updateCoinUI();
                     saveGame();
-                    handleSkinAction(id); // Сразу применяем после покупки
+                    handleSkinAction(id);
                 } else {
-                    alert("Недостаточно монет для покупки скина!");
+                    alert("Недостаточно монет!");
                 }
             }
         }
@@ -665,7 +705,7 @@
             if(view === 'generator') {
                 document.querySelector('[onclick="switchView(\'generator\')"]').classList.add('active');
                 document.getElementById('view-generator').classList.add('active');
-                setTimeout(() => map.invalidateSize(), 200); // Корректный пересчет размеров Leaflet
+                setTimeout(() => { if(map) map.invalidateSize(); }, 50); 
             } else {
                 document.querySelector('[onclick="switchView(\'shop\')"]').classList.add('active');
                 document.getElementById('view-shop').classList.add('active');
@@ -682,7 +722,6 @@
             renderShop();
         }
 
-        // СТАНДАРТНОЕ УПРАВЛЕНИЕ И ГЕНЕРАЦИЯ (ИЗ ПРОШЛОЙ ВЕРСИИ)
         function calculateEnergyCost(radius) {
             return Math.floor(radius / 100) + 5;
         }
@@ -737,17 +776,6 @@
             btnGenerate.addEventListener("click", generateValidPoint);
         }
 
-        function tryGeolocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((pos) => {
-                    centerCoords = [pos.coords.latitude, pos.coords.longitude];
-                    map.setView(centerCoords, 14);
-                    centerMarker.setLatLng(centerCoords);
-                    searchCircle.setLatLng(centerCoords);
-                });
-            }
-        }
-
         function getRandomPointInCircle(lat, lng, radiusMeters) {
             const r = (radiusMeters / 111320) * Math.sqrt(Math.random());
             const theta = Math.random() * 2 * Math.PI;
@@ -789,7 +817,7 @@
                 currentEnergy -= currentCost; updateEnergyUI();
                 if (targetMarker) map.removeLayer(targetMarker);
                 targetMarker = L.marker([validPoint.lat, validPoint.lng], {
-                    icon: L.divIcon({ className: 'target-glow-marker', iconSize: [16, 16] })
+                    icon: L.divIcon({ className: 'target-glow-marker', iconSize: [14, 14] })
                 }).addTo(map);
                 map.panTo([validPoint.lat, validPoint.lng]);
                 statusBox.innerHTML = `🎯 Точка создана!<br>Координаты: ${validPoint.lat.toFixed(5)}, ${validPoint.lng.toFixed(5)}`;
