@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Geo Walk App</title>
+    <!-- Telegram Web App API -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Карта Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
@@ -24,16 +26,17 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-dark);
-            margin: 0;
+            margin: 0 auto; /* Центрируем приложение на десктопе */
             padding: 12px;
             display: flex;
             flex-direction: column;
             gap: 10px;
             height: 100vh;
             max-height: 100vh;
+            max-width: 500px; /* Ограничиваем ширину для красивого вида на ПК */
             box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
-            overflow: hidden; /* Запрещаем общий скролл страницы */
+            overflow: hidden;
         }
 
         /* Шапка профиля */
@@ -129,9 +132,9 @@
             flex: 1;
             border: none;
             background: transparent;
-            padding: 8px;
+            padding: 8px 4px;
             border-radius: 10px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
@@ -190,10 +193,6 @@
             border-radius: 8px;
         }
 
-        .slider-wrapper {
-            padding: 2px 0;
-        }
-
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
@@ -227,6 +226,12 @@
             justify-content: space-between;
             font-size: 11px;
             font-weight: 700;
+        }
+
+        .energy-timer {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
         .energy-bar-bg {
@@ -270,7 +275,6 @@
             border-left: 3px solid var(--primary-purple);
         }
 
-        /* Интерактивная карта забирает все оставшееся место */
         .map-wrapper {
             background: var(--card-bg);
             border-radius: 22px;
@@ -279,7 +283,6 @@
             flex-grow: 1; 
             display: flex;
             overflow: hidden;
-            position: relative;
         }
 
         #map {
@@ -289,7 +292,7 @@
             z-index: 1;
         }
 
-        /* Премиальный магазин скинов со скроллом внутри */
+        /* Магазин скинов */
         .shop-subtabs {
             display: flex;
             gap: 6px;
@@ -316,12 +319,11 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            overflow-y: auto; /* Разрешаем скролл только внутри сетки магазина */
+            overflow-y: auto; 
             padding-bottom: 20px;
             flex-grow: 1;
         }
 
-        /* Премиальные стеклянные карточки скинов */
         .skin-card {
             background: #FFFFFF;
             border-radius: 18px;
@@ -341,7 +343,6 @@
             background: linear-gradient(180deg, #FFFFFF 0%, #F5F3FF 100%);
         }
 
-        /* Тег редкости */
         .skin-rarity {
             position: absolute;
             top: 6px;
@@ -395,12 +396,135 @@
             color: #FFFFFF;
         }
 
-        /* Премиальные фильтры карт */
+        /* ЭКРАН: КОЛЕСО ФОРТУНЫ (ПОЛНЫЙ РЕДИЗАЙН) */
+        .wheel-view-container {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 24px 16px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-grow: 1;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 260px;
+            height: 260px;
+            margin: 10px 0;
+        }
+
+        /* Премиальная неоновая стрелка */
+        .wheel-pointer {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, #FF007F, #FF4B4B);
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            z-index: 10;
+            filter: drop-shadow(0px 3px 6px rgba(255, 0, 127, 0.4));
+        }
+
+        .wheel-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 6px solid #0F172A;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.25);
+            /* Сбалансированная палитра премиальных градиентных секторов */
+            background: conic-gradient(
+                #4A3AFF 0deg 60deg,
+                #6366F1 60deg 120deg,
+                #06B6D4 120deg 180deg,
+                #059669 180deg 240deg,
+                #F59E0B 240deg 300deg,
+                #D946EF 300deg 360deg
+            );
+            position: relative;
+            transition: transform 4s cubic-bezier(0.1, 0.8, 0.1, 1);
+        }
+
+        /* Центральная заглушка колеса */
+        .wheel-center-cap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            background: #0F172A;
+            border: 4px solid #FFFFFF;
+            border-radius: 50%;
+            z-index: 6;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        /* ИСПРАВЛЕННЫЕ ЛЕЙБЛЫ НАГРАД (Без квадратов) */
+        .wheel-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px;
+            height: 34px;
+            margin-left: -40px;
+            margin-top: -17px;
+            text-align: center;
+            font-weight: 800;
+            color: #FFFFFF;
+            transform-origin: center center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.1;
+        }
+        
+        .wl-num {
+            font-size: 16px;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+        
+        .wl-txt {
+            font-size: 7px;
+            font-weight: 700;
+            opacity: 0.85;
+            letter-spacing: 0.5px;
+        }
+
+        /* Точный радиальный отступ для попадания в центр секторов */
+        .wl-0 { transform: rotate(30deg) translateY(-95px); }
+        .wl-1 { transform: rotate(90deg) translateY(-95px); }
+        .wl-2 { transform: rotate(150deg) translateY(-95px); }
+        .wl-3 { transform: rotate(210deg) translateY(-95px); }
+        .wl-4 { transform: rotate(270deg) translateY(-95px); }
+        .wl-5 { transform: rotate(330deg) translateY(-95px); }
+
+        .wheel-status-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-align: center;
+            min-height: 38px;
+            padding: 0 10px;
+            line-height: 1.4;
+        }
+
+        /* Премиальные эффекты карт */
         .map-beige-filter {
             filter: sepia(0.55) hue-rotate(-10deg) saturate(120%) contrast(96%) brightness(102%) !important;
         }
 
-        /* Эффекты скинов */
         @keyframes rgbPegman {
             0% { fill: #FF0000; } 20% { fill: #00FF00; } 40% { fill: #0000FF; }
             60% { fill: #FFFF00; } 80% { fill: #00FFFF; } 100% { fill: #FF0000; }
@@ -422,12 +546,13 @@
 </head>
 <body>
 
+    <!-- Шапка профиля -->
     <div class="header-card">
         <div class="profile-box">
             <img id="user-avatar" class="avatar" src="https://ui-avatars.com/api/?name=Guest&background=EBEFF8&color=4A3AFF" alt="Avatar">
             <div class="profile-meta">
                 <h4 id="user-name" class="user-title">Гость</h4>
-                <span id="user-version-label" class="app-version">v1.5.0</span>
+                <span id="user-version-label" class="app-version">v1.6.1</span>
             </div>
         </div>
         <div class="header-right">
@@ -435,11 +560,14 @@
         </div>
     </div>
 
+    <!-- Вкладки навигации -->
     <div class="app-tabs">
-        <button class="tab-btn active" onclick="switchView('generator')">🗺️ Карта</button>
-        <button class="tab-btn" onclick="switchView('shop')">🛍️ Скины</button>
+        <button class="tab-btn active" id="tab-link-generator" onclick="switchView('generator')">🗺️ Карта</button>
+        <button class="tab-btn" id="tab-link-shop" onclick="switchView('shop')">🛍️ Скины</button>
+        <button class="tab-btn" id="tab-link-wheel" onclick="switchView('wheel')">🎡 Колесо</button>
     </div>
 
+    <!-- ЭКРАН 1: ГЕНЕРАТОР -->
     <div id="view-generator" class="view-section active">
         <div class="main-card">
             <div class="section-header">
@@ -451,7 +579,7 @@
             </div>
             <div class="energy-container">
                 <div class="energy-meta">
-                    <span>Доступная энергия</span>
+                    <span>Доступная энергия <span id="energy-timer" class="energy-timer"></span></span>
                     <span id="energy-text" style="color: #10B981">100 / 100 ⚡</span>
                 </div>
                 <div class="energy-bar-bg">
@@ -463,12 +591,12 @@
                 Перетащите человечка для изменения центра зоны.
             </div>
         </div>
-        
         <div class="map-wrapper">
             <div id="map"></div>
         </div>
     </div>
 
+    <!-- ЭКРАН 2: МАГАЗИН СКИНОВ -->
     <div id="view-shop" class="view-section">
         <div class="shop-subtabs">
             <button class="subtab-btn active" id="subtab-char" onclick="switchSubTab('char')">👤 Персонаж</button>
@@ -477,26 +605,91 @@
         <div class="skins-grid" id="shop-items-container"></div>
     </div>
 
+    <!-- ЭКРАН 3: КОЛЕСО ФОРТУНЫ -->
+    <div id="view-wheel" class="view-section">
+        <div class="wheel-view-container">
+            <div class="wheel-wrapper">
+                <div class="wheel-pointer"></div>
+                <div class="wheel-center-cap">🎯</div>
+                <div id="wheel-circle" class="wheel-circle">
+                    <!-- Защищенные текстовые селекторы без системных эмодзи -->
+                    <div class="wheel-label wl-0"><span class="wl-num">1</span><span class="wl-txt">МОНЕТА</span></div>
+                    <div class="wheel-label wl-1"><span class="wl-num">5</span><span class="wl-txt">МОНЕТ</span></div>
+                    <div class="wheel-label wl-2"><span class="wl-num">10</span><span class="wl-txt">МОНЕТ</span></div>
+                    <div class="wheel-label wl-3"><span class="wl-num">20">20</span><span class="wl-txt">МОНЕТ</span></div>
+                    <div class="wheel-label wl-4"><span class="wl-num">50</span><span class="wl-txt">МОНЕТ</span></div>
+                    <div class="wheel-label wl-5"><span class="wl-num">100</span><span class="wl-txt">МОНЕТ</span></div>
+                </div>
+            </div>
+            
+            <div id="wheel-status" class="wheel-status-text">
+                Испытай удачу! Бесплатный прокрут доступен раз в 24 часа.
+            </div>
+            
+            <button class="action-button" id="btn-spin-wheel" style="width: 90%; background: linear-gradient(135deg, #FF007F, #D946EF); box-shadow: 0 6px 16px rgba(255, 0, 127, 0.25);">
+                Испытать удачу
+            </button>
+        </div>
+    </div>
+
     <script>
+        // АУДИО-ДВИЖОК ДЛЯ ПРЕМИАЛЬНЫХ ЗВУКОВ
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone(freq, type, duration, delay = 0) {
+            setTimeout(() => {
+                try {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = type;
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(); osc.stop(audioCtx.currentTime + duration);
+                } catch(e){}
+            }, delay * 1000);
+        }
+
+        function playSoundClick() { playTone(580, 'sine', 0.04); triggerHaptic('light'); }
+        function playSoundCoin() { playTone(950, 'sine', 0.08); playTone(1300, 'sine', 0.15, 0.06); triggerHaptic('medium'); }
+        function playSoundTick() { playTone(280, 'triangle', 0.012); }
+        function playSoundVictory() { 
+            playTone(523, 'sine', 0.08); playTone(659, 'sine', 0.08, 0.08); 
+            playTone(784, 'sine', 0.08, 0.16); playTone(1046, 'sine', 0.25, 0.24);
+            triggerHaptic('success');
+        }
+
+        function triggerHaptic(style) {
+            try {
+                if(window.Telegram?.WebApp?.HapticFeedback) {
+                    if(style === 'success') window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+                    else window.Telegram.WebApp.HapticFeedback.impactOccurred(style);
+                }
+            } catch(e){}
+        }
+
+        // ПЕРЕМЕННЫЕ И ИНИЦИАЛИЗАЦИЯ
         let map, centerMarker, targetMarker, searchCircle, currentTileLayer;
         let centerCoords = [55.7558, 37.6173]; 
         let currentRadius = 500;
         
-        let currentEnergy = 100;
-        const maxEnergy = 100;
+        let maxEnergy = 100;
         let currentCost = 10;
-
-        let userCoins = 1000;
         let isVip = false;
+        let currentWheelRotation = 0; // Накопительный угол вращения
 
         let db = {
+            coins: 1000,
+            energy: 100,
+            nextEnergyTime: 0, 
+            lastFreeSpin: 0,   
             activeChar: 'default',
             activeMap: 'bright',
             unlocked: ['default', 'bright']
         };
 
-        if(localStorage.getItem('geo_walk_save')) {
-            try { db = JSON.parse(localStorage.getItem('geo_walk_save')); } catch(e){}
+        if(localStorage.getItem('geo_walk_save_v161')) {
+            try { db = JSON.parse(localStorage.getItem('geo_walk_save_v161')); } catch(e){}
         }
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -506,11 +699,11 @@
             setupProfile(tg);
             initMap();
             setupControls();
-            startEnergyRegen();
             renderShop();
-            
-            // Защита от кривого рендеринга Leaflet при старте внутри iframe
-            setTimeout(() => { if(map) map.invalidateSize(); }, 350);
+            initEnergySystem();
+            updateWheelButtonState();
+
+            setTimeout(() => { if(map) map.invalidateSize(); }, 300);
         });
 
         function setupProfile(tg) {
@@ -532,26 +725,73 @@
 
         function updateCoinUI() {
             const counter = document.getElementById("coin-counter");
-            counter.innerHTML = isVip ? "🪙 ∞" : `🪙 ${userCoins}`;
+            counter.innerHTML = isVip ? "🪙 ∞" : `🪙 ${db.coins}`;
         }
 
         function saveGame() {
-            localStorage.setItem('geo_walk_save', JSON.stringify(db));
+            localStorage.setItem('geo_walk_save_v161', JSON.stringify(db));
         }
 
+        // РЕГЕНЕРАЦИЯ ЭНЕРГИИ (Раз в 30 минут)
+        const REGEN_INTERVAL = 30 * 60 * 1000; 
+
+        function initEnergySystem() {
+            const now = Date.now();
+            
+            if (db.energy < maxEnergy && db.nextEnergyTime > 0) {
+                if (now >= db.nextEnergyTime) {
+                    let passedTime = now - db.nextEnergyTime;
+                    let restoredUnits = Math.floor(passedTime / REGEN_INTERVAL) + 1;
+                    db.energy = Math.min(maxEnergy, db.energy + restoredUnits);
+                    db.nextEnergyTime = db.energy >= maxEnergy ? 0 : db.nextEnergyTime + (restoredUnits * REGEN_INTERVAL);
+                }
+            } else if (db.energy < maxEnergy && db.nextEnergyTime === 0) {
+                db.nextEnergyTime = now + REGEN_INTERVAL;
+            }
+            
+            saveGame();
+            updateEnergyUI();
+
+            setInterval(() => {
+                if (db.energy >= maxEnergy) {
+                    document.getElementById("energy-timer").textContent = "";
+                    return;
+                }
+
+                const currentTime = Date.now();
+                if (currentTime >= db.nextEnergyTime) {
+                    db.energy++;
+                    db.nextEnergyTime = db.energy >= maxEnergy ? 0 : currentTime + REGEN_INTERVAL;
+                    saveGame(); updateEnergyUI(); updateWheelButtonState();
+                } else {
+                    let diff = db.nextEnergyTime - currentTime;
+                    let minutes = Math.floor(diff / 60000);
+                    let seconds = Math.floor((diff % 60000) / 1000);
+                    document.getElementById("energy-timer").textContent = `(+1 через ${minutes}:${seconds < 10 ? '0' : ''}${seconds})`;
+                }
+            }, 1000);
+        }
+
+        function updateEnergyUI() {
+            const energyText = document.getElementById("energy-text");
+            const energyBar = document.getElementById("energy-bar");
+            const btnGenerate = document.getElementById("btn-generate");
+
+            energyText.textContent = `${db.energy} / ${maxEnergy} ⚡`;
+            energyBar.style.width = `${db.energy}%`;
+
+            btnGenerate.textContent = `Сгенерировать точку (⚡ ${currentCost})`;
+            btnGenerate.disabled = db.energy < currentCost;
+        }
+
+        // ОРИГИНАЛЬНЫЕ КАРТЫ И ПЕРСОНАЖИ
         function getPegmanSVG(skinClass) {
             return `
                 <svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.25))">
                     <defs>
-                        <linearGradient id="fireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="#FF8C00"/><stop offset="100%" stop-color="#FF0000"/>
-                        </linearGradient>
-                        <linearGradient id="galaxyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#4A3AFF"/><stop offset="50%" stop-color="#6700FF"/><stop offset="100%" stop-color="#FF007F"/>
-                        </linearGradient>
-                        <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="#00F0FF"/><stop offset="100%" stop-color="#0072FF"/>
-                        </linearGradient>
+                        <linearGradient id="fireGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FF8C00"/><stop offset="100%" stop-color="#FF0000"/></linearGradient>
+                        <linearGradient id="galaxyGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4A3AFF"/><stop offset="50%" stop-color="#6700FF"/><stop offset="100%" stop-color="#FF007F"/></linearGradient>
+                        <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#00F0FF"/><stop offset="100%" stop-color="#0072FF"/></linearGradient>
                     </defs>
                     <circle cx="16" cy="7" r="5" class="${skinClass}" stroke="#FFFFFF" stroke-width="2"/>
                     <path d="M16 13C11 13 8 16 8 21V30H11V40H14V32H18V40H21V30H24V21C24 16 21 13 16 13Z" class="${skinClass}" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
@@ -559,41 +799,24 @@
             `;
         }
 
-        // Премиальные векторные миниатюры карт для витрины магазина
         function getMapPreviewSVG(mapId) {
             let colorA = "#E2E8F0", colorB = "#CBD5E1", roadColor = "#FFFFFF";
             if (mapId === 'dark') { colorA = "#0F172A"; colorB = "#1E293B"; roadColor = "#334155"; }
             if (mapId === 'beige') { colorA = "#F5EBE6"; colorB = "#E6DCD2"; roadColor = "#FFFBF7"; }
-
-            return `
-                <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius:10px; box-shadow: inset 0 0 6px rgba(0,0,0,0.1)">
-                    <rect width="44" height="44" fill="${colorA}"/>
-                    <circle cx="12" cy="32" r="8" fill="${colorB}" opacity="0.6"/>
-                    <circle cx="34" cy="12" r="10" fill="${colorB}" opacity="0.4"/>
-                    <path d="M-5 14H50M-5 30H50M16 -5V50M32 -5V50" stroke="${roadColor}" stroke-width="3.5" stroke-linejoin="round"/>
-                    <path d="M-5 -5L50 50" stroke="${roadColor}" stroke-width="2" opacity="0.7"/>
-                </svg>
-            `;
+            return `<svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius:10px;"><rect width="44" height="44" fill="${colorA}"/><path d="M-5 14H50M-5 30H50M16 -5V50M32 -5V50" stroke="${roadColor}" stroke-width="3.5"/></svg>`;
         }
 
         function initMap() {
             map = L.map('map', { zoomControl: false }).setView(centerCoords, 14);
             applyMapSkin(db.activeMap);
             updatePegmanIcon();
-            
-            searchCircle = L.circle(centerCoords, {
-                radius: currentRadius, color: '#4A3AFF', fillColor: '#4A3AFF', fillOpacity: 0.06, weight: 2
-            }).addTo(map);
+            searchCircle = L.circle(centerCoords, { radius: currentRadius, color: '#4A3AFF', fillColor: '#4A3AFF', fillOpacity: 0.06, weight: 2 }).addTo(map);
         }
 
         function updatePegmanIcon() {
             if (centerMarker) map.removeLayer(centerMarker);
-
             const iconHtml = getPegmanSVG(`skin-path-${db.activeChar}`);
-            const pegmanIcon = L.divIcon({
-                html: iconHtml, className: 'pegman-marker-container', iconSize: [32, 42], iconAnchor: [16, 40]
-            });
-
+            const pegmanIcon = L.divIcon({ html: iconHtml, className: 'pegman-marker-container', iconSize: [32, 42], iconAnchor: [16, 40] });
             centerMarker = L.marker(centerCoords, { draggable: true, icon: pegmanIcon }).addTo(map);
             centerMarker.on('drag', (e) => {
                 centerCoords = [e.latlng.lat, e.latlng.lng];
@@ -603,21 +826,12 @@
 
         function applyMapSkin(skinId) {
             if (currentTileLayer) map.removeLayer(currentTileLayer);
-            
             let url = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-            const mapContainer = document.getElementById('map');
-            mapContainer.className = ''; 
-
-            if (skinId === 'dark') {
-                url = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-            } else if (skinId === 'beige') {
-                mapContainer.classList.add('map-beige-filter');
-            }
-
+            document.getElementById('map').className = skinId === 'beige' ? 'map-beige-filter' : '';
+            if (skinId === 'dark') url = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
             currentTileLayer = L.tileLayer(url, { attribution: '© OpenStreetMap' }).addTo(map);
         }
 
-        // ДАННЫЕ МАГАЗИНА СКИНОВ С РЕДКОСТЬЮ
         let currentShopTab = 'char';
         const skinsData = {
             char: [
@@ -637,27 +851,18 @@
         function renderShop() {
             const container = document.getElementById("shop-items-container");
             container.innerHTML = "";
-            
             const list = skinsData[currentShopTab];
             const activeId = currentShopTab === 'char' ? db.activeChar : db.activeMap;
 
             list.forEach(item => {
                 const isUnlocked = db.unlocked.includes(item.id);
                 const isApplied = item.id === activeId;
-                
                 let previewContent = currentShopTab === 'char' ? getPegmanSVG(item.cls) : getMapPreviewSVG(item.mapId);
 
-                let btnText = "Купить 100";
-                let btnCls = "skin-btn buy";
-
+                let btnText = "Купить 100"; let btnCls = "skin-btn buy";
                 if (isUnlocked) {
-                    if (isApplied) {
-                        btnText = "Применено";
-                        btnCls = "skin-btn active-skin";
-                    } else {
-                        btnText = "Выбрать";
-                        btnCls = "skin-btn";
-                    }
+                    if (isApplied) { btnText = "Применено"; btnCls = "skin-btn active-skin"; }
+                    else { btnText = "Выбрать"; btnCls = "skin-btn"; }
                 }
 
                 const card = document.createElement("div");
@@ -673,76 +878,139 @@
         }
 
         function handleSkinAction(id) {
+            playSoundClick();
             const isUnlocked = db.unlocked.includes(id) || isVip;
-            
             if (isUnlocked) {
-                if (currentShopTab === 'char') {
-                    db.activeChar = id;
-                    updatePegmanIcon();
-                } else {
-                    db.activeMap = id;
-                    applyMapSkin(id);
-                }
-                saveGame();
-                renderShop();
+                if (currentShopTab === 'char') { db.activeChar = id; updatePegmanIcon(); }
+                else { db.activeMap = id; applyMapSkin(id); }
+                saveGame(); renderShop();
             } else {
-                if (userCoins >= 100) {
-                    userCoins -= 100;
-                    db.unlocked.push(id);
-                    updateCoinUI();
-                    saveGame();
-                    handleSkinAction(id);
-                } else {
-                    alert("Недостаточно монет!");
-                }
+                if (isVip || db.coins >= 100) {
+                    if(!isVip) db.coins -= 100;
+                    db.unlocked.push(id); saveGame(); updateCoinUI(); handleSkinAction(id);
+                } else { alert("Недостаточно монет!"); }
             }
         }
 
+        // ТОЧНАЯ И ИСПРАВЛЕННАЯ ЛОГИКА КОЛЕСА ФОРТУНЫ
+        let isSpinning = false;
+        const wheelSectors = [
+            { label: "1 монета", word: "МОНЕТА", value: 1, weight: 45 },
+            { label: "5 монет", word: "МОНЕТ", value: 5, weight: 25 },
+            { label: "10 монет", word: "МОНЕТ", value: 10, weight: 18 },
+            { label: "20 монет", word: "МОНЕТ", value: 20, weight: 8 },
+            { label: "50 монет", word: "МОНЕТ", value: 50, weight: 3 },
+            { label: "100 монет", word: "МОНЕТ", value: 100, weight: 1 }
+        ];
+
+        function updateWheelButtonState() {
+            const btn = document.getElementById("btn-spin-wheel");
+            const status = document.getElementById("wheel-status");
+            const now = Date.now();
+            const timePassed = now - db.lastFreeSpin;
+
+            if (timePassed >= 24 * 60 * 60 * 1000) {
+                btn.textContent = "Крутить БЕСПЛАТНО";
+                status.textContent = "Вам доступен ежедневный бесплатный прокрут!";
+                btn.disabled = false;
+            } else {
+                btn.textContent = "Крутить за 10 ⚡";
+                let diff = (24 * 60 * 60 * 1000) - timePassed;
+                let hoursLeft = Math.ceil(diff / (1000 * 60 * 60));
+                status.textContent = `До бесплатного колеса: ~ ${hoursLeft} ч. Или крутите за энергию.`;
+                btn.disabled = db.energy < 10;
+            }
+        }
+
+        document.getElementById("btn-spin-wheel").addEventListener("click", () => {
+            if (isSpinning) return;
+            playSoundClick();
+
+            const now = Date.now();
+            const isFree = (now - db.lastFreeSpin) >= 24 * 60 * 60 * 1000;
+
+            if (!isFree) {
+                if (db.energy < 10) return;
+                db.energy -= 10;
+                if(db.energy < maxEnergy && db.nextEnergyTime === 0) db.nextEnergyTime = Date.now() + REGEN_INTERVAL;
+                updateEnergyUI();
+            } else {
+                db.lastFreeSpin = now;
+            }
+            saveGame();
+            updateWheelButtonState();
+
+            // Рандом на основе уменьшающихся шансов выпадения
+            let rand = Math.random() * 100;
+            let sum = 0;
+            let targetSectorIndex = 0;
+            for (let i = 0; i < wheelSectors.length; i++) {
+                sum += wheelSectors[i].weight;
+                if (rand <= sum) { targetSectorIndex = i; break; }
+            }
+
+            isSpinning = true;
+            document.getElementById("btn-spin-wheel").disabled = true;
+            document.getElementById("wheel-status").textContent = "🎰 Разгоняем барабан удачи...";
+
+            // ИСПРАВЛЕННЫЙ НАКОПИТЕЛЬНЫЙ МЕТОД ВРАЩЕНИЯ (без сбросов)
+            let sectorAngle = 60;
+            let stopAngle = 360 - (targetSectorIndex * sectorAngle + 30);
+            
+            // Наращиваем угол от текущего положения вперед на 5 полных кругов + угол нужного сектора
+            currentWheelRotation = Math.ceil(currentWheelRotation / 360) * 360 + (5 * 360) + stopAngle;
+
+            const wheelCircle = document.getElementById("wheel-circle");
+            wheelCircle.style.transform = `rotate(${currentWheelRotation}deg)`;
+
+            // Треск вращения колеса
+            let currentRotationTrack = 0;
+            let tickInterval = setInterval(() => {
+                currentRotationTrack += 18;
+                if(currentRotationTrack < (5 * 360 + stopAngle)) { playSoundTick(); }
+                else { clearInterval(tickInterval); }
+            }, 50);
+
+            // Финал анимации (4 секунды)
+            setTimeout(() => {
+                clearInterval(tickInterval);
+                isSpinning = false;
+                
+                const reward = wheelSectors[targetSectorIndex];
+                if (!isVip) db.coins += reward.value;
+                saveGame();
+                updateCoinUI();
+                updateWheelButtonState();
+
+                playSoundVictory();
+                document.getElementById("wheel-status").innerHTML = `🎉 Отличный улов!<br>Вы выиграли <span style="color:#FF007F; font-weight:800">${reward.value} ${reward.word}</span>`;
+            }, 4000);
+        });
+
+        // ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ
         function switchView(view) {
+            playSoundClick();
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             
-            if(view === 'generator') {
-                document.querySelector('[onclick="switchView(\'generator\')"]').classList.add('active');
-                document.getElementById('view-generator').classList.add('active');
-                setTimeout(() => { if(map) map.invalidateSize(); }, 50); 
-            } else {
-                document.querySelector('[onclick="switchView(\'shop\')"]').classList.add('active');
-                document.getElementById('view-shop').classList.add('active');
-                renderShop();
-            }
+            document.getElementById(`tab-link-${view}`).classList.add('active');
+            document.getElementById(`view-${view}`).classList.add('active');
+            
+            if(view === 'generator') { setTimeout(() => { if(map) map.invalidateSize(); }, 50); }
+            if(view === 'shop') { renderShop(); }
+            if(view === 'wheel') { updateWheelButtonState(); }
         }
 
         function switchSubTab(type) {
+            playSoundClick();
             currentShopTab = type;
             document.getElementById('subtab-char').classList.remove('active');
             document.getElementById('subtab-map').classList.remove('active');
-            if(type === 'char') document.getElementById('subtab-char').classList.add('active');
-            else document.getElementById('subtab-map').classList.add('active');
+            document.getElementById(`subtab-${type}`).classList.add('active');
             renderShop();
         }
 
-        function calculateEnergyCost(radius) {
-            return Math.floor(radius / 100) + 5;
-        }
-
-        function updateEnergyUI() {
-            const energyText = document.getElementById("energy-text");
-            const energyBar = document.getElementById("energy-bar");
-            const btnGenerate = document.getElementById("btn-generate");
-
-            energyText.textContent = `${currentEnergy} / ${maxEnergy} ⚡`;
-            energyBar.style.width = `${currentEnergy}%`;
-
-            btnGenerate.textContent = `Сгенерировать точку (⚡ ${currentCost})`;
-            btnGenerate.disabled = currentEnergy < currentCost;
-        }
-
-        function startEnergyRegen() {
-            setInterval(() => {
-                if (currentEnergy < maxEnergy) { currentEnergy++; updateEnergyUI(); }
-            }, 2000);
-        }
+        function calculateEnergyCost(radius) { return Math.floor(radius / 100) + 5; }
 
         function setupControls() {
             const slider = document.getElementById("radius-slider");
@@ -756,7 +1024,6 @@
 
             updateFill(slider);
             currentCost = calculateEnergyCost(currentRadius);
-            updateEnergyUI();
 
             slider.addEventListener("input", (e) => {
                 currentRadius = parseInt(e.target.value);
@@ -768,6 +1035,7 @@
             });
 
             map.on('click', (e) => {
+                playSoundClick();
                 centerCoords = [e.latlng.lat, e.latlng.lng];
                 centerMarker.setLatLng(e.latlng);
                 searchCircle.setLatLng(e.latlng);
@@ -779,10 +1047,7 @@
         function getRandomPointInCircle(lat, lng, radiusMeters) {
             const r = (radiusMeters / 111320) * Math.sqrt(Math.random());
             const theta = Math.random() * 2 * Math.PI;
-            return {
-                lat: lat + r * Math.cos(theta),
-                lng: lng + r * Math.sin(theta) / Math.cos(lat * Math.PI / 180)
-            };
+            return { lat: lat + r * Math.cos(theta), lng: lng + r * Math.sin(theta) / Math.cos(lat * Math.PI / 180) };
         }
 
         async function checkPointSafety(lat, lng) {
@@ -802,7 +1067,8 @@
         }
 
         async function generateValidPoint() {
-            if (currentEnergy < currentCost) return;
+            if (db.energy < currentCost) return;
+            playSoundClick();
             const statusBox = document.getElementById("status-text");
             statusBox.innerHTML = "⏳ Сканируем карту на наличие преград...";
             
@@ -814,12 +1080,16 @@
             }
 
             if (validPoint) {
-                currentEnergy -= currentCost; updateEnergyUI();
+                db.energy -= currentCost;
+                if(db.energy < maxEnergy && db.nextEnergyTime === 0) db.nextEnergyTime = Date.now() + REGEN_INTERVAL;
+                saveGame(); updateEnergyUI(); updateWheelButtonState();
+                
                 if (targetMarker) map.removeLayer(targetMarker);
                 targetMarker = L.marker([validPoint.lat, validPoint.lng], {
                     icon: L.divIcon({ className: 'target-glow-marker', iconSize: [14, 14] })
                 }).addTo(map);
                 map.panTo([validPoint.lat, validPoint.lng]);
+                playSoundCoin();
                 statusBox.innerHTML = `🎯 Точка создана!<br>Координаты: ${validPoint.lat.toFixed(5)}, ${validPoint.lng.toFixed(5)}`;
             } else {
                 statusBox.innerHTML = "❌ Ошибка подбора локации. Смените позицию.";
