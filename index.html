@@ -3,12 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GeoRandomizer - Professional Edition</title>
+    <title>GeoRandomizer - Creator Edition</title>
     
-    <!-- Подключение Telegram WebApp SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <!-- Подключение Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
@@ -22,8 +18,6 @@
             --accent-black: #000000;
             --text-main: #ffffff;
             --text-muted: #999999;
-            --admin-color: #ff3b30;
-            --case-gold: #ffb300;
         }
 
         * {
@@ -75,7 +69,6 @@
             z-index: 1;
         }
 
-        /* ВЕРХНИЙ HUD */
         .top-hud {
             position: absolute;
             top: 12px;
@@ -117,8 +110,6 @@
             justify-content: center;
             font-weight: 800;
             font-size: 16px;
-            cursor: pointer;
-            user-select: none;
         }
 
         .user-name {
@@ -127,21 +118,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-        }
-
-        /* Радужный перелив для VIP */
-        @keyframes rainbow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .rainbow-text {
-            background: linear-gradient(to right, #ff3b30, #ff9500, #ffcc00, #4cd964, #5ac8fa, #5856d6, #ff2d55);
-            background-size: 400% 400%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: rainbow 5s ease infinite;
-            font-weight: 800;
         }
 
         .lvl-badge {
@@ -154,92 +130,19 @@
             text-transform: uppercase;
         }
 
-        .right-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
         .wallet-selector {
             background: var(--card-inner);
             border: 1px solid var(--border-glow);
             padding: 6px 10px;
             border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             font-size: 11px;
             font-weight: 600;
-        }
-
-        .admin-toggle-btn {
-            background: var(--admin-color);
-            color: #fff;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 700;
             cursor: pointer;
-            display: none;
-            box-shadow: 0 0 10px rgba(255, 59, 48, 0.4);
-            text-transform: uppercase;
         }
 
-        /* ПАНЕЛЬ РАЗРАБОТЧИКА */
-        .admin-panel-popup {
-            position: absolute;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            z-index: 2000;
-            background: rgba(20, 20, 20, 0.98);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--admin-color);
-            border-radius: 18px;
-            padding: 14px;
-            display: none;
-            flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-        }
-
-        .admin-panel-title {
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--admin-color);
-            text-transform: uppercase;
-        }
-
-        .admin-sub-section {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 10px;
-            margin-top: 4px;
-        }
-
-        .admin-input {
-            width: 100%;
-            background: #111;
-            border: 1px solid #333;
-            color: #fff;
-            padding: 8px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            outline: none;
-            margin-bottom: 6px;
-        }
-        .admin-input:focus { border-color: #666; }
-
-        .admin-mini-btn {
-            padding: 6px 12px;
-            font-size: 11px;
-            font-weight: 700;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        /* НИЖНИЙ HUD */
         .bottom-hud {
             position: absolute;
             bottom: 0;
@@ -284,6 +187,7 @@
             font-size: 9px;
             color: var(--text-muted);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .crypto-card .value {
@@ -322,6 +226,7 @@
             height: 18px;
             border-radius: 50%;
             background: var(--accent-white);
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
             cursor: pointer;
         }
 
@@ -336,6 +241,7 @@
             font-weight: 700;
             letter-spacing: 1px;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
             text-transform: uppercase;
             transition: all 0.2s ease;
         }
@@ -344,20 +250,8 @@
             background: #111;
             border-color: #222;
             color: #555;
-            cursor: not-allowed;
             box-shadow: none;
-        }
-
-        .arrive-btn {
-            background: linear-gradient(180deg, #555 0%, #222 100%);
-            border-color: #444;
-            margin-top: 8px;
-            display: none;
-        }
-        .arrive-btn.unlocked {
-            background: linear-gradient(180deg, #30d158 0%, #1c7c32 100%) !important;
-            border-color: #30d158 !important;
-            color: #fff !important;
+            cursor: not-allowed;
         }
 
         .energy-bar-row {
@@ -373,6 +267,17 @@
             align-items: center;
             gap: 6px;
             font-weight: 700;
+            color: var(--accent-white);
+        }
+
+        .boost-link {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .footer-tabs {
@@ -400,84 +305,12 @@
             font-weight: 700;
         }
 
-        .radar-pulse { animation: cyberPulse 0.8s infinite alternate; }
+        .radar-pulse {
+            animation: cyberPulse 0.8s infinite alternate;
+        }
         @keyframes cyberPulse {
             from { border-color: rgba(255,255,255,0.1); }
             to { border-color: rgba(255, 255, 255, 0.6); }
-        }
-
-        /* ЭКРАН КЕЙСА */
-        .case-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.94); z-index: 5000;
-            display: none; align-items: center; justify-content: center;
-            flex-direction: column; padding: 20px; backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-
-        .case-box {
-            width: 150px; height: 150px;
-            background: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
-            border: 2px solid var(--case-gold); border-radius: 24px;
-            display: flex; align-items: center; justify-content: center; font-size: 70px;
-            box-shadow: 0 0 30px rgba(255, 179, 0, 0.25); cursor: pointer;
-            transform: translateY(-100vh);
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .case-box.dropped { transform: translateY(0); }
-        .case-box.opened { animation: caseExplode 0.5s ease forwards; }
-
-        @keyframes caseExplode {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.15); filter: brightness(1.8); box-shadow: 0 0 40px #fff; }
-            100% { transform: scale(0); opacity: 0; display: none; }
-        }
-
-        .case-title {
-            font-size: 15px; font-weight: 800; letter-spacing: 0.5px;
-            text-transform: uppercase; margin-top: 24px; color: #fff;
-            text-align: center; max-width: 280px; line-height: 1.4;
-        }
-
-        /* РУЛЕТКА */
-        .roulette-container {
-            width: 100%; height: 120px; background: #0a0a0a;
-            border-top: 2px solid #222; border-bottom: 2px solid #222;
-            position: relative; overflow: hidden; display: none; margin-top: 20px;
-        }
-
-        .roulette-marker {
-            position: absolute; left: 50%; top: 0; transform: translateX(-50%);
-            width: 4px; height: 100%; background: #ff3b30; z-index: 10; box-shadow: 0 0 8px #ff3b30;
-        }
-
-        .roulette-track { display: flex; height: 100%; position: absolute; left: 0; top: 0; will-change: transform; }
-        .roulette-item {
-            width: 90px; height: 100%; flex-shrink: 0; border-right: 2px solid #141414;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 17px; position: relative;
-        }
-
-        .rare-blue { background: linear-gradient(to top, #4b69ff 0%, #111 80%); border-bottom: 4px solid #4b69ff; }
-        .rare-purple { background: linear-gradient(to top, #8847ff 0%, #111 80%); border-bottom: 4px solid #8847ff; }
-        .rare-pink { background: linear-gradient(to top, #d32ce6 0%, #111 80%); border-bottom: 4px solid #d32ce6; }
-        .rare-red { background: linear-gradient(to top, #eb4b4b 0%, #111 80%); border-bottom: 4px solid #eb4b4b; }
-        .rare-gold { background: linear-gradient(to top, #caab05 0%, #111 80%); border-bottom: 4px solid #caab05; }
-
-        .item-subtext { font-size: 9px; color: #aaa; text-transform: uppercase; margin-top: 4px; font-weight: 600; }
-
-        .win-screen { display: none; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease; }
-        .win-glow { font-size: 60px; text-shadow: 0 0 25px var(--case-gold); animation: pulseGlow 1.2s infinite alternate; }
-
-        @keyframes pulseGlow { from { transform: scale(1); } to { transform: scale(1.06); } }
-
-        #historyList, .friends-list { max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .list-item {
-            display: flex; align-items: center; justify-content: space-between;
-            background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
-            padding: 10px 12px; border-radius: 12px; font-size: 12px;
         }
     </style>
 </head>
@@ -486,134 +319,56 @@
     <div class="app-container">
         <div id="map"></div>
 
-        <!-- ЛАБОРАТОРИЯ СОЗДАТЕЛЯ (Только для @kirushapross) -->
-        <div class="admin-panel-popup" id="adminPanel">
-            <div class="admin-panel-title">🛠️ Лаборатория создателя</div>
-            <button class="action-btn" id="adminTeleportBtn" style="background: #ff9500; font-size: 11px; padding: 10px;">
-                📍 Симулировать прибытие к цели (Тест 30м)
-            </button>
-            
-            <!-- Секция поиска и редактирования игроков -->
-            <div class="admin-sub-section">
-                <div style="font-size: 11px; font-weight: 800; margin-bottom: 6px; color: #aaa;">УПРАВЛЕНИЕ ИГРОКАМИ 👥</div>
-                <input type="text" id="playerSearchTag" class="admin-input" placeholder="Введите тег, например @alex_ton">
-                <button class="action-btn" id="searchPlayerBtn" style="padding: 8px; font-size: 11px; background: #fff; color: #000;">Найти профиль</button>
-                
-                <!-- Результаты поиска и карточка действий -->
-                <div id="searchProfileCard" style="display: none; margin-top: 10px; background: rgba(255,255,255,0.06); padding: 10px; border-radius: 10px; border: 1px dashed #444;">
-                    <div id="cardTargetName" style="font-weight: 700; font-size: 13px; color: #fff; margin-bottom: 2px;">-</div>
-                    <div id="cardTargetStats" style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Категория: Игрок | Лимит: 200</div>
-                    
-                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
-                        <button class="admin-mini-btn" id="cardGiveVip" style="background: #30d158; color: #fff;">Выдать VIP</button>
-                        <button class="admin-mini-btn" id="cardDemote" style="background: #ff3b30; color: #fff;">Понизить</button>
-                    </div>
-                    
-                    <div style="display: flex; gap: 6px; align-items: center;">
-                        <input type="number" id="cardEnergyAddValue" class="admin-input" placeholder="+100" style="margin-bottom:0; flex: 1; padding: 6px;">
-                        <button class="admin-mini-btn" id="cardAddEnergyBtn" style="background: var(--case-gold); color: #000; height: 32px; flex: 2;">Зарядить (+сверх лимита)</button>
-                    </div>
-                </div>
-            </div>
-
-            <button class="action-btn" id="adminResetAll" style="background: #222; border-color:#333; font-size: 11px; padding: 8px; margin-top: 5px;">
-                🗑️ Полный сброс приложения
-            </button>
-        </div>
-
-        <!-- ВЕРХНИЙ HUD -->
         <div class="top-hud">
             <div class="profile-row">
                 <div class="user-meta">
-                    <div class="avatar-frame" id="userAvatar">?</div>
+                    <div class="avatar-frame" id="userAvatar">K</div>
                     <div>
-                        <!-- Значения по умолчанию изменены на рядового игрока -->
-                        <div class="user-name" id="userName">Загрузка...</div>
-                        <div style="font-size: 11px; color: var(--text-muted);" id="rankLabel">Ранг: Игрок</div>
+                        <div class="user-name" id="displayUsername">@kirushapross <span class="lvl-badge" id="roleBadge">Creator</span></div>
+                        <div style="font-size: 11px; color: var(--text-muted);" id="roleText">Ранг: Создатель</div>
                     </div>
                 </div>
-                <div class="right-controls">
-                    <div class="wallet-selector">💎 GrandTon</div>
-                    <button class="admin-toggle-btn" id="adminToggle">🛠️ Тест</button>
+                <div class="wallet-selector">
+                    <span>💎 GrandTon</span>
+                    <span style="font-size: 10px; color: var(--text-muted);">▼</span>
                 </div>
             </div>
         </div>
 
-        <!-- CS2 КЕЙС ОВЕРЛЕЙ -->
-        <div class="case-overlay" id="caseOverlay">
-            <div id="caseOpeningStage" style="display: flex; flex-direction: column; align-items: center;">
-                <div class="case-box" id="caseBox">📦</div>
-                <div class="case-title" id="caseStatusTitle">Вы дошли до секретной зоны! Нажмите на кейс, чтобы открыть его</div>
-            </div>
-
-            <div class="roulette-container" id="rouletteContainer">
-                <div class="roulette-marker"></div>
-                <div class="roulette-track" id="rouletteTrack"></div>
-            </div>
-
-            <div class="win-screen" id="winScreen">
-                <div class="win-glow">⚡</div>
-                <h2 style="font-size: 24px; font-weight: 800; margin: 15px 0 4px 0;" id="winAmountText">+0 ⚡</h2>
-                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Энергия успешно сохранена в хранилище</p>
-                <button class="action-btn" id="claimRewardBtn" style="width: 160px;">Забрать</button>
-            </div>
-        </div>
-
-        <!-- НИЖНИЙ HUD -->
         <div class="bottom-hud">
-            <div id="tab-main" class="tab-panel">
-                <div class="main-panel" id="hudPanel">
-                    <div class="crypto-grid">
-                        <div class="crypto-card">
-                            <span class="title">Шаг / Тап</span>
-                            <span class="value">+1.5 КМ</span>
-                        </div>
-                        <div class="crypto-card">
-                            <span class="title">Дистанция</span>
-                            <span class="value" id="hudDistance">0.0 км</span>
-                        </div>
-                        <div class="crypto-card">
-                            <span class="title">Время</span>
-                            <span class="value" id="hudTime">0 мин</span>
-                        </div>
+            <div class="main-panel" id="hudPanel">
+                <div class="crypto-grid">
+                    <div class="crypto-card">
+                        <span class="title">Шаг / Тап</span>
+                        <span class="value">+1.5 КМ</span>
                     </div>
-
-                    <div class="slider-wrapper">
-                        <div class="slider-info">
-                            <span>Радиус сканирования</span>
-                            <span id="radiusLabel" style="color: var(--accent-white); font-weight: 700;">3.0 км</span>
-                        </div>
-                        <input type="range" id="radiusSlider" class="cyber-slider" min="500" max="5000" step="100" value="3000">
+                    <div class="crypto-card">
+                        <span class="title">Дистанция</span>
+                        <span class="value" id="hudDistance">0.0 км</span>
+                    </div>
+                    <div class="crypto-card">
+                        <span class="title">Время</span>
+                        <span class="value" id="hudTime">0 мин</span>
                     </div>
                 </div>
-                
-                <button class="action-btn" id="generateBtn" style="margin-top: 10px;" disabled>Ожидание GPS 📍</button>
-                <button class="action-btn arrive-btn" id="arriveBtn">🏁 Расчет дистанции...</button>
-            </div>
 
-            <div id="tab-friends" class="tab-panel" style="display: none;">
-                <div class="main-panel">
-                    <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px;">Команда</div>
-                    <div class="friends-list">
-                        <div class="list-item"><span>@alex_ton (14.2 км)</span><span style="color:#30d158; font-weight:700;">В сети</span></div>
-                        <div class="list-item"><span>@crypto_mario (8.5 км)</span><span style="color:var(--text-muted);">Оффлайн</span></div>
+                <div class="slider-wrapper">
+                    <div class="slider-info">
+                        <span>Радиус сканирования</span>
+                        <span id="radiusLabel" style="color: var(--accent-white); font-weight: 700;">3.0 км</span>
                     </div>
+                    <input type="range" id="radiusSlider" class="cyber-slider" min="500" max="5000" step="100" value="3000">
                 </div>
             </div>
 
-            <div id="tab-history" class="tab-panel" style="display: none;">
-                <div class="main-panel">
-                    <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px;">Выполненные контракты</div>
-                    <div id="historyList"></div>
-                </div>
-            </div>
+            <button class="action-btn" id="generateBtn" disabled>Укажите точку старта</button>
 
             <div class="energy-bar-row">
                 <div class="energy-info">
                     <span>⚡</span>
-                    <span id="energyText">200 / 200</span>
+                    <span id="energyValue">1000 / 1000</span>
                 </div>
-                <div style="color: var(--text-muted); font-weight:600;">🚀 Буст</div>
+                <div class="boost-link">🚀 Буст</div>
             </div>
 
             <div class="footer-tabs">
@@ -626,6 +381,16 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // === АДРЕС СЕРВЕРА RENDER ===
+        // Замени строчку ниже на адрес, который выдаст тебе Render после деплоя!
+        const SERVER_URL = "https://geo-walk-app.onrender.com"; 
+
+        // Игровые переменные профиля
+        let myUsername = "@kirushapross";
+        let myRole = "Creator";
+        let currentEnergy = 1000;
+        let maxEnergy = 1000;
+
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
 
@@ -643,15 +408,6 @@
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
                 osc.connect(gain); gain.connect(audioCtx.destination);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.04);
-            },
-            tick() {
-                initAudio();
-                const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(130, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.015);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.015);
             },
             success() {
                 initAudio();
@@ -674,95 +430,63 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
         let startMarker = null, targetMarker = null, radiusCircle = null, routeCore = null, routeGlow = null, selectedLocation = null;
-        let userLocation = null, liveLocationMarker = null, initialLocationSet = false;
         let currentRadius = 3000;
-        let isGeoEnabled = false;
-
-        // ДИНАМИЧЕСКИЕ НАСТРОЙКИ СЕССИИ ТЕКУЩЕГО ИГРОКА
-        let myUsername = "Игрок";
-        let myRole = localStorage.getItem('gr_my_role') || "User"; // "User", "VIP", "Admin"
-        let maxEnergy = localStorage.getItem('gr_max_energy') ? parseInt(localStorage.getItem('gr_max_energy')) : 200;
-        let currentEnergy = localStorage.getItem('gr_energy') !== null ? parseInt(localStorage.getItem('gr_energy')) : 200;
-        
-        let routeHistory = JSON.parse(localStorage.getItem('gr_history')) || [];
-        let activeRouteState = JSON.parse(localStorage.getItem('gr_active_route')) || null;
 
         const generateBtn = document.getElementById('generateBtn');
-        const arriveBtn = document.getElementById('arriveBtn');
         const radiusSlider = document.getElementById('radiusSlider');
         const radiusLabel = document.getElementById('radiusLabel');
         const hudDistance = document.getElementById('hudDistance');
         const hudTime = document.getElementById('hudTime');
         const hudPanel = document.getElementById('hudPanel');
-        const energyText = document.getElementById('energyText');
 
-        function getEnergyCost(meters) {
-            let km = meters / 1000;
-            if (km <= 0.5) return 1;
-            if (km <= 1.2) return 2;
-            return Math.ceil(km / 0.5);
-        }
-
-        function saveUserData() {
-            localStorage.setItem('gr_energy', currentEnergy);
-            localStorage.setItem('gr_max_energy', maxEnergy);
-            localStorage.setItem('gr_my_role', myRole);
-            localStorage.setItem('gr_history', JSON.stringify(routeHistory));
-            if (activeRouteState) {
-                localStorage.setItem('gr_active_route', JSON.stringify(activeRouteState));
-            } else {
-                localStorage.removeItem('gr_active_route');
-            }
-        }
-
-        function updateEnergyUI() {
-            energyText.innerText = `${currentEnergy} / ${maxEnergy}`;
-            saveUserData();
-            updateButtonLabel();
-        }
-
-        function updateButtonLabel() {
-            if (!isGeoEnabled && !activeRouteState) {
-                generateBtn.disabled = true;
-                generateBtn.innerText = "ВКЛЮЧИТЕ GPS 📍";
-                return;
-            }
-            const cost = getEnergyCost(currentRadius);
-            generateBtn.innerText = `СГЕНЕРИРОВАТЬ МАРШРУТ (⚡ ${cost})`;
-        }
-
-        // ОБНОВЛЕНИЕ СТИЛЕЙ И РОЛЕЙ В ИНТЕРФЕЙСЕ
-        function applyRoleVisuals() {
-            const nameContainer = document.getElementById('userName');
-            const badge = document.getElementById('roleBadge');
-            const rankLabel = document.getElementById('rankLabel');
-            const toggleAdmin = document.getElementById('adminToggle');
-
-            nameContainer.className = "user-name"; // очистка
+        // Функции обновления визуальной части профиля
+        function updateProfileUI() {
+            document.getElementById('displayUsername').innerHTML = `${myUsername} <span class="lvl-badge" id="roleBadge">${myRole}</span>`;
+            document.getElementById('roleText').innerText = `Ранг: ${myRole}`;
+            document.getElementById('energyValue').innerText = `${currentEnergy} / ${maxEnergy}`;
             
-            if (myRole === "Admin") {
-                nameContainer.innerHTML = `${myUsername} <span class="lvl-badge" id="roleBadge" style="background:#ff3b30; color:#fff;">Создатель</span>`;
-                rankLabel.innerText = "Ранг: Разработчик";
-                toggleAdmin.style.display = "block";
-            } else if (myRole === "VIP") {
-                nameContainer.innerHTML = `<span class="rainbow-text">${myUsername}</span> <span class="lvl-badge" id="roleBadge" style="background:#ffb300; color:#000;">VIP</span>`;
-                rankLabel.innerText = "Ранг: Элита";
-                toggleAdmin.style.display = "none";
-                maxEnergy = 400;
-            } else {
-                nameContainer.innerHTML = `${myUsername} <span class="lvl-badge" id="roleBadge" style="background:#fff; color:#000;">Игрок</span>`;
-                rankLabel.innerText = "Ранг: Новичок";
-                toggleAdmin.style.display = "none";
-                if(maxEnergy > 200 && maxEnergy === 400) maxEnergy = 200; 
+            if (myUsername && myUsername.length > 1) {
+                document.getElementById('userAvatar').innerText = myUsername.charAt(1).toUpperCase();
             }
-            updateEnergyUI();
+        }
+
+        // Синхронизация: Загрузка профиля с сервера Render
+        async function loadProfileFromServer() {
+            try {
+                const response = await fetch(`${SERVER_URL}/get_player?username=${encodeURIComponent(myUsername)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    myRole = data.role;
+                    maxEnergy = data.maxEnergy;
+                    currentEnergy = data.energy;
+                    updateProfileUI();
+                }
+            } catch (e) {
+                console.error("Ошибка подключения к серверу Render при загрузке:", e);
+            }
+        }
+
+        // Синхронизация: Сохранение данных на сервер Render
+        async function saveProfileToServer() {
+            try {
+                await fetch(`${SERVER_URL}/update_player`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: myUsername,
+                        role: myRole,
+                        energy: currentEnergy,
+                        maxEnergy: maxEnergy
+                    })
+                });
+            } catch (e) {
+                console.error("Ошибка сохранения на сервере Render:", e);
+            }
         }
 
         radiusSlider.addEventListener('input', function(e) {
-            if (activeRouteState) return;
             currentRadius = parseInt(e.target.value);
             radiusLabel.innerText = (currentRadius / 1000).toFixed(1) + ' км';
-            updateButtonLabel();
             if (radiusCircle && selectedLocation) {
                 radiusCircle.setRadius(currentRadius);
                 map.fitBounds(radiusCircle.getBounds(), { animate: true, duration: 0.4 });
@@ -770,7 +494,6 @@
         });
 
         map.on('click', function(e) {
-            if (activeRouteState || !isGeoEnabled) return;
             haptics.tap();
             selectedLocation = e.latlng;
             resetLayoutAndDrawStart();
@@ -794,7 +517,7 @@
 
             map.fitBounds(radiusCircle.getBounds(), { animate: true, duration: 0.4 });
             generateBtn.disabled = false;
-            updateButtonLabel();
+            generateBtn.innerText = "СГЕНЕРИРОВАТЬ МАРШРУТ";
         }
 
         function getRandomPointInRadius(center, radiusInMeters) {
@@ -806,11 +529,11 @@
         }
 
         generateBtn.addEventListener('click', async function() {
-            if (!selectedLocation || !isGeoEnabled) return;
-            const cost = getEnergyCost(currentRadius);
-
-            if (currentEnergy < cost) {
-                alert("Недостаточно энергии!");
+            if (!selectedLocation) return;
+            
+            // Проверяем энергию перед генерацией
+            if (currentEnergy < 50) {
+                alert("Недостаточно энергии для генерации маршрута! Нужно минимум 50 ⚡");
                 return;
             }
 
@@ -818,10 +541,13 @@
             hudPanel.classList.add('radar-pulse');
             generateBtn.innerText = "ПОИСК ТОЧЕК...";
 
-            let candidate = getRandomPointInRadius(selectedLocation, currentRadius);
-            let routeStart = userLocation ? userLocation : selectedLocation;
+            if (targetMarker) map.removeLayer(targetMarker);
+            if (routeCore) map.removeLayer(routeCore);
+            if (routeGlow) map.removeLayer(routeGlow);
 
-            const routingUrl = `https://router.project-osrm.org/route/v1/walking/${routeStart.lng},${routeStart.lat};${candidate.lng},${candidate.lat}?overview=full&geometries=geojson`;
+            let candidate = getRandomPointInRadius(selectedLocation, currentRadius);
+
+            const routingUrl = `https://router.project-osrm.org/route/v1/walking/${selectedLocation.lng},${selectedLocation.lat};${candidate.lng},${candidate.lat}?overview=full&geometries=geojson`;
             
             let routeData = null;
             try {
@@ -830,471 +556,72 @@
             } catch (e) { console.error(e); }
 
             hudPanel.classList.remove('radar-pulse');
+            generateBtn.disabled = false;
+            generateBtn.innerText = "СГЕНЕРИРОВАТЬ МАРШРУТ";
             haptics.success();
 
-            currentEnergy -= cost;
-            
-            activeRouteState = {
-                target: candidate,
-                start: { lat: routeStart.lat, lng: routeStart.lng },
-                spentEnergy: cost || 2,
-                geometry: routeData && routeData.routes ? routeData.routes[0].geometry : null,
-                distanceText: routeData && routeData.routes ? (routeData.routes[0].distance / 1000).toFixed(1) + ' км' : (map.distance(routeStart, candidate)/1000).toFixed(1) + ' км',
-                durationText: routeData && routeData.routes ? Math.round(routeData.routes[0].duration / 60) + ' мин' : Math.round((map.distance(routeStart, candidate)/4500)*60) + ' мин'
-            };
-            
-            saveUserData();
-            updateEnergyUI();
-            renderActiveRoute();
-        });
-
-        function renderActiveRoute() {
-            if (!activeRouteState) return;
-
-            const tLatLng = [activeRouteState.target.lat, activeRouteState.target.lng];
-            const sLatLng = [activeRouteState.start.lat, activeRouteState.start.lng];
-
-            if (startMarker) map.removeLayer(startMarker);
-            if (targetMarker) map.removeLayer(targetMarker);
-            if (radiusCircle) map.removeLayer(radiusCircle);
-            if (routeCore) map.removeLayer(routeCore);
-            if (routeGlow) map.removeLayer(routeGlow);
-
-            startMarker = L.circleMarker(sLatLng, {
-                radius: 7, fillColor: '#000', fillOpacity: 1, color: '#fff', weight: 2
-            }).addTo(map);
-
-            targetMarker = L.circleMarker(tLatLng, {
+            targetMarker = L.circleMarker([candidate.lat, candidate.lng], {
                 radius: 9, fillColor: '#fff', fillOpacity: 1, color: '#000', weight: 3
             }).addTo(map);
 
-            if (activeRouteState.geometry) {
-                routeGlow = L.geoJSON(activeRouteState.geometry, {
-                    style: { color: '#000000', weight: 8, opacity: 0.6 }
+            if (routeData && routeData.routes && routeData.routes.length > 0) {
+                const route = routeData.routes[0];
+                
+                routeGlow = L.geoJSON(route.geometry, {
+                    style: { color: '#000000', weight: 8, opacity: 0.6, lineCap: 'round', lineJoin: 'round' }
                 }).addTo(map);
-                routeCore = L.geoJSON(activeRouteState.geometry, {
-                    style: { color: '#ffffff', weight: 3, opacity: 1 }
+
+                routeCore = L.geoJSON(route.geometry, {
+                    style: { color: '#ffffff', weight: 3, opacity: 1, lineCap: 'round', lineJoin: 'round' }
                 }).addTo(map);
+
+                hudDistance.innerText = (route.distance / 1000).toFixed(1) + ' км';
+                hudTime.innerText = Math.round(route.duration / 60) + ' мин';
             } else {
-                routeCore = L.polyline([sLatLng, tLatLng], {
-                    color: '#000', weight: 4, dashArray: '8, 8'
+                routeCore = L.polyline([selectedLocation, [candidate.lat, candidate.lng]], {
+                    color: '#000', weight: 4, dashArray: '8, 8', opacity: 0.8
                 }).addTo(map);
+                
+                const d = map.distance(selectedLocation, [candidate.lat, candidate.lng]);
+                hudDistance.innerText = (d / 1000).toFixed(1) + ' км';
+                hudTime.innerText = Math.round((d / 4500) * 60) + ' мин';
             }
 
-            hudDistance.innerText = activeRouteState.distanceText;
-            hudTime.innerText = activeRouteState.durationText;
+            // Уменьшаем энергию за генерацию и отправляем в облако Render
+            currentEnergy = Math.max(0, currentEnergy - 50);
+            updateProfileUI();
+            await saveProfileToServer();
 
-            generateBtn.style.display = 'none';
-            arriveBtn.style.display = 'block';
+            const boundsGroup = new L.featureGroup([startMarker, targetMarker]);
+            map.fitBounds(boundsGroup.getBounds().pad(0.35), { animate: true, duration: 0.5 });
+        });
 
-            if (userLocation) {
-                checkGeofenceDistance();
-            } else {
-                arriveBtn.disabled = true;
-                arriveBtn.className = "action-btn arrive-btn";
-                arriveBtn.innerText = "⏳ Ожидание сигнала GPS...";
+        // Инициализация при запуске игры
+        async function initApp() {
+            const tg = window.Telegram ? window.Telegram.WebApp : null;
+            if (tg) {
+                tg.ready(); 
+                tg.expand();
+                const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
+                if (user && user.username) {
+                    myUsername = '@' + user.username;
+                }
             }
 
-            const bounds = L.latLngBounds([sLatLng, tLatLng]);
-            map.fitBounds(bounds.pad(0.35), { animate: true, duration: 0.5 });
+            // Загружаем актуальные данные из Python-сервера Render
+            await loadProfileFromServer();
+
+            // Запускаем геолокацию устройства
+            map.locate({setView: true, maxZoom: 14});
         }
-
-        function checkGeofenceDistance() {
-            if (!activeRouteState || !userLocation) return;
-            
-            const targetLatLng = L.latLng(activeRouteState.target.lat, activeRouteState.target.lng);
-            const dist = map.distance(userLocation, targetLatLng);
-
-            if (dist <= 30) {
-                arriveBtn.disabled = false;
-                arriveBtn.classList.add('unlocked');
-                arriveBtn.innerText = "🏁 Я НА МЕСТЕ (ОТКРЫТЬ КЕЙС)";
-            } else {
-                arriveBtn.disabled = true;
-                arriveBtn.classList.remove('unlocked');
-                arriveBtn.innerText = `⏳ ДО ЦЕЛИ: ${Math.round(dist)} м`;
-            }
-        }
-
-        map.locate({setView: false, watch: true, enableHighAccuracy: true});
 
         map.on('locationfound', function(e) {
-            userLocation = e.latlng;
-            isGeoEnabled = true;
-
-            if (liveLocationMarker) liveLocationMarker.setLatLng(userLocation);
-            else {
-                liveLocationMarker = L.circleMarker(userLocation, {
-                    radius: 6, fillColor: '#ffffff', color: '#000', weight: 2.5
-                }).addTo(map);
-            }
-
-            if (!initialLocationSet) {
-                if (!activeRouteState) {
-                    map.setView(userLocation, 14);
-                    selectedLocation = userLocation;
-                    resetLayoutAndDrawStart();
-                }
-                initialLocationSet = true;
-            }
-
-            updateButtonLabel();
-            if (activeRouteState) {
-                checkGeofenceDistance();
-            }
+            selectedLocation = e.latlng;
+            resetLayoutAndDrawStart();
         });
 
-        map.on('locationerror', function(e) {
-            isGeoEnabled = false;
-            updateButtonLabel();
-            if (activeRouteState) {
-                arriveBtn.disabled = true;
-                arriveBtn.classList.remove('unlocked');
-                arriveBtn.innerText = "📍 GPS ОТКЛЮЧЕН (ВКЛЮЧИТЕ ДЛЯ ПРОВЕРКИ)";
-            }
-        });
-
-        // МЕХАНИКА CS2 КЕЙСА
-        const caseOverlay = document.getElementById('caseOverlay');
-        const caseBox = document.getElementById('caseBox');
-        const caseOpeningStage = document.getElementById('caseOpeningStage');
-        const rouletteContainer = document.getElementById('rouletteContainer');
-        const rouletteTrack = document.getElementById('rouletteTrack');
-        const winScreen = document.getElementById('winScreen');
-        const winAmountText = document.getElementById('winAmountText');
-        const claimRewardBtn = document.getElementById('claimRewardBtn');
-
-        let finalRewardAmount = 0;
-
-        arriveBtn.addEventListener('click', () => {
-            if (arriveBtn.disabled) return;
-            triggerCaseReward();
-        });
-
-        function triggerCaseReward() {
-            haptics.success();
-            caseOverlay.style.display = 'flex';
-            caseOpeningStage.style.display = 'flex';
-            rouletteContainer.style.display = 'none';
-            winScreen.style.display = 'none';
-            caseBox.className = "case-box";
-            document.getElementById('caseStatusTitle').innerText = "Вы дошли до секретной зоны! Нажмите на кейс, чтобы открыть его";
-            
-            setTimeout(() => {
-                caseBox.classList.add('dropped');
-            }, 60);
-        }
-
-        caseBox.addEventListener('click', () => {
-            haptics.tap();
-            caseBox.classList.add('opened');
-            document.getElementById('caseStatusTitle').innerText = "Распаковка контейнера энергии...";
-            
-            setTimeout(() => {
-                caseOpeningStage.style.display = 'none';
-                startRouletteSpin();
-            }, 500);
-        });
-
-        function startRouletteSpin() {
-            rouletteContainer.style.display = 'block';
-            rouletteTrack.innerHTML = '';
-            rouletteTrack.style.transition = 'none';
-            rouletteTrack.style.transform = 'translateX(0px)';
-
-            let spent = activeRouteState ? activeRouteState.spentEnergy : 2;
-            let minReward = Math.max(1, Math.floor(spent / 2));
-            let maxReward = Math.floor(spent * 2);
-            
-            finalRewardAmount = Math.floor(Math.random() * (maxReward - minReward + 1)) + minReward;
-
-            const totalItems = 32; 
-            const itemWidth = 92;  
-            const targetIdx = 25;  
-
-            const rarities = ['rare-blue', 'rare-purple', 'rare-pink', 'rare-red', 'rare-gold'];
-
-            for (let i = 0; i < totalItems; i++) {
-                let cell = document.createElement('div');
-                let isWinner = (i === targetIdx);
-                
-                let val = isWinner ? finalRewardAmount : Math.floor(Math.random() * (maxReward + 8)) + 1;
-                let rarity = rarities[Math.floor(Math.random() * rarities.length)];
-                
-                if (isWinner) rarity = 'rare-gold';
-
-                cell.className = `roulette-item ${rarity}`;
-                cell.innerHTML = `<div>⚡ ${val}</div><div class="item-subtext">Энергия</div>`;
-                rouletteTrack.appendChild(cell);
-            }
-
-            let containerWidth = rouletteContainer.offsetWidth;
-            let centerOffset = containerWidth / 2;
-            let targetLeftPosition = (targetIdx * itemWidth) + (itemWidth / 2);
-            let randomInnerShift = Math.floor(Math.random() * 50) - 25; 
-            let finalTranslate = -(targetLeftPosition - centerOffset + randomInnerShift);
-
-            let currentX = 0;
-            let interval = setInterval(() => {
-                if (!rouletteTrack) return;
-                let transformMatrix = window.getComputedStyle(rouletteTrack).transform;
-                if (transformMatrix !== 'none') {
-                    let posX = Math.abs(parseFloat(transformMatrix.split(',')[4]));
-                    if (posX - currentX >= itemWidth) {
-                        haptics.tick();
-                        currentX = posX;
-                    }
-                }
-            }, 25);
-
-            setTimeout(() => {
-                rouletteTrack.style.transition = 'transform 4.5s cubic-bezier(0.1, 1, 0.15, 1)';
-                rouletteTrack.style.transform = `translateX(${finalTranslate}px)`;
-            }, 800);
-
-            setTimeout(() => {
-                clearInterval(interval);
-                haptics.success();
-                
-                setTimeout(() => {
-                    rouletteContainer.style.display = 'none';
-                    winScreen.style.display = 'flex';
-                    winAmountText.innerText = `+${finalRewardAmount} ⚡`;
-                }, 800);
-            }, 4700);
-        }
-
-        claimRewardBtn.addEventListener('click', () => {
-            haptics.tap();
-            
-            // Если баланс энергии уже выше лимита благодаря админу, сохраняем его и не режем при получении наград
-            if (currentEnergy < maxEnergy) {
-                currentEnergy = Math.min(maxEnergy, currentEnergy + finalRewardAmount);
-            }
-
-            routeHistory.unshift({
-                timeCreated: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                distance: hudDistance.innerText,
-                duration: hudTime.innerText + ` (+${finalRewardAmount}⚡)`
-            });
-
-            if (targetMarker) map.removeLayer(targetMarker);
-            if (routeCore) map.removeLayer(routeCore);
-            if (routeGlow) map.removeLayer(routeGlow);
-            routeCore = null; routeGlow = null; targetMarker = null;
-
-            hudDistance.innerText = "0.0 км";
-            hudTime.innerText = "0 мин";
-
-            arriveBtn.style.display = 'none';
-            generateBtn.style.display = 'block';
-            generateBtn.disabled = false;
-
-            activeRouteState = null;
-            caseOverlay.style.display = 'none';
-            
-            saveUserData();
-            updateEnergyUI();
-            
-            if (userLocation) {
-                selectedLocation = userLocation;
-                resetLayoutAndDrawStart();
-            }
-        });
-
-        // МОДЕРНИЗИРОВАННАЯ АДМИН-ПАНЕЛЬ С СИСТЕМОЙ ПОИСКА И МОДИФИКАЦИИ ПРОФИЛЕЙ
-        const adminToggle = document.getElementById('adminToggle');
-        const adminPanel = document.getElementById('adminPanel');
-        
-        // Симулируемая база данных пользователей в localStorage для тестирования функций админа
-        let mockUsersDB = JSON.parse(localStorage.getItem('gr_mock_db')) || {};
-
-        adminToggle.addEventListener('click', () => {
-            haptics.tap();
-            adminPanel.style.display = adminPanel.style.display === 'flex' ? 'none' : 'flex';
-        });
-
-        document.getElementById('adminTeleportBtn').addEventListener('click', () => {
-            if (!activeRouteState) {
-                alert("Сначала сгенерируйте маршрут!");
-                return;
-            }
-            haptics.success();
-            userLocation = L.latLng(activeRouteState.target.lat, activeRouteState.target.lng);
-            if (liveLocationMarker) liveLocationMarker.setLatLng(userLocation);
-            checkGeofenceDistance();
-            adminPanel.style.display = 'none';
-        });
-
-        // Поиск профиля по никнейму
-        const searchInput = document.getElementById('playerSearchTag');
-        const searchCard = document.getElementById('searchProfileCard');
-        let currentSearchedUser = null;
-
-        document.getElementById('searchPlayerBtn').addEventListener('click', () => {
-            let rawTag = searchInput.value.trim();
-            if (!rawTag) return alert("Введите корректный никнейм");
-            if (!rawTag.startsWith('@')) rawTag = '@' + rawTag;
-
-            let cleanKey = rawTag.toLowerCase();
-
-            // Если админ ищет самого себя, загружаем его живое состояние
-            if (cleanKey === myUsername.toLowerCase()) {
-                currentSearchedUser = {
-                    username: myUsername,
-                    role: myRole,
-                    energy: currentEnergy,
-                    maxEnergy: maxEnergy,
-                    isSelf: true
-                };
-            } else {
-                // Ищет стороннего игрока в симулируемой локальной БД
-                if (!mockUsersDB[cleanKey]) {
-                    mockUsersDB[cleanKey] = {
-                        username: rawTag,
-                        role: "User",
-                        energy: 150,
-                        maxEnergy: 200,
-                        isSelf: false
-                    };
-                    localStorage.setItem('gr_mock_db', JSON.stringify(mockUsersDB));
-                }
-                currentSearchedUser = mockUsersDB[cleanKey];
-            }
-
-            // Вывод данных в карточку
-            document.getElementById('cardTargetName').innerText = `Игрок: ${currentSearchedUser.username}`;
-            document.getElementById('cardTargetStats').innerText = `Категория: ${currentSearchedUser.role} | Энергия: ${currentSearchedUser.energy}/${currentSearchedUser.maxEnergy}`;
-            searchCard.style.display = "flex";
-        });
-
-        // Действие: Выдать VIP
-        document.getElementById('cardGiveVip').addEventListener('click', () => {
-            if (!currentSearchedUser) return;
-            currentSearchedUser.role = "VIP";
-            currentSearchedUser.maxEnergy = 400;
-            
-            syncAndSaveSearchedUser();
-            alert(`Статус VIP для ${currentSearchedUser.username} успешно активирован!`);
-        });
-
-        // Действие: Понизить до игрока
-        document.getElementById('cardDemote').addEventListener('click', () => {
-            if (!currentSearchedUser) return;
-            currentSearchedUser.role = "User";
-            currentSearchedUser.maxEnergy = 200;
-            if (currentSearchedUser.energy > 200) currentSearchedUser.energy = 200;
-            
-            syncAndSaveSearchedUser();
-            alert(`Игрок ${currentSearchedUser.username} понижен до обычной категории.`);
-        });
-
-        // Действие: Начислить энергию сверх лимита
-        document.getElementById('cardAddEnergyBtn').addEventListener('click', () => {
-            if (!currentSearchedUser) return;
-            let val = parseInt(document.getElementById('cardEnergyAddValue').value);
-            if (isNaN(val) || val <= 0) return alert("Введите положительное число");
-
-            currentSearchedUser.energy += val; // зачисление без Math.min, прямое превышение лимита
-            
-            syncAndSaveSearchedUser();
-            alert(`Начислено +${val} ⚡ игроку ${currentSearchedUser.username} сверх установленного лимита!`);
-        });
-
-        function syncAndSaveSearchedUser() {
-            if (currentSearchedUser.isSelf) {
-                myRole = currentSearchedUser.role;
-                maxEnergy = currentSearchedUser.maxEnergy;
-                currentEnergy = currentSearchedUser.energy;
-                applyRoleVisuals();
-            } else {
-                let cleanKey = currentSearchedUser.username.toLowerCase();
-                mockUsersDB[cleanKey] = currentSearchedUser;
-                localStorage.setItem('gr_mock_db', JSON.stringify(mockUsersDB));
-            }
-            // Обновляем текст в карточке
-            document.getElementById('cardTargetStats').innerText = `Категория: ${currentSearchedUser.role} | Энергия: ${currentSearchedUser.energy}/${currentSearchedUser.maxEnergy}`;
-        }
-
-        document.getElementById('adminResetAll').addEventListener('click', () => {
-            localStorage.clear();
-            location.reload();
-        });
-
-        // ИНИЦИАЛИЗАЦИЯ И ТЕСТИРОВАНИЕ КЛИКАМИ (Пасхалка для локального теста)
-        let devClicks = 0;
-        document.getElementById('userAvatar').addEventListener('click', () => {
-            if (myRole === "Admin") return;
-            devClicks++;
-            if (devClicks === 3) {
-                myUsername = "@kirushapross";
-                myRole = "Admin";
-                applyRoleVisuals();
-                alert("Вход по секретному ключу Создателя выполнен!");
-            }
-        });
-
-        // МЕНЮ ТАБОВ
-        const tabs = document.querySelectorAll('.tab-item');
-        const panels = document.querySelectorAll('.tab-panel');
-        tabs.forEach((tab, idx) => {
-            tab.addEventListener('click', () => {
-                haptics.tap();
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                panels.forEach(p => p.style.display = 'none');
-                if(panels[idx]) panels[idx].style.display = 'block';
-                if(idx === 2) renderHistory();
-            });
-        });
-
-        function renderHistory() {
-            const container = document.getElementById('historyList');
-            if (routeHistory.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:11px; padding:20px 0;">Вылазок нет.</div>`;
-                return;
-            }
-            container.innerHTML = routeHistory.map((h, i) => `
-                <div class="list-item">
-                    <div>
-                        <div style="font-weight:600;">Рандом Контракт #${routeHistory.length - i}</div>
-                        <div style="color:var(--text-muted); font-size:10px;">${h.timeCreated} • Заняло: ${h.duration}</div>
-                    </div>
-                    <div style="font-weight:700;">${h.distance}</div>
-                </div>
-            `).join('');
-        }
-
-        // ИНТЕГРАЦИЯ С TELEGRAM WEBAPP С УЧЕТОМ ТВОИХ ПРАВИЛ РОЛЕЙ
-        const tg = window.Telegram ? window.Telegram.WebApp : null;
-        if (tg) {
-            tg.ready(); tg.expand();
-            const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
-            if (user && user.username) {
-                myUsername = '@' + user.username;
-                if(user.first_name) document.getElementById('userAvatar').innerText = user.first_name.charAt(0).toUpperCase();
-                
-                // Проверка: Админ ТОЛЬКО ты. Если это твой ник — выдаем полные права
-                if (user.username.toLowerCase() === 'kirushapross') {
-                    myRole = "Admin";
-                } else {
-                    // Все остальные пользователи сохраняют свой сохраненный статус (например VIP), но не могут быть админами
-                    if(myRole === "Admin") myRole = "User"; 
-                }
-            } else {
-                // Резервный запуск вне TG client
-                if(myRole === "Admin" && myUsername === "Игрок") myUsername = "@kirushapross";
-            }
-        } else {
-            if(myRole === "Admin" && myUsername === "Игрок") myUsername = "@kirushapross";
-        }
-
-        // Рендерим визуал ролей и восстанавливаем сессию
-        applyRoleVisuals();
-
-        if (activeRouteState) {
-            renderActiveRoute();
-        }
+        // Запуск
+        initApp();
     </script>
 </body>
 </html>
