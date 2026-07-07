@@ -5,47 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geo Walk App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <style>
+        :root {
+            --bg-color: #F4F6FA;
+            --card-bg: #FFFFFF;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --accent-purple: #7F00FF;
+            --accent-blue: #2481CC;
+            --gradient-purple: linear-gradient(135deg, #7F00FF, #FF007F);
+            --gradient-dark: linear-gradient(135deg, #1E1B4B, #312E81);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #1a1a1a);
-            color: var(--tg-theme-text-color, #ffffff);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
+            gap: 16px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* Верхняя панель: Профиль и Версия */
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            min-height: 80vh;
+            background: var(--card-bg);
+            padding: 12px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(36, 24, 99, 0.05);
+            position: relative;
         }
 
-        .profile-card {
-            background-color: var(--tg-theme-secondary-bg-color, #2d2d2d);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            text-align: center;
-            width: 80%;
-            max-width: 350px;
-        }
-
-        .avatar-container {
-            margin-bottom: 15px;
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .avatar {
-            width: 100px;
-            height: 100px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--tg-theme-button-color, #2481cc);
-            background-color: #444;
+            border: 2px solid var(--accent-purple);
+            box-shadow: 0 2px 8px rgba(127, 0, 255, 0.2);
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
         }
 
         .username {
-            font-size: 22px;
-            font-weight: bold;
-            margin: 10px 0 5px 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
         }
 
         /* Анимация переливающегося ника для VIP */
@@ -65,112 +88,352 @@
         }
 
         .status-badge {
-            font-size: 14px;
-            padding: 5px 12px;
-            border-radius: 12px;
-            background-color: rgba(255, 255, 255, 0.1);
-            display: inline-block;
-            margin-top: 5px;
-            color: #aaa;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
         }
 
-        .vip-badge {
-            background: linear-gradient(45deg, #ff007f, #7f00ff);
+        .version-tag {
+            background: var(--gradient-purple);
             color: #fff;
-            font-weight: bold;
-            box-shadow: 0 2px 8px rgba(255, 0, 127, 0.4);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(255, 0, 127, 0.2);
+        }
+
+        /* Контейнер управления */
+        .control-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(36, 24, 99, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .radius-value {
+            color: var(--accent-purple);
+            font-size: 16px;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #E2E8F0;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(127, 0, 255, 0.4);
+            transition: transform 0.1s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(1.2);
+        }
+
+        .btn-primary {
+            background: var(--gradient-dark);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 4px 15px rgba(30, 27, 75, 0.25);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        /* Блок статуса и инспекции */
+        .status-box {
+            background: #F8FAFC;
+            border-left: 4px solid var(--accent-purple);
+            padding: 10px 14px;
+            border-radius: 0 12px 12px 0;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Контейнер для карты с кастомными фильтрами */
+        .map-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(36, 24, 99, 0.04);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 350px;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            flex-grow: 1;
+            z-index: 1;
+            /* Кастомный фильтр для стилизации карты под палитру дашборда */
+            filter: hue-rotate(10deg) saturate(110%) contrast(95%);
+        }
+
+        /* Стилизация маркеров Leaflet под неоновый дизайн */
+        .custom-pulse-icon {
+            background: #FF007F;
+            border: 2px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #FF007F;
         }
     </style>
 </head>
 <body>
 
-    <div class="profile-card">
-        <div class="avatar-container">
+    <div class="header-panel">
+        <div class="profile-container">
             <img id="user-avatar" class="avatar" src="https://ui-avatars.com/api/?name=Guest&background=444&color=fff" alt="Avatar">
+            <div class="profile-info">
+                <span id="user-name" class="username">Гость</span>
+                <span id="user-status" class="status-badge">Браузер</span>
+            </div>
         </div>
-        <div id="user-name" class="username">Загрузка...</div>
-        <div id="user-status" class="status-badge">Определение...</div>
+        <div class="version-tag">v1.1.0</div>
+    </div>
+
+    <div class="control-card">
+        <h3 class="card-title">
+            Генератор прогулки
+            <span id="radius-val" class="radius-value">500 м</span>
+        </h3>
+        
+        <div class="slider-container">
+            <input type="range" id="radius-slider" min="100" max="3000" step="50" value="500">
+        </div>
+
+        <button class="btn-primary" id="btn-generate">Сгенерировать случайную точку</button>
+        
+        <div class="status-box" id="status-text">
+            Кликните на карту или разрешите геопозицию, чтобы выбрать центр зоны.
+        </div>
+    </div>
+
+    <div class="map-card">
+        <div id="map"></div>
     </div>
 
     <script>
+        let map, centerMarker, targetMarker, searchCircle;
+        let centerCoords = [55.7558, 37.6173]; // По умолчанию Москва
+        let currentRadius = 500;
+
         document.addEventListener("DOMContentLoaded", async () => {
+            // Инициализация Telegram Web App
             const tg = window.Telegram.WebApp;
             tg.ready();
-            tg.expand(); // Разворачиваем приложение на весь экран телефона
+            tg.expand();
 
-            // Данные по умолчанию (если зашли через обычный браузер)
-            let userData = {
-                id: null,
-                username: "",
-                first_name: "Гость",
-                photo_url: "https://ui-avatars.com/api/?name=Guest&background=444&color=fff"
-            };
+            setupTelegramProfile(tg);
+            initMap();
+            setupEvents();
+            tryGeolocation();
+        });
 
-            // Проверяем, открыто ли приложение внутри Telegram
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                const tgUser = tg.initDataUnsafe.user;
-                userData.id = tgUser.id;
-                userData.username = tgUser.username || "";
-                userData.first_name = tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "");
-                
-                // Если у пользователя есть аватарка в TG
-                if (tgUser.photo_url) {
-                    userData.photo_url = tgUser.photo_url;
-                } else {
-                    userData.photo_url = `https://ui-avatars.com/api/?name=${encodeURIComponent(tgUser.first_name)}&background=2481cc&color=fff`;
-                }
-            }
-
-            // Сразу выводим базовые данные (чтобы интерфейс не мигал)
+        // Настройка отображения профиля из TG
+        function setupTelegramProfile(tg) {
             const nameElem = document.getElementById("user-name");
             const avatarElem = document.getElementById("user-avatar");
             const statusElem = document.getElementById("user-status");
 
-            nameElem.textContent = userData.first_name;
-            avatarElem.src = userData.photo_url;
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+                nameElem.textContent = user.first_name;
+                
+                if (user.photo_url) {
+                    avatarElem.src = user.photo_url;
+                } else {
+                    avatarElem.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name)}&background=7F00FF&color=fff`;
+                }
 
-            // Если это просто гость из браузера
-            if (!userData.id) {
-                statusElem.textContent = "Браузерный гость";
-                return;
+                // Проверка на VIP статус (серверная/локальная)
+                if (user.id === 5434932796 || (user.username && user.username.toLowerCase() === "kirushapross")) {
+                    nameElem.classList.add("vip-nick");
+                    statusElem.textContent = "VIP Пользователь";
+                    statusElem.style.color = "#FF007F";
+                } else {
+                    statusElem.textContent = "Telegram Пользователь";
+                }
+            }
+        }
+
+        // Инициализация карты
+        function initMap() {
+            map = L.map('map', { zoomControl: false }).setView(centerCoords, 14);
+            
+            // Используем красочную и чистую подложку Voyager от CartoDB
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            // Создаем маркер центра и окружность
+            centerMarker = L.marker(centerCoords, { draggable: true }).addTo(map);
+            searchCircle = L.circle(centerCoords, {
+                radius: currentRadius,
+                color: '#7F00FF',
+                fillColor: '#7F00FF',
+                fillOpacity: 0.12,
+                weight: 2
+            }).addTo(map);
+
+            centerMarker.on('drag', (e) => {
+                centerCoords = [e.latlng.lat, e.latlng.lng];
+                searchCircle.setLatLng(e.latlng);
+            });
+        }
+
+        // Настройка событий и ползунка радиуса
+        function setupEvents() {
+            const slider = document.getElementById("radius-slider");
+            const radiusVal = document.getElementById("radius-val");
+            const btnGenerate = document.getElementById("btn-generate");
+
+            slider.addEventListener("input", (e) => {
+                currentRadius = parseInt(e.target.value);
+                radiusVal.textContent = currentRadius >= 1000 ? `${(currentRadius/1000).toFixed(1)} км` : `${currentRadius} м`;
+                searchCircle.setRadius(currentRadius);
+            });
+
+            // Клик по карте меняет центр зоны
+            map.on('click', (e) => {
+                centerCoords = [e.latlng.lat, e.latlng.lng];
+                centerMarker.setLatLng(e.latlng);
+                searchCircle.setLatLng(e.latlng);
+            });
+
+            btnGenerate.addEventListener("click", generateValidPoint);
+        }
+
+        // Запрос реального местоположения устройства
+        function tryGeolocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    centerCoords = [position.coords.latitude, position.coords.longitude];
+                    map.setView(centerCoords, 14);
+                    centerMarker.setLatLng(centerCoords);
+                    searchCircle.setLatLng(centerCoords);
+                    document.getElementById("status-text").textContent = "Геопозиция определена успешно. Перетащите маркер или настройте радиус.";
+                }, () => {
+                    document.getElementById("status-text").textContent = "Не удалось получить геопозицию. Используется дефолтная точка.";
+                });
+            }
+        }
+
+        // Генерация случайной точки внутри окружности
+        function getRandomPointInCircle(lat, lng, radiusMeters) {
+            const r = (radiusMeters / 111320) * Math.sqrt(Math.random());
+            const theta = Math.random() * 2 * Math.PI;
+            
+            const randomLat = lat + r * Math.cos(theta);
+            const randomLng = lng + r * Math.sin(theta) / Math.cos(lat * Math.PI / 180);
+            
+            return { lat: randomLat, lng: randomLng };
+        }
+
+        // Валидация точки через Overpass API (проверка на воду и здания)
+        async function checkPointSafety(lat, lng) {
+            // Ищем элементы типа "building" или "water" в радиусе 15 метров от точки
+            const query = `[out:json];(node(around:15,${lat},${lng});way(around:15,${lat},${lng}););out tags;`;
+            const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) return true; // Если API недоступно, пропускаем фильтр ради стабильности
+                
+                const data = await response.json();
+                
+                for (let element of data.elements) {
+                    if (element.tags) {
+                        // Если это здание
+                        if (element.tags.building && element.tags.building !== 'no') return false;
+                        // Если это водоем/река/бассейн
+                        if (element.tags.natural === 'water' || element.tags.waterway || element.tags.landuse === 'reservoir') return false;
+                    }
+                }
+                return true; // Точка безопасна (не в доме и не на воде)
+            } catch (e) {
+                console.error("Ошибка проверки Overpass API: ", e);
+                return true; 
+            }
+        }
+
+        // Запуск цикла поиска валидной точки
+        async function generateValidPoint() {
+            const statusBox = document.getElementById("status-text");
+            statusBox.innerHTML = "⏳ Проверяем местность... (ищем сушу без зданий)";
+            
+            let attempts = 0;
+            let validPoint = null;
+            const maxAttempts = 15; // Чтобы не зациклить приложение в центре озера
+
+            while (attempts < maxAttempts) {
+                let candidate = getRandomPointInCircle(centerCoords[0], centerCoords[1], currentRadius);
+                let isSafe = await checkPointSafety(candidate.lat, candidate.lng);
+                
+                if (isSafe) {
+                    validPoint = candidate;
+                    break;
+                }
+                attempts++;
             }
 
-            // Отправляем данные на твой сервер Render для проверки VIP и сохранения в БД
-            try {
-                const response = await fetch("https://geo-walk-app.onrender.com/api/user", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(userData)
+            if (validPoint) {
+                // Удаляем старый маркер цели, если он был
+                if (targetMarker) map.removeLayer(targetMarker);
+
+                // Создаем красивый кастомный неоновый маркер для цели
+                const neonIcon = L.divIcon({
+                    className: 'custom-pulse-icon',
+                    iconSize: [16, 16]
                 });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    
-                    // Если сервер подтвердил VIP статус
-                    if (result.is_vip) {
-                        nameElem.classList.add("vip-nick");
-                        statusElem.textContent = "VIP Пользователь";
-                        statusElem.classList.add("vip-badge");
-                    } else {
-                        statusElem.textContent = "Пользователь";
-                    }
-                } else {
-                    statusElem.textContent = "Ошибка сервера";
-                }
-            } catch (error) {
-                console.error("Ошибка при запросе к бэкенду:", error);
-                // Резервный локальный метод проверки (если сервер временно «спит» на Render)
-                if (userData.id === 5434932796 || userData.username.toLowerCase() === "kirushapross") {
-                    nameElem.classList.add("vip-nick");
-                    statusElem.textContent = "VIP (Резерв)";
-                    statusElem.classList.add("vip-badge");
-                } else {
-                    statusElem.textContent = "Офлайн-режим";
-                }
+                targetMarker = L.marker([validPoint.lat, validPoint.lng], { icon: neonIcon }).addTo(map);
+                map.panTo([validPoint.lat, validPoint.lng]);
+
+                statusBox.innerHTML = `✅ Точка найдена (Попыток: ${attempts + 1})!<br>Координаты: ${validPoint.lat.toFixed(5)}, ${validPoint.lng.toFixed(5)}`;
+            } else {
+                statusBox.innerHTML = "❌ Не удалось найти свободную точку. Возможно, вокруг сплошная вода или застройка. Попробуйте увеличить радиус.";
             }
-        });
+        }
     </script>
 </body>
 </html>
