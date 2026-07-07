@@ -11,7 +11,7 @@
         :root {
             --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
             --bg-space: #000000;
-            --panel-bg: rgba(15, 15, 15, 0.8);
+            --panel-bg: rgba(15, 15, 15, 0.75);
             --card-inner: rgba(30, 30, 30, 0.6);
             --border-glow: rgba(255, 255, 255, 0.15);
             --accent-white: #ffffff;
@@ -19,10 +19,9 @@
             --text-main: #ffffff;
             --text-muted: #999999;
             
-            /* Цвета статусов */
-            --color-dev: #a020f0;
-            --color-vip: #ffd700;
-            --color-creator: #00e5ff;
+            /* Неоновые Dev-цвета */
+            --neon-purple: #a855f7;
+            --neon-glow: rgba(168, 85, 247, 0.6);
         }
 
         * {
@@ -89,7 +88,6 @@
             padding: 10px 14px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
         }
 
         .profile-row {
@@ -116,6 +114,7 @@
             justify-content: center;
             font-weight: 800;
             font-size: 16px;
+            transition: all 0.3s ease;
         }
 
         .user-name {
@@ -124,6 +123,25 @@
             display: flex;
             align-items: center;
             gap: 6px;
+        }
+
+        /* ЭФФЕКТ ПЕРЕЛИВАНИЯ ДЛЯ @kirushapross */
+        .developer-glow {
+            background: linear-gradient(
+                45deg, 
+                #ff00ff, #a855f7, #00ffff, #a855f7, #ff00ff
+            );
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: auroraBorealis 8s ease infinite;
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+        }
+
+        @keyframes auroraBorealis {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .lvl-badge {
@@ -135,16 +153,13 @@
             font-weight: 700;
             text-transform: uppercase;
         }
-        
-        /* Стили уникальных бейджей */
-        .badge-dev { background: var(--color-dev) !important; color: white !important; }
-        .badge-vip { background: var(--color-vip) !important; color: black !important; }
-        .badge-creator { background: var(--color-creator) !important; color: black !important; }
 
-        .right-menu {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* Неоновый бейдж для разработчика */
+        .badge-developer {
+            background: var(--neon-purple) !important;
+            color: #fff !important;
+            box-shadow: 0 0 10px var(--neon-glow);
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .wallet-selector {
@@ -154,23 +169,10 @@
             border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             font-size: 11px;
             font-weight: 600;
-        }
-
-        /* Кнопка админки */
-        .dev-trigger-btn {
-            background: #a020f0;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 700;
             cursor: pointer;
-            display: none; /* Включится только для тебя */
-            box-shadow: 0 0 10px rgba(160, 32, 240, 0.5);
         }
 
         .bottom-hud {
@@ -305,6 +307,9 @@
             font-weight: 600;
             text-decoration: none;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .footer-tabs {
@@ -332,81 +337,6 @@
             font-weight: 700;
         }
 
-        /* ОКНО ПАНЕЛИ РАЗРАБОТЧИКА */
-        .dev-panel {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.92);
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-            padding: 30px 20px;
-            overflow-y: auto;
-        }
-
-        .dev-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #a020f0;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-
-        .dev-title {
-            color: #a020f0;
-            font-size: 20px;
-            font-weight: 800;
-        }
-
-        .close-dev-btn {
-            background: #333; color: white; border: none;
-            padding: 8px 16px; border-radius: 10px; cursor: pointer;
-        }
-
-        .dev-section {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 14px;
-            padding: 14px;
-            margin-bottom: 15px;
-        }
-
-        .dev-section h4 {
-            font-size: 14px;
-            margin-bottom: 10px;
-            color: #aaa;
-            text-transform: uppercase;
-        }
-
-        .dev-btn {
-            background: #222; border: 1px solid #444; color: white;
-            padding: 10px; border-radius: 10px; width: 100%;
-            text-align: left; margin-bottom: 8px; cursor: pointer;
-            font-weight: 600; font-size: 13px;
-        }
-        .dev-btn:hover { background: #333; border-color: #666; }
-
-        .toggle-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-        }
-
-        /* Кейсы анимация */
-        .case-display {
-            background: #1a1a1a;
-            border: 2px dashed #a020f0;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 10px;
-            display: none;
-        }
-
         .radar-pulse {
             animation: cyberPulse 0.8s infinite alternate;
         }
@@ -424,53 +354,16 @@
         <div class="top-hud">
             <div class="profile-row">
                 <div class="user-meta">
-                    <div class="avatar-frame" id="userAvatar">K</div>
+                    <div class="avatar-frame" id="userAvatar">?</div>
                     <div>
                         <div class="user-name" id="displayUsername">Загрузка...</div>
-                        <div style="font-size: 11px; color: var(--text-muted);" id="roleText">Синхронизация...</div>
+                        <div style="font-size: 11px; color: var(--text-muted);" id="roleText">Ранг: Определение...</div>
                     </div>
                 </div>
-                <div class="right-menu">
-                    <button class="dev-trigger-btn" id="devTriggerBtn" onclick="toggleDevPanel(true)">🛠️ DEV</button>
-                    <div class="wallet-selector">
-                        <span id="tonBalance">💎 0.0</span>
-                    </div>
+                <div class="wallet-selector">
+                    <span>💎 GrandTon</span>
+                    <span style="font-size: 10px; color: var(--text-muted);">▼</span>
                 </div>
-            </div>
-        </div>
-
-        <div class="dev-panel" id="devPanel">
-            <div class="dev-header">
-                <div class="dev-title">Панель Разработчика</div>
-                <button class="close-dev-btn" onclick="toggleDevPanel(false)">Закрыть</button>
-            </div>
-            
-            <div class="dev-section">
-                <h4>⚙️ Тест-Режим</h4>
-                <div class="toggle-container">
-                    <span>Бесконечная энергия (Без затрат)</span>
-                    <input type="checkbox" id="testModeCheck" style="width: 20px; height: 20px; cursor: pointer;">
-                </div>
-            </div>
-
-            <div class="dev-section">
-                <h4>📦 Система Кейсов</h4>
-                <button class="dev-btn" style="border-color: #a020f0;" onclick="openDeveloperCase()">🎰 Открыть Секретный Кейс</button>
-                <div class="case-display" id="caseDisplay">Прокрутка кейса...</div>
-            </div>
-
-            <div class="dev-section">
-                <h4>💎 Накрутка ресурсов (Синхрон с Render)</h4>
-                <button class="dev-btn" onclick="addDevResources('energy', 1000)">⚡ Добавить +1000 Энергии</button>
-                <button class="dev-btn" onclick="addDevResources('ton', 50)">💎 Добавить +50 GrandTon</button>
-            </div>
-
-            <div class="dev-section">
-                <h4>👑 Тест VIP и Рангов интерфейса</h4>
-                <button class="dev-btn" onclick="changeDevRole('Developer')">🟣 Сделать себя: Разработчик</button>
-                <button class="dev-btn" onclick="changeDevRole('VIP')">🟡 Сделать себя: VIP-Игрок</button>
-                <button class="dev-btn" onclick="changeDevRole('Creator')">🔵 Сделать себя: Создатель</button>
-                <button class="dev-btn" onclick="changeDevRole('Player')">⚪ Сделать себя: Обычный Игрок</button>
             </div>
         </div>
 
@@ -507,29 +400,26 @@
                     <span>⚡</span>
                     <span id="energyValue">1000 / 1000</span>
                 </div>
-                <div class="boost-link" onclick="alert('Буст активирован! Регенерация +50%')">🚀 Буст</div>
+                <div class="boost-link">🚀 Буст</div>
             </div>
 
             <div class="footer-tabs">
                 <div class="tab-item active">🏠<br>Main</div>
-                <div class="tab-item" onclick="alert('Список друзей пуст')">👥<br>Friends</div>
-                <div class="tab-item" onclick="alert('История пуста')">📜<br>История</div>
+                <div class="tab-item">👥<br>Friends</div>
+                <div class="tab-item">📜<br>История</div>
             </div>
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // === АДРЕС СЕРВЕРА RENDER ===
         const SERVER_URL = "https://geo-walk-app.onrender.com"; 
 
-        // Игровые переменные профиля (дефолт)
-        let myUsername = "@kirushapross"; 
+        // Дефолтные локальные данные безопасности
+        let myUsername = "@guest";
         let myRole = "Player";
         let currentEnergy = 1000;
         let maxEnergy = 1000;
-        let grandTonBalance = 0.0;
-        let testModeActive = false;
 
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
@@ -579,50 +469,56 @@
         const hudTime = document.getElementById('hudTime');
         const hudPanel = document.getElementById('hudPanel');
 
-        // Обновление UI под разные роли
+        // РЕНДЕР ИНТЕРФЕЙСА С ПРОВЕРКОЙ НА ДЕВЕЛОПЕРА
         function updateProfileUI() {
-            let badgeClass = "";
-            let roleTitle = "Игрок";
+            const nameEl = document.getElementById('displayUsername');
+            const roleTextEl = document.getElementById('roleText');
+            const avatarEl = document.getElementById('userAvatar');
+            const energyValueEl = document.getElementById('energyValue');
 
-            // Если зашел именно ты, принудительно даем доступ к админ-панели
-            if (myUsername === "@kirushapross") {
-                document.getElementById('devTriggerBtn').style.display = 'block';
-                if (myRole === "Player") myRole = "Developer"; // Даем статус дева по умолчанию
+            // Проверка: переливающийся текст включается ТОЛЬКО для @kirushapross
+            if (myUsername.toLowerCase() === "@kirushapross") {
+                myRole = "Developer"; // Принудительно ставим ранг
+                nameEl.innerHTML = `<span class="developer-glow">${myUsername}</span> <span class="lvl-badge badge-developer">${myRole}</span>`;
+                roleTextEl.innerText = `Ранг: Разработчик систем`;
+                avatarEl.style.borderColor = "#a855f7";
+                avatarEl.style.boxShadow = "0 0 10px rgba(168, 85, 247, 0.5)";
+            } else {
+                // Если зашел кто-то другой — сброс эффектов
+                nameEl.innerHTML = `${myUsername} <span class="lvl-badge">${myRole}</span>`;
+                roleTextEl.innerText = `Ранг: Пользователь`;
+                avatarEl.style.borderColor = "#555";
+                avatarEl.style.boxShadow = "none";
             }
 
-            if (myRole === "Developer") { badgeClass = "badge-dev"; roleTitle = "Разработчик"; }
-            else if (myRole === "VIP") { badgeClass = "badge-vip"; roleTitle = "VIP-Игрок"; }
-            else if (myRole === "Creator") { badgeClass = "badge-creator"; roleTitle = "Создатель"; }
-
-            document.getElementById('displayUsername').innerHTML = `${myUsername} <span class="lvl-badge ${badgeClass}" id="roleBadge">${myRole}</span>`;
-            document.getElementById('roleText').innerText = `Ранг: ${roleTitle}`;
-            document.getElementById('energyValue').innerText = `${currentEnergy} / ${maxEnergy}`;
-            document.getElementById('tonBalance').innerText = `💎 ${grandTonBalance.toFixed(1)}`;
+            energyValueEl.innerText = `${currentEnergy} / ${maxEnergy}`;
             
             if (myUsername && myUsername.length > 1) {
-                document.getElementById('userAvatar').innerText = myUsername.charAt(1).toUpperCase();
+                avatarEl.innerText = myUsername.charAt(1).toUpperCase();
+            } else {
+                avatarEl.innerText = "?";
             }
         }
 
-        // Загрузка с Render сервера
         async function loadProfileFromServer() {
             try {
                 const response = await fetch(`${SERVER_URL}/get_player?username=${encodeURIComponent(myUsername)}`);
                 if (response.ok) {
                     const data = await response.json();
-                    myRole = data.role || "Player";
+                    // Загружаем данные только если это не взлом ника
+                    if (myUsername.toLowerCase() !== "@kirushapross") {
+                        myRole = data.role || "Player";
+                    }
                     maxEnergy = data.maxEnergy || 1000;
                     currentEnergy = data.energy !== undefined ? data.energy : 1000;
-                    grandTonBalance = data.grandTon || 0.0;
-                    updateProfileUI();
                 }
             } catch (e) {
-                console.error("Ошибка загрузки:", e);
-                updateProfileUI(); // Запустить локальный интерфейс в случае падения
+                console.error("Ошибка при работе с Render API:", e);
             }
+            // Вызываем UI в любом случае после попытки загрузки
+            updateProfileUI();
         }
 
-        // Сохранение на Render сервер
         async function saveProfileToServer() {
             try {
                 await fetch(`${SERVER_URL}/update_player`, {
@@ -632,69 +528,13 @@
                         username: myUsername,
                         role: myRole,
                         energy: currentEnergy,
-                        maxEnergy: maxEnergy,
-                        grandTon: grandTonBalance
+                        maxEnergy: maxEnergy
                     })
                 });
             } catch (e) {
-                console.error("Ошибка сохранения:", e);
+                console.error("Ошибка синхронизации данных с сервером:", e);
             }
         }
-
-        // ВКЛ/ВЫКЛ Панели разработчика
-        function toggleDevPanel(show) {
-            document.getElementById('devPanel').style.display = show ? 'flex' : 'none';
-        }
-
-        // Инструменты админа: Добавить ресурсы
-        async function addDevResources(type, amount) {
-            if (type === 'energy') {
-                currentEnergy = Math.min(maxEnergy, currentEnergy + amount);
-            } else if (type === 'ton') {
-                grandTonBalance += amount;
-            }
-            updateProfileUI();
-            await saveProfileToServer();
-            haptics.success();
-        }
-
-        // Инструменты админа: Изменить роль
-        async function changeDevRole(newRole) {
-            myRole = newRole;
-            updateProfileUI();
-            await saveProfileToServer();
-            haptics.success();
-        }
-
-        // ИНСТРУМЕНТ АДМИНА: Система кейсов
-        function openDeveloperCase() {
-            const display = document.getElementById('caseDisplay');
-            display.style.display = 'block';
-            display.innerText = "🎰 Крутим кейс...";
-            haptics.tap();
-
-            setTimeout(async () => {
-                const prizes = [
-                    { name: "+500 ⚡ Энергии", action: () => currentEnergy = Math.min(maxEnergy, currentEnergy + 500) },
-                    { name: "+25 💎 GrandTon", action: () => grandTonBalance += 25 },
-                    { name: "👑 СЕКРЕТНЫЙ VIP СТАТУС", action: () => myRole = "VIP" },
-                    { name: "💨 Ничего (Удача в следующий раз)", action: () => {} }
-                ];
-
-                const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
-                randomPrize.action();
-                
-                display.innerText = `🎉 Выпало: ${randomPrize.name}!`;
-                updateProfileUI();
-                await saveProfileToServer();
-                haptics.success();
-            }, 2000);
-        }
-
-        document.getElementById('testModeCheck').addEventListener('change', function(e) {
-            testModeActive = e.target.checked;
-            alert(testModeActive ? "Тест-режим АКТИВИРОВАН! Энергия не тратится." : "Тест-режим ОТКЛЮЧЕН.");
-        });
 
         radiusSlider.addEventListener('input', function(e) {
             currentRadius = parseInt(e.target.value);
@@ -743,9 +583,8 @@
         generateBtn.addEventListener('click', async function() {
             if (!selectedLocation) return;
             
-            // Если тест-режим выключен, проверяем энергию
-            if (!testModeActive && currentEnergy < 50) {
-                alert("Недостаточно энергии! Нужно минимум 50 ⚡ или включите Тест-Режим в DEV панели.");
+            if (currentEnergy < 50) {
+                alert("Недостаточно энергии! Нужно минимум 50 ⚡");
                 return;
             }
 
@@ -777,28 +616,28 @@
 
             if (routeData && routeData.routes && routeData.routes.length > 0) {
                 const route = routeData.routes[0];
+                
                 routeGlow = L.geoJSON(route.geometry, {
                     style: { color: '#000000', weight: 8, opacity: 0.6, lineCap: 'round', lineJoin: 'round' }
                 }).addTo(map);
+
                 routeCore = L.geoJSON(route.geometry, {
                     style: { color: '#ffffff', weight: 3, opacity: 1, lineCap: 'round', lineJoin: 'round' }
                 }).addTo(map);
+
                 hudDistance.innerText = (route.distance / 1000).toFixed(1) + ' км';
                 hudTime.innerText = Math.round(route.duration / 60) + ' мин';
             } else {
                 routeCore = L.polyline([selectedLocation, [candidate.lat, candidate.lng]], {
                     color: '#000', weight: 4, dashArray: '8, 8', opacity: 0.8
                 }).addTo(map);
+                
                 const d = map.distance(selectedLocation, [candidate.lat, candidate.lng]);
                 hudDistance.innerText = (d / 1000).toFixed(1) + ' км';
                 hudTime.innerText = Math.round((d / 4500) * 60) + ' мин';
             }
 
-            // Тратим энергию только если тест-режим ВЫКЛЮЧЕН
-            if (!testModeActive) {
-                currentEnergy = Math.max(0, currentEnergy - 50);
-            }
-            
+            currentEnergy = Math.max(0, currentEnergy - 50);
             updateProfileUI();
             await saveProfileToServer();
 
@@ -806,6 +645,7 @@
             map.fitBounds(boundsGroup.getBounds().pad(0.35), { animate: true, duration: 0.5 });
         });
 
+        // Инициализация при запуске игры
         async function initApp() {
             const tg = window.Telegram ? window.Telegram.WebApp : null;
             if (tg) {
@@ -815,9 +655,14 @@
                 if (user && user.username) {
                     myUsername = '@' + user.username;
                 }
+            } else {
+                // Если открыто в обычном браузере для тестов, ставим дефолт
+                myUsername = "@kirushapross"; 
             }
 
+            // Загружаем данные и рендерим UI
             await loadProfileFromServer();
+
             map.locate({setView: true, maxZoom: 14});
         }
 
