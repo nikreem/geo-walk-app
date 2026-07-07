@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Geo Walk App — Developer Edition</title>
-    <!-- Telegram Web App API -->
+    <title>Geo Walk App — Server Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Карта Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
@@ -58,7 +56,7 @@
             overflow: hidden;
         }
 
-        /* ЦВЕТА И СТИЛИ ДЛЯ ШЕЙПОВ СКИНОВ (ФИКС БАГА) */
+        /* ЦВЕТА И СТИЛИ ДЛЯ ШЕЙПОВ СКИНОВ */
         .skin-path-default { fill: #8E8E93; }
         .skin-path-water { fill: url(#waterGrad); }
         .skin-path-fire { fill: url(#fireGrad); }
@@ -301,7 +299,7 @@
             transition: width 0.3s ease;
         }
 
-        /* КНОПКА: ЖИДКОЕ СТЕКЛО */
+        /* КНОПКА */
         .action-button {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(240, 240, 250, 0.05) 100%);
             color: var(--text-apple-dark);
@@ -353,7 +351,6 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Инпуты для админки */
         .glass-input {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.5);
@@ -370,7 +367,6 @@
             background: rgba(255, 255, 255, 0.4);
         }
 
-        /* Контейнер интерактивной карты */
         .map-wrapper {
             padding: 6px;
             flex-grow: 1; 
@@ -385,7 +381,6 @@
             z-index: 1;
         }
 
-        /* Магазин скинов */
         .shop-subtabs {
             display: flex;
             gap: 8px;
@@ -487,7 +482,7 @@
             border-color: var(--text-apple-dark);
         }
 
-        /* КУРТИТЬ КОЛЕСО */
+        /* КОЛЕСО ФОРТУНЫ */
         .wheel-view-container {
             padding: 30px 16px;
             display: flex;
@@ -598,30 +593,26 @@
 </head>
 <body>
 
-    <!-- Шапка профиля -->
     <div class="header-card glass-panel">
         <div class="profile-box">
             <img id="user-avatar" class="avatar" src="https://ui-avatars.com/api/?name=Guest&background=EBEFF8&color=4A3AFF" alt="Avatar">
             <div class="profile-meta">
-                <h4 id="user-name" class="user-title">Гость</h4>
-                <span id="user-version-label" class="app-version">v1.6.1</span>
+                <h4 id="user-name" class="user-title">Загрузка...</h4>
+                <span id="user-version-label" class="app-version">v2.0.0 (Server)</span>
             </div>
         </div>
         <div class="header-right">
-            <div id="coin-counter" class="coin-badge">🪙 1000</div>
+            <div id="coin-counter" class="coin-badge">🪙 0</div>
         </div>
     </div>
 
-    <!-- Вкладки навигации -->
     <div class="app-tabs" id="navigation-tabs">
         <button class="tab-btn active" id="tab-link-generator" onclick="switchView('generator')">🗺️ Карта</button>
         <button class="tab-btn" id="tab-link-shop" onclick="switchView('shop')">🛍️ Скины</button>
         <button class="tab-btn" id="tab-link-wheel" onclick="switchView('wheel')">🎡 Колесо</button>
-        <!-- Вкладка админа скрыта по умолчанию -->
         <button class="tab-btn" id="tab-link-admin" style="display: none;" onclick="switchView('admin')">🛠️ Админ</button>
     </div>
 
-    <!-- ЭКРАН 1: ГЕНЕРАТОР -->
     <div id="view-generator" class="view-section active">
         <div class="main-card glass-panel">
             <div class="section-header">
@@ -634,13 +625,13 @@
             <div class="energy-container">
                 <div class="energy-meta">
                     <span>Запас энергии <span id="energy-timer" class="energy-timer"></span></span>
-                    <span id="energy-text" style="color: #10B981">100 / 100 ⚡</span>
+                    <span id="energy-text" style="color: #10B981">0 / 100 ⚡</span>
                 </div>
                 <div class="energy-bar-bg">
                     <div id="energy-bar" class="energy-bar-fill"></div>
                 </div>
             </div>
-            <button class="action-button" id="btn-generate">Сгенерировать точку (⚡ 10)</button>
+            <button class="action-button" id="btn-generate" disabled>Сгенерировать точку (⚡ 10)</button>
             <div class="log-panel" id="status-text">
                 Сдвиньте человечка, чтобы изменить центр зоны поиска.
             </div>
@@ -650,7 +641,6 @@
         </div>
     </div>
 
-    <!-- ЭКРАН 2: МАГАЗИН СКИНОВ -->
     <div id="view-shop" class="view-section">
         <div class="shop-subtabs">
             <button class="subtab-btn active" id="subtab-char" onclick="switchSubTab('char')">👤 Персонаж</button>
@@ -659,7 +649,6 @@
         <div class="skins-grid" id="shop-items-container"></div>
     </div>
 
-    <!-- ЭКРАН 3: КОЛЕСО ФОРТУНЫ -->
     <div id="view-wheel" class="view-section">
         <div class="wheel-view-container glass-panel">
             <div class="wheel-wrapper">
@@ -676,23 +665,22 @@
             </div>
             
             <div id="wheel-status" class="wheel-status-text">
-                Испытай удачу! Бесплатный прокрут доступен раз в 24 часа.
+                Подключение к серверу...
             </div>
             
-            <button class="action-button" id="btn-spin-wheel" style="width: 90%; color: var(--apple-blue);">
+            <button class="action-button" id="btn-spin-wheel" style="width: 90%; color: var(--apple-blue);" disabled>
                 Испытать удачу
             </button>
         </div>
     </div>
 
-    <!-- ЭКРАН 4: ПАНЕЛЬ АДМИНИСТРАТОРА -->
     <div id="view-admin" class="view-section">
         <div class="main-card glass-panel" style="gap: 14px;">
             <h3 class="section-title" style="color: #FF2D55;">Панель разработчика</h3>
             
             <div style="display: flex; flex-direction: column; gap: 6px;">
                 <label style="font-size: 11px; font-weight: 600; color: var(--text-apple-muted);">ЦЕЛЬ (ПУСТО ДЛЯ СЕБЯ)</label>
-                <input type="text" id="admin-target-user" class="glass-input" placeholder="Юзернейм игрока (например, ivan_walk)">
+                <input type="text" id="admin-target-user" class="glass-input" placeholder="Юзернейм или ID игрока">
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -713,6 +701,9 @@
     </div>
 
     <script>
+        // АДРЕС ВАШЕГО СЕРВЕРА БЭКЕНДА (Оставьте пустым, если хостинг там же, где API)
+        const API_BASE = ""; 
+
         // АУДИО-ДВИЖОК
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playTone(freq, type, duration, delay = 0) {
@@ -748,7 +739,15 @@
             } catch(e){}
         }
 
-        // БАЗА ДАННЫХ И СОХРАНЕНИЯ
+        // ХЕЛПЕР ДЛЯ ЗАГОЛОВКОВ (ПЕРЕДАЧА ДАННЫХ АВТОРИЗАЦИИ ТЕЛЕГРАМ)
+        function getServerHeaders() {
+            return {
+                "Content-Type": "application/json",
+                "X-TG-Init-Data": window.Telegram?.WebApp?.initData || ""
+            };
+        }
+
+        // СОСТОЯНИЕ ИГРЫ (ОБНОВЛЯЕТСЯ ИЗ СЕРВЕРА)
         let map, centerMarker, targetMarker, searchCircle, currentTileLayer;
         let centerCoords = [55.7558, 37.6173]; 
         let currentRadius = 500;
@@ -759,8 +758,8 @@
         let myUsername = "";
 
         let db = {
-            coins: 1000,
-            energy: 100,
+            coins: 0,
+            energy: 0,
             nextEnergyTime: 0, 
             lastFreeSpin: 0,   
             activeChar: 'default',
@@ -768,17 +767,17 @@
             unlocked: ['default', 'bright']
         };
 
-        if(localStorage.getItem('geo_walk_save_v161')) {
-            try { db = JSON.parse(localStorage.getItem('geo_walk_save_v161')); } catch(e){}
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             const tg = window.Telegram.WebApp;
             tg.ready(); tg.expand();
 
-            setupProfile(tg);
+            setupProfileLayout(tg);
             initMap();
             setupControls();
+            
+            // Загружаем данные с бэкенда
+            await syncWithServer(); 
+            
             renderShop();
             initEnergySystem();
             updateWheelButtonState();
@@ -786,7 +785,7 @@
             setTimeout(() => { if(map) map.invalidateSize(); }, 300);
         });
 
-        function setupProfile(tg) {
+        function setupProfileLayout(tg) {
             const nameElem = document.getElementById("user-name");
             const avatarElem = document.getElementById("user-avatar");
 
@@ -795,58 +794,83 @@
                 nameElem.textContent = user.first_name;
                 myUsername = user.username ? user.username.toLowerCase() : "";
                 avatarElem.src = user.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name)}&background=E2E8F0&color=1c1c1e`;
+            } else {
+                myUsername = "local_dev"; 
+                nameElem.textContent = "Разработчик";
+            }
+        }
 
-                // Проверка прав администратора
-                if (user.id === 5434932796 || myUsername === "kirushapross") {
-                    isVip = true;
-                    nameElem.classList.add("vip-nick");
+        // 1. ЗАГРУЗКА И СИНХРОНИЗАЦИЯ С СЕРВЕРОМ
+        async function syncWithServer() {
+            try {
+                const response = await fetch(`${API_BASE}/api/user/profile`, {
+                    method: "GET",
+                    headers: getServerHeaders()
+                });
+                if (!response.ok) throw new Error("Ошибка сервера");
+                
+                const serverData = await response.json();
+                
+                // Обновляем локальное состояние из ответа сервера
+                db.coins = serverData.coins;
+                db.energy = serverData.energy;
+                db.nextEnergyTime = serverData.nextEnergyTime;
+                db.lastFreeSpin = serverData.lastFreeSpin;
+                db.activeChar = serverData.activeChar || 'default';
+                db.activeMap = serverData.activeMap || 'bright';
+                db.unlocked = serverData.unlocked || ['default', 'bright'];
+                
+                isVip = serverData.isVip || false;
+
+                if (isVip) {
+                    document.getElementById("user-name").classList.add("vip-nick");
                     document.getElementById("tab-link-admin").style.display = "block";
                 }
-            } else {
-                // Локальный фолбек для отладки
-                myUsername = "kirushapross"; 
-                isVip = true;
-                nameElem.textContent = "Kirill";
-                nameElem.classList.add("vip-nick");
-                document.getElementById("tab-link-admin").style.display = "block";
+
+                updateCoinUI();
+                updateEnergyUI();
+                applyMapSkin(db.activeMap);
+                updatePegmanIcon();
+
+            } catch (err) {
+                console.error("Ошибка синхронизации с сервером:", err);
+                document.getElementById("status-text").textContent = "⚠️ Ошибка подключения к серверу. Работает локальный демо-режим.";
+                // Фолбек на случай падения сервера при тестах
+                db.coins = 500; db.energy = 100; updateCoinUI(); updateEnergyUI();
             }
-            updateCoinUI();
         }
 
         function updateCoinUI() {
             document.getElementById("coin-counter").innerHTML = `🪙 ${db.coins}`;
         }
 
-        function saveGame() {
-            localStorage.setItem('geo_walk_save_v161', JSON.stringify(db));
+        // 2. ОТПРАВКА ОБНОВЛЕНИЙ СОСТОЯНИЯ НА СЕРВЕР
+        async function saveGameToServer() {
+            try {
+                await fetch(`${API_BASE}/api/user/save`, {
+                    method: "POST",
+                    headers: getServerHeaders(),
+                    body: JSON.stringify({
+                        activeChar: db.activeChar,
+                        activeMap: db.activeMap,
+                        radius: currentRadius
+                    })
+                });
+            } catch (e) { console.error("Не удалось сохранить состояние на сервере", e); }
         }
 
         const REGEN_INTERVAL = 30 * 60 * 1000; 
 
         function initEnergySystem() {
-            const now = Date.now();
-            if (db.energy < maxEnergy && db.nextEnergyTime > 0) {
-                if (now >= db.nextEnergyTime) {
-                    let passedTime = now - db.nextEnergyTime;
-                    let restoredUnits = Math.floor(passedTime / REGEN_INTERVAL) + 1;
-                    db.energy = Math.min(maxEnergy, db.energy + restoredUnits);
-                    db.nextEnergyTime = db.energy >= maxEnergy ? 0 : db.nextEnergyTime + (restoredUnits * REGEN_INTERVAL);
-                }
-            } else if (db.energy < maxEnergy && db.nextEnergyTime === 0) {
-                db.nextEnergyTime = now + REGEN_INTERVAL;
-            }
-            saveGame(); updateEnergyUI();
-
             setInterval(() => {
                 if (db.energy >= maxEnergy) {
                     document.getElementById("energy-timer").textContent = ""; return;
                 }
                 const currentTime = Date.now();
-                if (currentTime >= db.nextEnergyTime) {
-                    db.energy++;
-                    db.nextEnergyTime = db.energy >= maxEnergy ? 0 : currentTime + REGEN_INTERVAL;
-                    saveGame(); updateEnergyUI(); updateWheelButtonState();
-                } else {
+                if (db.nextEnergyTime > 0 && currentTime >= db.nextEnergyTime) {
+                    // Каждую итерацию запрашиваем точный баланс у сервера, чтобы избежать рассинхрона времени
+                    syncWithServer();
+                } else if (db.nextEnergyTime > 0) {
                     let diff = db.nextEnergyTime - currentTime;
                     let m = Math.floor(diff / 60000); let s = Math.floor((diff % 60000) / 1000);
                     document.getElementById("energy-timer").textContent = `(+1 через ${m}:${s < 10 ? '0' : ''}${s})`;
@@ -948,36 +972,45 @@
                     <span class="skin-rarity rarity-${item.rarity}">${item.rarityText}</span>
                     <div class="skin-preview-box">${previewContent}</div>
                     <div class="skin-name">${item.name}</div>
-                    <button class="${btnCls}" onclick="handleSkinAction('${item.id}')">${btnText}</button>
+                    <button class="${btnCls}" onclick="handleSkinActionOnServer('${item.id}', ${isUnlocked})">${btnText}</button>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function handleSkinAction(id) {
+        // 3. ПОКУПКА И СМЕНА СКИНОВ ЧЕРЕЗ СЕРВЕР
+        async function handleSkinActionOnServer(id, isUnlocked) {
             playSoundClick();
-            const isUnlocked = db.unlocked.includes(id);
-            if (isUnlocked) {
-                if (currentShopTab === 'char') { db.activeChar = id; updatePegmanIcon(); }
-                else { db.activeMap = id; applyMapSkin(id); }
-                saveGame(); renderShop();
-            } else {
-                if (db.coins >= 100) {
-                    db.coins -= 100; db.unlocked.push(id); 
-                    saveGame(); updateCoinUI(); handleSkinAction(id);
-                } else { alert("Недостаточно монет!"); }
+            try {
+                const response = await fetch(`${API_BASE}/api/shop/action`, {
+                    method: "POST",
+                    headers: getServerHeaders(),
+                    body: JSON.stringify({ item_id: id, tab: currentShopTab, action: isUnlocked ? "select" : "buy" })
+                });
+
+                if(!response.ok) {
+                    const data = await response.json();
+                    alert(data.error || "Ошибка операции со скином");
+                    return;
+                }
+
+                await syncWithServer(); 
+                renderShop();
+            } catch(e) {
+                console.error(e);
+                alert("Ошибка соединения с сервером при операции магазина.");
             }
         }
 
-        // КОЛЕСО ФОРТУНЫ
+        // КОЛЕСО ФОРТУНЫ (УПРАВЛЯЕТСЯ СЕРВЕРОМ)
         let isSpinning = false;
         const wheelSectors = [
-            { label: "1 монета", word: "МОНЕТА", value: 1, weight: 45 },
-            { label: "5 монет", word: "МОНЕТ", value: 5, weight: 25 },
-            { label: "10 монет", word: "МОНЕТ", value: 10, weight: 18 },
-            { label: "20 монет", word: "МОНЕТ", value: 20, weight: 8 },
-            { label: "50 монет", word: "МОНЕТ", value: 50, weight: 3 },
-            { label: "100 монет", word: "МОНЕТ", value: 100, weight: 1 }
+            { label: "1 монета", word: "МОНЕТА", value: 1 },
+            { label: "5 монет", word: "МОНЕТ", value: 5 },
+            { label: "10 монет", word: "МОНЕТ", value: 10 },
+            { label: "20 монет", word: "МОНЕТ", value: 20 },
+            { label: "50 монет", word: "МОНЕТ", value: 50 },
+            { label: "100 монет", word: "МОНЕТ", value: 100 }
         ];
 
         function updateWheelButtonState() {
@@ -999,79 +1032,94 @@
             }
         }
 
-        document.getElementById("btn-spin-wheel").addEventListener("click", () => {
+        // 4. КРУЧЕНИЕ КОЛЕСА ЧЕРЕЗ ЗАПРОС К СЕРВЕРУ
+        document.getElementById("btn-spin-wheel").addEventListener("click", async () => {
             if (isSpinning) return;
             playSoundClick();
-            const now = Date.now();
-            const isFree = (now - db.lastFreeSpin) >= 24 * 60 * 60 * 1000;
 
-            if (!isFree) {
-                if (db.energy < 10) return;
-                db.energy -= 10;
-                if(db.energy < maxEnergy && db.nextEnergyTime === 0) db.nextEnergyTime = Date.now() + REGEN_INTERVAL;
-                updateEnergyUI();
-            } else { db.lastFreeSpin = now; }
-            saveGame(); updateWheelButtonState();
-
-            let rand = Math.random() * 100; let sum = 0; let targetSectorIndex = 0;
-            for (let i = 0; i < wheelSectors.length; i++) {
-                sum += wheelSectors[i].weight;
-                if (rand <= sum) { targetSectorIndex = i; break; }
-            }
-
-            isSpinning = true;
             document.getElementById("btn-spin-wheel").disabled = true;
-            document.getElementById("wheel-status").textContent = "🎰 Разгоняем барабан удачи...";
+            document.getElementById("wheel-status").textContent = "🎰 Запрос к серверу...";
 
-            let sectorAngle = 60;
-            let stopAngle = 360 - (targetSectorIndex * sectorAngle + 30);
-            currentWheelRotation = Math.ceil(currentWheelRotation / 360) * 360 + (5 * 360) + stopAngle;
-            document.getElementById("wheel-circle").style.transform = `rotate(${currentWheelRotation}deg)`;
+            try {
+                const response = await fetch(`${API_BASE}/api/wheel/spin`, {
+                    method: "POST",
+                    headers: getServerHeaders()
+                });
 
-            let currentRotationTrack = 0;
-            let tickInterval = setInterval(() => {
-                currentRotationTrack += 18;
-                if(currentRotationTrack < (5 * 360 + stopAngle)) { playSoundTick(); }
-                else { clearInterval(tickInterval); }
-            }, 50);
+                if(!response.ok) {
+                    const errorData = await response.json();
+                    document.getElementById("wheel-status").textContent = `❌ ${errorData.error || 'Ошибка'}`;
+                    updateWheelButtonState();
+                    return;
+                }
 
-            setTimeout(() => {
-                clearInterval(tickInterval); isSpinning = false;
-                const reward = wheelSectors[targetSectorIndex];
-                db.coins += reward.value; saveGame(); updateCoinUI(); updateWheelButtonState();
-                playSoundVictory();
-                document.getElementById("wheel-status").innerHTML = `🎉 Отличный улов!<br>Вы выиграли <span style="color:#FF2D55; font-weight:800">${reward.value} ${reward.word}</span>`;
-            }, 4000);
+                // Сервер должен вернуть индекс выпавшего сектора (0-5)
+                const data = await response.json(); 
+                let targetSectorIndex = data.targetSectorIndex;
+
+                isSpinning = true;
+                
+                let sectorAngle = 60;
+                let stopAngle = 360 - (targetSectorIndex * sectorAngle + 30);
+                currentWheelRotation = Math.ceil(currentWheelRotation / 360) * 360 + (5 * 360) + stopAngle;
+                document.getElementById("wheel-circle").style.transform = `rotate(${currentWheelRotation}deg)`;
+
+                let currentRotationTrack = 0;
+                let tickInterval = setInterval(() => {
+                    currentRotationTrack += 18;
+                    if(currentRotationTrack < (5 * 360 + stopAngle)) { playSoundTick(); }
+                    else { clearInterval(tickInterval); }
+                }, 50);
+
+                setTimeout(async () => {
+                    clearInterval(tickInterval); 
+                    isSpinning = false;
+                    
+                    await syncWithServer(); // Синхронизируем выигрыш и списания с сервера
+                    updateWheelButtonState();
+                    
+                    const reward = wheelSectors[targetSectorIndex];
+                    playSoundVictory();
+                    document.getElementById("wheel-status").innerHTML = `🎉 Отличный улов!<br>Вы выиграли <span style="color:#FF2D55; font-weight:800">${reward.value} ${reward.word}</span>`;
+                }, 4000);
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById("wheel-status").textContent = "❌ Ошибка сети с сервером.";
+                updateWheelButtonState();
+            }
         });
 
-        // АДМИН-ФУНКЦИИОНАЛ (РАЗРАБОТЧИК)
-        function executeAdminAction(type, value) {
+        // 5. ПАНЕЛЬ АДМИНИСТРАТОРА (ОТПРАВЛЯЕТ ДЕЙСТВИЯ НА СЕРВЕР)
+        async function executeAdminAction(type, value) {
             playSoundClick();
             const logBox = document.getElementById("admin-log-box");
             const targetInput = document.getElementById("admin-target-user").value.trim();
             
-            // Если поле пустое или совпадает с ником админа, меняем локальную бд
-            if (!targetInput || targetInput.toLowerCase() === myUsername || targetInput.toLowerCase() === "гость") {
-                if (type === 'coins') {
-                    db.coins += value;
-                    logBox.innerHTML = `⚙️ [ADMIN]: Начислено +${value} монет вашему аккаунту.`;
-                } else if (type === 'energy') {
-                    db.energy = Math.min(maxEnergy, db.energy + value);
-                    db.nextEnergyTime = db.energy >= maxEnergy ? 0 : Date.now() + REGEN_INTERVAL;
-                    logBox.innerHTML = `⚙️ [ADMIN]: Восстановлено +${value} единиц энергии.`;
-                } else if (type === 'spin') {
-                    db.lastFreeSpin = 0;
-                    logBox.innerHTML = `⚙️ [ADMIN]: Кулдаун Колеса Фортуны успешно сброшен.`;
-                    updateWheelButtonState();
+            logBox.innerHTML = `📡 Отправка команды на сервер...`;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/execute`, {
+                    method: "POST",
+                    headers: getServerHeaders(),
+                    body: JSON.stringify({
+                        type: type,
+                        value: value,
+                        target: targetInput // Пустая строка означает применить к себе
+                    })
+                });
+
+                const resData = await response.json();
+
+                if(response.ok) {
+                    logBox.innerHTML = `⚙️ [ADMIN SERVER]: Успех!<br>${resData.message || 'Действие выполнено успешно.'}`;
+                    playSoundVictory();
+                    await syncWithServer();
+                } else {
+                    logBox.innerHTML = `❌ [SERVER ERROR]: ${resData.error || 'Ошибка доступа'}`;
                 }
-                saveGame();
-                updateCoinUI();
-                updateEnergyUI();
-                playSoundVictory();
-            } else {
-                // Эмуляция отправки API-запроса на бэкенд для изменения параметров другого игрока по юзернейму
-                logBox.innerHTML = `📡 [SERVER API]: Отправлен запрос...<br>Игрок: <span style="color:#007AFF">@${targetInput}</span><br>Действие: ${type === 'spin' ? 'Сброс КД Спина' : 'Выдача +' + value + ' ' + type}`;
-                playSoundCoin();
+            } catch (err) {
+                logBox.innerHTML = `❌ Не удалось связаться с сервером API.`;
             }
         }
 
@@ -1128,7 +1176,7 @@
                 searchCircle.setLatLng(e.latlng);
             });
 
-            btnGenerate.addEventListener("click", generateValidPoint);
+            btnGenerate.addEventListener("click", generateValidPointFromServer);
         }
 
         function getRandomPointInCircle(lat, lng, radiusMeters) {
@@ -1153,7 +1201,8 @@
             } catch (e) { return true; }
         }
 
-        async function generateValidPoint() {
+        // 6. СТАТУС ГЕНЕРАЦИИ ТОЧКИ (СПИСАНИЕ ЭНЕРГИИ ПОДТВЕРЖДАЕТ СЕРВЕР)
+        async function generateValidPointFromServer() {
             if (db.energy < currentCost) return;
             playSoundClick();
             const statusBox = document.getElementById("status-text");
@@ -1167,17 +1216,37 @@
             }
 
             if (validPoint) {
-                db.energy -= currentCost;
-                if(db.energy < maxEnergy && db.nextEnergyTime === 0) db.nextEnergyTime = Date.now() + REGEN_INTERVAL;
-                saveGame(); updateEnergyUI(); updateWheelButtonState();
+                try {
+                    // Отправляем запрос на сервер для списания энергии и сохранения созданной точки
+                    const response = await fetch(`${API_BASE}/api/generator/point`, {
+                        method: "POST",
+                        headers: getServerHeaders(),
+                        body: JSON.stringify({
+                            lat: validPoint.lat,
+                            lng: validPoint.lng,
+                            cost: currentCost
+                        })
+                    });
+
+                    if(!response.ok) {
+                        const err = await response.json();
+                        statusBox.innerHTML = `❌ Ошибка сервера: ${err.error}`;
+                        return;
+                    }
+
+                    await syncWithServer(); // Синхронизируем упавшую энергию
+                    
+                    if (targetMarker) map.removeLayer(targetMarker);
+                    targetMarker = L.marker([validPoint.lat, validPoint.lng], {
+                        icon: L.divIcon({ className: 'target-glow-marker', iconSize: [14, 14] })
+                    }).addTo(map);
+                    map.panTo([validPoint.lat, validPoint.lng]);
+                    playSoundCoin();
+                    statusBox.innerHTML = `🎯 Точка создана!<br>Координаты: ${validPoint.lat.toFixed(5)}, ${validPoint.lng.toFixed(5)}`;
                 
-                if (targetMarker) map.removeLayer(targetMarker);
-                targetMarker = L.marker([validPoint.lat, validPoint.lng], {
-                    icon: L.divIcon({ className: 'target-glow-marker', iconSize: [14, 14] })
-                }).addTo(map);
-                map.panTo([validPoint.lat, validPoint.lng]);
-                playSoundCoin();
-                statusBox.innerHTML = `🎯 Точка создана!<br>Координаты: ${validPoint.lat.toFixed(5)}, ${validPoint.lng.toFixed(5)}`;
+                } catch(err) {
+                    statusBox.innerHTML = "❌ Ошибка синхронизации точки с сервером.";
+                }
             } else {
                 statusBox.innerHTML = "❌ Ошибка подбора локации. Смените позицию.";
             }
