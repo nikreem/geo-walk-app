@@ -22,6 +22,7 @@
             /* Неоновые Dev-цвета */
             --neon-purple: #a855f7;
             --neon-glow: rgba(168, 85, 247, 0.6);
+            --neon-green: #22c55e;
         }
 
         * {
@@ -161,6 +162,23 @@
             border: 1px solid rgba(255,255,255,0.3);
         }
 
+        .right-meta-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .version-tag {
+            font-size: 9px;
+            color: var(--text-muted);
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 1px 5px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
         .wallet-selector {
             background: var(--card-inner);
             border: 1px solid var(--border-glow);
@@ -285,6 +303,14 @@
             cursor: not-allowed;
         }
 
+        /* Кнопка открытия админки */
+        .dev-panel-trigger {
+            background: linear-gradient(180deg, #2e1065 0%, #0f052d 100%);
+            border: 1px solid var(--neon-purple);
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+            margin-top: 2px;
+        }
+
         .energy-bar-row {
             display: flex;
             justify-content: space-between;
@@ -336,6 +362,105 @@
             font-weight: 700;
         }
 
+        /* СТИЛИ МОДАЛЬНОГО ОКНА АДМИНКИ */
+        .dev-modal {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .dev-modal-content {
+            background: #0f0f13;
+            border: 1px solid var(--neon-purple);
+            box-shadow: 0 0 30px var(--neon-glow);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 360px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .dev-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .dev-modal-header h3 {
+            font-size: 16px;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .close-modal-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .dev-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .dev-input-group label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .dev-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px 12px;
+            color: #fff;
+            font-family: var(--font-apple);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .dev-input:focus {
+            border-color: var(--neon-purple);
+        }
+
+        .dev-submit-btn {
+            background: var(--neon-purple);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .dev-submit-btn:active {
+            background: #9333ea;
+        }
+
         .radar-pulse {
             animation: cyberPulse 0.8s infinite alternate;
         }
@@ -359,9 +484,12 @@
                         <div style="font-size: 11px; color: var(--text-muted);" id="roleText">Ранг: Определение...</div>
                     </div>
                 </div>
-                <div class="wallet-selector">
-                    <span>💎 GrandTon</span>
-                    <span style="font-size: 10px; color: var(--text-muted);">▼</span>
+                <div class="right-meta-block">
+                    <span class="version-tag">v1.0.1</span>
+                    <div class="wallet-selector">
+                        <span>💎 GrandTon</span>
+                        <span style="font-size: 10px; color: var(--text-muted);">▼</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -393,6 +521,8 @@
             </div>
 
             <button class="action-btn" id="generateBtn" disabled>Укажите точку старта</button>
+            
+            <button class="action-btn dev-panel-trigger" id="devPanelBtn" style="display: none;">⚙️ Dev Panel</button>
 
             <div class="energy-bar-row">
                 <div class="energy-info">
@@ -408,6 +538,27 @@
                 <div class="tab-item">📜<br>История</div>
             </div>
         </div>
+
+        <div class="dev-modal" id="devModal">
+            <div class="dev-modal-content">
+                <div class="dev-modal-header">
+                    <h3>Управление энергией</h3>
+                    <button class="close-modal-btn" id="closeModalBtn">&times;</button>
+                </div>
+                
+                <div class="dev-input-group">
+                    <label for="targetUser">Юзернейм (с @ или id)</label>
+                    <input type="text" id="targetUser" class="dev-input" placeholder="@username или @id12345">
+                </div>
+
+                <div class="dev-input-group">
+                    <label for="energyAmount">Количество энергии</label>
+                    <input type="number" id="energyAmount" class="dev-input" placeholder="Например: 5000" value="1000">
+                </div>
+
+                <button class="dev-submit-btn" id="submitEnergyBtn">Выдать энергию</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -415,8 +566,6 @@
         const SERVER_URL = "https://geo-walk-app.onrender.com"; 
 
         // === НАСТРОЙКА БЕЗОПАСНОСТИ РАЗРАБОТЧИКА ===
-        // Вставь сюда свой числовой ID из Telegram (например: 582910482), чтобы привязка была 100% точной.
-        // Если оставить null, то проверка будет идти только по строгому совпадению никнейма из Telegram.
         const ALLOWED_TELEGRAM_ID = 5434932796; 
 
         let myUsername = "@guest";
@@ -472,12 +621,18 @@
         const hudDistance = document.getElementById('hudDistance');
         const hudTime = document.getElementById('hudTime');
         const hudPanel = document.getElementById('hudPanel');
+        
+        // Элементы админки
+        const devPanelBtn = document.getElementById('devPanelBtn');
+        const devModal = document.getElementById('devModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const submitEnergyBtn = document.getElementById('submitEnergyBtn');
+        const targetUserInput = document.getElementById('targetUser');
+        const energyAmountInput = document.getElementById('energyAmount');
 
-        // ДВУХЭТАПНАЯ ПРОВЕРКА ПРАВ
+        // ДВУХЭТАПНАЯ ПРОВЕРКА ПРАВ (СТРОГО ПО ID)
         function checkIsDeveloper() {
             const matchUsername = (myUsername.toLowerCase() === "@kirushapross");
-            
-            // Если в константу добавлен ID, проверяем и его. Если нет — только никнейм.
             if (ALLOWED_TELEGRAM_ID !== null) {
                 return matchUsername && (myTelegramId === ALLOWED_TELEGRAM_ID);
             }
@@ -496,11 +651,13 @@
                 roleTextEl.innerText = `Ранг: Разработчик систем`;
                 avatarEl.style.borderColor = "#a855f7";
                 avatarEl.style.boxShadow = "0 0 10px rgba(168, 85, 247, 0.5)";
+                devPanelBtn.style.display = "block"; // Показываем кнопку админки только тебе
             } else {
                 nameEl.innerHTML = `${myUsername} <span class="lvl-badge">${myRole}</span>`;
                 roleTextEl.innerText = `Ранг: Пользователь`;
                 avatarEl.style.borderColor = "#555";
                 avatarEl.style.boxShadow = "none";
+                devPanelBtn.style.display = "none";
             }
 
             energyValueEl.innerText = `${currentEnergy} / ${maxEnergy}`;
@@ -545,6 +702,85 @@
                 console.error("Ошибка синхронизации данных с сервером:", e);
             }
         }
+
+        // Логика модального окна админки
+        devPanelBtn.addEventListener('click', () => {
+            haptics.tap();
+            devModal.style.display = "flex";
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            haptics.tap();
+            devModal.style.display = "none";
+        });
+
+        // Отправка начисления энергии на сервер
+        submitEnergyBtn.addEventListener('click', async () => {
+            haptics.tap();
+            let targetUser = targetUserInput.value.trim();
+            const amount = parseInt(energyAmountInput.value);
+
+            if (!targetUser || isNaN(amount) || amount <= 0) {
+                alert("Введите корректный никнейм и объем энергии!");
+                return;
+            }
+
+            // Автоматическое добавление @ если пользователь забыл
+            if (!targetUser.startsWith('@')) {
+                targetUser = '@' + targetUser;
+            }
+
+            submitEnergyBtn.disabled = true;
+            submitEnergyBtn.innerText = "ОТПРАВКА...";
+
+            try {
+                // Сначала получаем данные игрока, чтобы узнать его текущий лимит
+                const getRes = await fetch(`${SERVER_URL}/get_player?username=${encodeURIComponent(targetUser)}`);
+                let targetMaxEnergy = 1000;
+                let targetRole = "Player";
+                
+                if (getRes.ok) {
+                    const targetData = await getRes.json();
+                    targetMaxEnergy = targetData.maxEnergy || 1000;
+                    targetRole = targetData.role || "Player";
+                }
+
+                // Если выдаем больше текущего максимума, расширяем maxEnergy
+                const newMaxEnergy = amount > targetMaxEnergy ? amount : targetMaxEnergy;
+
+                const response = await fetch(`${SERVER_URL}/update_player`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: targetUser,
+                        role: targetRole,
+                        energy: amount,
+                        maxEnergy: newMaxEnergy
+                    })
+                });
+
+                if (response.ok) {
+                    alert(`Энергия (${amount} ⚡) успешно начислена пользователю ${targetUser}`);
+                    devModal.style.display = "none";
+                    targetUserInput.value = "";
+                    
+                    // Если выдал энергию самому себе, сразу обновляем интерфейс
+                    if (targetUser.toLowerCase() === myUsername.toLowerCase()) {
+                        currentEnergy = amount;
+                        maxEnergy = newMaxEnergy;
+                        updateProfileUI();
+                    }
+                } else {
+                    alert("Ошибка при сохранении на сервере.");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Не удалось связаться с сервером.");
+            } finally {
+                submitEnergyBtn.disabled = false;
+                submitEnergyBtn.innerText = "Выдать энергию";
+            }
+        });
 
         radiusSlider.addEventListener('input', function(e) {
             currentRadius = parseInt(e.target.value);
@@ -670,7 +906,6 @@
                 }
                 myTelegramId = user.id; 
             } else {
-                // Если открыто вне Telegram (прямая ссылка) — это Гость
                 myUsername = "@guest"; 
                 myTelegramId = null;
             }
