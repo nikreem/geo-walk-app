@@ -125,7 +125,7 @@
             gap: 6px;
         }
 
-        /* ЭФФЕКТ ПЕРЕЛИВАНИЯ ДЛЯ @kirushapross */
+        /* ЭФФЕКТ ПЕРЕЛИВАНИЯ НИКА РАЗРАБОТЧИКА */
         .developer-glow {
             background: linear-gradient(
                 45deg, 
@@ -154,7 +154,6 @@
             text-transform: uppercase;
         }
 
-        /* Неоновый бейдж для разработчика */
         .badge-developer {
             background: var(--neon-purple) !important;
             color: #fff !important;
@@ -415,8 +414,13 @@
     <script>
         const SERVER_URL = "https://geo-walk-app.onrender.com"; 
 
-        // Дефолтные локальные данные безопасности
+        // === НАСТРОЙКА БЕЗОПАСНОСТИ РАЗРАБОТЧИКА ===
+        // Вставь сюда свой числовой ID из Telegram (например: 582910482), чтобы привязка была 100% точной.
+        // Если оставить null, то проверка будет идти только по строгому совпадению никнейма из Telegram.
+        const ALLOWED_TELEGRAM_ID = 5434932796; 
+
         let myUsername = "@guest";
+        let myTelegramId = null;
         let myRole = "Player";
         let currentEnergy = 1000;
         let maxEnergy = 1000;
@@ -469,22 +473,30 @@
         const hudTime = document.getElementById('hudTime');
         const hudPanel = document.getElementById('hudPanel');
 
-        // РЕНДЕР ИНТЕРФЕЙСА С ПРОВЕРКОЙ НА ДЕВЕЛОПЕРА
+        // ДВУХЭТАПНАЯ ПРОВЕРКА ПРАВ
+        function checkIsDeveloper() {
+            const matchUsername = (myUsername.toLowerCase() === "@kirushapross");
+            
+            // Если в константу добавлен ID, проверяем и его. Если нет — только никнейм.
+            if (ALLOWED_TELEGRAM_ID !== null) {
+                return matchUsername && (myTelegramId === ALLOWED_TELEGRAM_ID);
+            }
+            return matchUsername;
+        }
+
         function updateProfileUI() {
             const nameEl = document.getElementById('displayUsername');
             const roleTextEl = document.getElementById('roleText');
             const avatarEl = document.getElementById('userAvatar');
             const energyValueEl = document.getElementById('energyValue');
 
-            // Проверка: переливающийся текст включается ТОЛЬКО для @kirushapross
-            if (myUsername.toLowerCase() === "@kirushapross") {
-                myRole = "Developer"; // Принудительно ставим ранг
+            if (checkIsDeveloper()) {
+                myRole = "Developer"; 
                 nameEl.innerHTML = `<span class="developer-glow">${myUsername}</span> <span class="lvl-badge badge-developer">${myRole}</span>`;
                 roleTextEl.innerText = `Ранг: Разработчик систем`;
                 avatarEl.style.borderColor = "#a855f7";
                 avatarEl.style.boxShadow = "0 0 10px rgba(168, 85, 247, 0.5)";
             } else {
-                // Если зашел кто-то другой — сброс эффектов
                 nameEl.innerHTML = `${myUsername} <span class="lvl-badge">${myRole}</span>`;
                 roleTextEl.innerText = `Ранг: Пользователь`;
                 avatarEl.style.borderColor = "#555";
@@ -493,7 +505,7 @@
 
             energyValueEl.innerText = `${currentEnergy} / ${maxEnergy}`;
             
-            if (myUsername && myUsername.length > 1) {
+            if (myUsername && myUsername.length > 1 && myUsername !== "@guest") {
                 avatarEl.innerText = myUsername.charAt(1).toUpperCase();
             } else {
                 avatarEl.innerText = "?";
@@ -505,8 +517,7 @@
                 const response = await fetch(`${SERVER_URL}/get_player?username=${encodeURIComponent(myUsername)}`);
                 if (response.ok) {
                     const data = await response.json();
-                    // Загружаем данные только если это не взлом ника
-                    if (myUsername.toLowerCase() !== "@kirushapross") {
+                    if (!checkIsDeveloper()) {
                         myRole = data.role || "Player";
                     }
                     maxEnergy = data.maxEnergy || 1000;
@@ -515,7 +526,6 @@
             } catch (e) {
                 console.error("Ошибка при работе с Render API:", e);
             }
-            // Вызываем UI в любом случае после попытки загрузки
             updateProfileUI();
         }
 
@@ -645,24 +655,27 @@
             map.fitBounds(boundsGroup.getBounds().pad(0.35), { animate: true, duration: 0.5 });
         });
 
-        // Инициализация при запуске игры
         async function initApp() {
             const tg = window.Telegram ? window.Telegram.WebApp : null;
-            if (tg) {
+            
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 tg.ready(); 
                 tg.expand();
-                const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
-                if (user && user.username) {
+                const user = tg.initDataUnsafe.user;
+                
+                if (user.username) {
                     myUsername = '@' + user.username;
+                } else {
+                    myUsername = "@id" + user.id;
                 }
+                myTelegramId = user.id; 
             } else {
-                // Если открыто в обычном браузере для тестов, ставим дефолт
-                myUsername = "@kirushapross"; 
+                // Если открыто вне Telegram (прямая ссылка) — это Гость
+                myUsername = "@guest"; 
+                myTelegramId = null;
             }
 
-            // Загружаем данные и рендерим UI
             await loadProfileFromServer();
-
             map.locate({setView: true, maxZoom: 14});
         }
 
