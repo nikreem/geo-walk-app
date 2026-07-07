@@ -10,35 +10,35 @@
     
     <style>
         :root {
-            --bg-color: #F3F5F9; /* Нежный серо-голубой фон как на картинке */
+            --bg-color: #F3F5F9; 
             --card-bg: #FFFFFF;
-            --primary-purple: #4A3AFF; /* Фирменный глубокий индиго */
+            --primary-purple: #4A3AFF; 
             --accent-cyan: #00F0FF;
-            --text-dark: #0F172A; /* Насыщенный темный для заголовков */
-            --text-muted: #64748B; /* Мягкий серый для подписей */
+            --text-dark: #0F172A; 
+            --text-muted: #64748B; 
             --shadow-sm: 0 4px 12px rgba(74, 58, 255, 0.03);
             --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.04);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-dark);
             margin: 0;
-            padding: 20px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
             min-height: 100vh;
             box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Верхняя панель профиля */
+        /* Шапка профиля */
         .header-card {
             background: var(--card-bg);
             border-radius: 24px;
-            padding: 14px 20px;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -48,19 +48,12 @@
         .profile-box {
             display: flex;
             align-items: center;
-            gap: 14px;
-        }
-
-        .avatar-frame {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            gap: 10px;
         }
 
         .avatar {
-            width: 46px;
-            height: 46px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #FFFFFF;
@@ -70,17 +63,14 @@
         .profile-meta {
             display: flex;
             flex-direction: column;
-            gap: 2px;
         }
 
         .user-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-dark);
+            font-size: 14px;
+            font-weight: 700;
             margin: 0;
         }
 
-        /* Эффект переливающегося никнейма для VIP */
         .vip-nick {
             background: linear-gradient(270deg, #ff007f, #4a3aff, #00f0ff, #ff007f);
             background-size: 400% 400%;
@@ -96,32 +86,81 @@
             100% { background-position: 0% 50%; }
         }
 
-        .user-status {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 500;
+        .header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
         }
 
-        /* Метка текущей версии приложения */
-        .app-version {
-            background: #EBEFF8;
-            color: var(--primary-purple);
-            font-size: 11px;
+        .coin-badge {
+            background: #FFF9E6;
+            color: #D4A373;
+            border: 1px solid #FFEAA7;
             font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 100px;
-            letter-spacing: 0.5px;
+            font-size: 14px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        /* Главная карточка управления */
+        .app-version {
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Навигация между вкладками приложения */
+        .app-tabs {
+            display: flex;
+            background: #EBEFF8;
+            padding: 4px;
+            border-radius: 16px;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--primary-purple);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Экраны приложения */
+        .view-section {
+            display: none;
+            flex-direction: column;
+            gap: 14px;
+            flex-grow: 1;
+        }
+
+        .view-section.active {
+            display: flex;
+        }
+
+        /* Главная карточка генератора */
         .main-card {
             background: var(--card-bg);
-            border-radius: 32px;
-            padding: 24px;
+            border-radius: 28px;
+            padding: 20px;
             box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
         }
 
         .section-header {
@@ -131,120 +170,219 @@
         }
 
         .section-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             margin: 0;
-            color: var(--text-dark);
         }
 
         .radius-display {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             color: var(--primary-purple);
             background: #F0EEFF;
-            padding: 4px 12px;
-            border-radius: 12px;
-        }
-
-        /* Премиальный кастомный слайдер радиуса */
-        .slider-wrapper {
-            padding: 8px 0;
-            position: relative;
+            padding: 4px 10px;
+            border-radius: 10px;
         }
 
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 10px;
+            height: 8px;
             border-radius: 20px;
-            /* Динамический градиент инжектируется через JS */
             background: #E2E8F0; 
             outline: none;
-            margin: 0;
             cursor: pointer;
         }
 
-        /* Стилизация ползунка (Thumb) */
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             background: #FFFFFF;
-            border: 4.5px solid var(--primary-purple);
-            box-shadow: 0 4px 12px rgba(74, 58, 255, 0.3);
-            cursor: pointer;
-            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 4px solid var(--primary-purple);
+            box-shadow: 0 4px 10px rgba(74, 58, 255, 0.25);
         }
 
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
+        .energy-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: #F8FAFC;
+            padding: 10px 14px;
+            border-radius: 14px;
         }
 
-        input[type="range"]::-webkit-slider-thumb:active {
-            transform: scale(0.95);
-            background: var(--primary-purple);
-            border-color: #FFFFFF;
+        .energy-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
         }
 
-        /* Кнопка в стиле "Ongoing" задач с макета */
+        .energy-bar-bg {
+            background: #E2E8F0;
+            height: 6px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .energy-bar-fill {
+            background: linear-gradient(90deg, #34D399, #10B981);
+            height: 100%;
+            width: 100%;
+            transition: width 0.3s;
+        }
+
         .action-button {
             background: var(--primary-purple);
             color: #FFFFFF;
             border: none;
-            padding: 16px;
-            border-radius: 20px;
-            font-size: 15px;
+            padding: 14px;
+            border-radius: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(74, 58, 255, 0.2);
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(74, 58, 255, 0.15);
         }
 
-        .action-button:active {
-            transform: scale(0.97);
-            box-shadow: 0 3px 10px rgba(74, 58, 255, 0.1);
+        .action-button:disabled {
+            background: #94A3B8;
+            box-shadow: none;
         }
 
-        /* Информационная панель логов */
         .log-panel {
             background: #F8FAFC;
-            border-radius: 16px;
-            padding: 14px 16px;
-            font-size: 13px;
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-size: 12px;
             color: var(--text-muted);
-            line-height: 1.5;
+            line-height: 1.4;
             border-left: 3px solid var(--primary-purple);
         }
 
-        /* Блок интерактивной карты */
         .map-wrapper {
             background: var(--card-bg);
-            border-radius: 32px;
-            padding: 10px;
+            border-radius: 28px;
+            padding: 8px;
             box-shadow: var(--shadow-md);
             flex-grow: 1;
+            min-height: 260px;
             display: flex;
-            flex-direction: column;
-            min-height: 340px;
         }
 
         #map {
             width: 100%;
             height: 100%;
-            border-radius: 24px;
-            flex-grow: 1;
+            border-radius: 20px;
             z-index: 1;
-            /* Делаем карту чуть мягче по цветам под интерфейс приложения */
-            filter: grayscale(8%) contrast(96%) saturate(104%);
         }
 
-        /* Кастомная стильная неоновая точка цели */
+        /* Стили подвкладок магазина скинов */
+        .shop-subtabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .subtab-btn {
+            background: #E2E8F0;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .subtab-btn.active {
+            background: var(--text-dark);
+            color: #FFFFFF;
+        }
+
+        .skins-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            overflow-y: auto;
+        }
+
+        .skin-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            border: 2px solid transparent;
+            text-align: center;
+        }
+
+        .skin-card.applied {
+            border-color: var(--primary-purple);
+        }
+
+        .skin-preview-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: #F8FAFC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .skin-name {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .skin-btn {
+            width: 100%;
+            border: none;
+            padding: 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #F0EEFF;
+            color: var(--primary-purple);
+        }
+
+        .skin-btn.buy {
+            background: #FFF9E6;
+            color: #D4A373;
+        }
+
+        .skin-btn.active-skin {
+            background: var(--primary-purple);
+            color: #FFFFFF;
+        }
+
+        /* Стили фильтров для скинов карты */
+        .map-beige-filter {
+            filter: sepia(0.55) hue-rotate(-10deg) saturate(120%) contrast(95%) brightness(102%) !important;
+        }
+
+        /* Анимации для SVG-скинов человечка */
+        @keyframes rgbPegman {
+            0% { fill: #FF0000; } 20% { fill: #00FF00; } 40% { fill: #0000FF; }
+            60% { fill: #FFFF00; } 80% { fill: #00FFFF; } 100% { fill: #FF0000; }
+        }
+        .skin-path-rgb { animation: rgbPegman 4s linear infinite; }
+        .skin-path-fire { fill: url(#fireGrad); }
+        .skin-path-galaxy { fill: url(#galaxyGrad); }
+        .skin-path-water { fill: url(#waterGrad); }
+        .skin-path-default { fill: #F4B400; }
+
         .target-glow-marker {
             background: #FF007F;
             border: 2.5px solid #FFFFFF;
             border-radius: 50%;
-            box-shadow: 0 0 15px #FF007F, 0 0 5px rgba(255, 0, 127, 0.5);
+            box-shadow: 0 0 15px #FF007F;
         }
     </style>
 </head>
@@ -252,106 +390,319 @@
 
     <div class="header-card">
         <div class="profile-box">
-            <div class="avatar-frame">
-                <img id="user-avatar" class="avatar" src="https://ui-avatars.com/api/?name=Guest&background=EBEFF8&color=4A3AFF" alt="Avatar">
-            </div>
+            <img id="user-avatar" class="avatar" src="https://ui-avatars.com/api/?name=Guest&background=EBEFF8&color=4A3AFF" alt="Avatar">
             <div class="profile-meta">
                 <h4 id="user-name" class="user-title">Гость</h4>
-                <span id="user-status" class="user-status">Браузерная сессия</span>
+                <span id="user-version-label" class="app-version">v1.4.0</span>
             </div>
         </div>
-        <div class="app-version">v1.2.0</div>
-    </div>
-
-    <div class="main-card">
-        <div class="section-header">
-            <h3 class="section-title">Радиус поиска</h3>
-            <span id="radius-val" class="radius-display">500 м</span>
-        </div>
-        
-        <div class="slider-wrapper">
-            <input type="range" id="radius-slider" min="100" max="3000" step="50" value="500">
-        </div>
-
-        <button class="action-button" id="btn-generate">Сгенерировать случайную точку</button>
-        
-        <div class="log-panel" id="status-text">
-            Установите центр зоны кликом по карте или разрешите доступ к GPS устройства.
+        <div class="header-right">
+            <div id="coin-counter" class="coin-badge">🪙 1000</div>
         </div>
     </div>
 
-    <div class="map-wrapper">
-        <div id="map"></div>
+    <div class="app-tabs">
+        <button class="tab-btn active" onclick="switchView('generator')">🗺️ Карта</button>
+        <button class="tab-btn" onclick="switchView('shop')">🛍️ Скины</button>
+    </div>
+
+    <div id="view-generator" class="view-section active">
+        <div class="main-card">
+            <div class="section-header">
+                <h3 class="section-title">Радиус поиска</h3>
+                <span id="radius-val" class="radius-display">500 м</span>
+            </div>
+            <div class="slider-wrapper">
+                <input type="range" id="radius-slider" min="100" max="3000" step="50" value="500">
+            </div>
+            <div class="energy-container">
+                <div class="energy-meta">
+                    <span>Доступная энергия</span>
+                    <span id="energy-text" style="color: #10B981">100 / 100 ⚡</span>
+                </div>
+                <div class="energy-bar-bg">
+                    <div id="energy-bar" class="energy-bar-fill"></div>
+                </div>
+            </div>
+            <button class="action-button" id="btn-generate">Сгенерировать точку (⚡ 10)</button>
+            <div class="log-panel" id="status-text">
+                Перетащите человечка или кликните по карте для изменения центра зоны.
+            </div>
+        </div>
+        <div class="map-wrapper">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <div id="view-shop" class="view-section">
+        <div class="shop-subtabs">
+            <button class="subtab-btn active" id="subtab-char" onclick="switchSubTab('char')">👤 Персонаж</button>
+            <button class="subtab-btn" id="subtab-map" onclick="switchSubTab('map')">🗺️ Карта</button>
+        </div>
+        
+        <div class="skins-grid" id="shop-items-container"></div>
     </div>
 
     <script>
-        let map, centerMarker, targetMarker, searchCircle;
-        let centerCoords = [55.7558, 37.6173]; // Москва по дефолту
+        let map, centerMarker, targetMarker, searchCircle, currentTileLayer;
+        let centerCoords = [55.7558, 37.6173]; 
         let currentRadius = 500;
+        
+        let currentEnergy = 100;
+        const maxEnergy = 100;
+        let currentCost = 10;
+
+        // ЭКОНОМИКА И СКИДКИ
+        let userCoins = 1000;
+        let isVip = false;
+
+        // Системные данные скинов
+        let db = {
+            activeChar: 'default',
+            activeMap: 'bright',
+            unlocked: ['default', 'bright']
+        };
+
+        // Загрузка сохранений локально
+        if(localStorage.getItem('geo_walk_save')) {
+            try { db = JSON.parse(localStorage.getItem('geo_walk_save')); } catch(e){}
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
             const tg = window.Telegram.WebApp;
-            tg.ready();
-            tg.expand();
+            tg.ready(); tg.expand();
 
             setupProfile(tg);
             initMap();
             setupControls();
-            tryGeolocation();
+            startEnergyRegen();
+            renderShop();
         });
 
         function setupProfile(tg) {
             const nameElem = document.getElementById("user-name");
             const avatarElem = document.getElementById("user-avatar");
-            const statusElem = document.getElementById("user-status");
 
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const user = tg.initDataUnsafe.user;
                 nameElem.textContent = user.first_name;
-                
-                if (user.photo_url) {
-                    avatarElem.src = user.photo_url;
-                } else {
-                    avatarElem.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name)}&background=4A3AFF&color=fff`;
-                }
+                avatarElem.src = user.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name)}&background=4A3AFF&color=fff`;
 
                 if (user.id === 5434932796 || (user.username && user.username.toLowerCase() === "kirushapross")) {
+                    isVip = true;
                     nameElem.classList.add("vip-nick");
-                    statusElem.textContent = "VIP Доступ";
-                    statusElem.style.color = "#FF007F";
-                    statusElem.style.fontWeight = "600";
-                } else {
-                    statusElem.textContent = "Telegram Клиент";
                 }
             }
+            updateCoinUI();
+        }
+
+        function updateCoinUI() {
+            const counter = document.getElementById("coin-counter");
+            if (isVip) {
+                counter.innerHTML = "🪙 ∞";
+            } else {
+                counter.innerHTML = `🪙 ${userCoins}`;
+            }
+        }
+
+        function saveGame() {
+            localStorage.setItem('geo_walk_save', JSON.stringify(db));
+        }
+
+        // Рендеринг SVG-кода кастомных человечков
+        function getPegmanSVG(skinClass) {
+            return `
+                <svg width="36" height="46" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3))">
+                    <defs>
+                        <linearGradient id="fireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#FF8C00"/><stop offset="100%" stop-color="#FF0000"/>
+                        </linearGradient>
+                        <linearGradient id="galaxyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#4A3AFF"/><stop offset="50%" stop-color="#6700FF"/><stop offset="100%" stop-color="#FF007F"/>
+                        </linearGradient>
+                        <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#00F0FF"/><stop offset="100%" stop-color="#0072FF"/>
+                        </linearGradient>
+                    </defs>
+                    <circle cx="16" cy="7" r="5" class="${skinClass}" stroke="#FFFFFF" stroke-width="2"/>
+                    <path d="M16 13C11 13 8 16 8 21V30H11V40H14V32H18V40H21V30H24V21C24 16 21 13 16 13Z" class="${skinClass}" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+            `;
         }
 
         function initMap() {
             map = L.map('map', { zoomControl: false }).setView(centerCoords, 14);
+            applyMapSkin(db.activeMap);
+
+            updatePegmanIcon();
             
-            // Чистые и стильные тайлы Voyager от CartoDB под тон макета
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '© OpenStreetMap'
-            }).addTo(map);
-
-            centerMarker = L.marker(centerCoords, { draggable: true }).addTo(map);
             searchCircle = L.circle(centerCoords, {
-                radius: currentRadius,
-                color: '#4A3AFF',
-                fillColor: '#4A3AFF',
-                fillOpacity: 0.08,
-                weight: 2.5
+                radius: currentRadius, color: '#4A3AFF', fillColor: '#4A3AFF', fillOpacity: 0.08, weight: 2.5
             }).addTo(map);
+        }
 
+        function updatePegmanIcon() {
+            if (centerMarker) map.removeLayer(centerMarker);
+
+            const iconHtml = getPegmanSVG(`skin-path-${db.activeChar}`);
+            const pegmanIcon = L.divIcon({
+                html: iconHtml, className: 'pegman-marker-container', iconSize: [36, 46], iconAnchor: [18, 44]
+            });
+
+            centerMarker = L.marker(centerCoords, { draggable: true, icon: pegmanIcon }).addTo(map);
             centerMarker.on('drag', (e) => {
                 centerCoords = [e.latlng.lat, e.latlng.lng];
                 searchCircle.setLatLng(e.latlng);
             });
         }
 
-        function updateSliderFill(slider) {
-            const percentage = (slider.value - slider.min) / (slider.max - slider.min) * 100;
-            slider.style.background = `linear-gradient(to right, var(--primary-purple) 0%, var(--primary-purple) ${percentage}%, #E2E8F0 ${percentage}%, #E2E8F0 100%)`;
+        function applyMapSkin(skinId) {
+            if (currentTileLayer) map.removeLayer(currentTileLayer);
+            
+            let url = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+            const mapContainer = document.getElementById('map');
+            mapContainer.className = ''; 
+
+            if (skinId === 'dark') {
+                url = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+            } else if (skinId === 'beige') {
+                mapContainer.classList.add('map-beige-filter');
+            }
+
+            currentTileLayer = L.tileLayer(url, { attribution: '© OpenStreetMap' }).addTo(map);
+        }
+
+        // СИСТЕМА МАГАЗИНА СКИНОВ
+        let currentShopTab = 'char';
+        const skinsData = {
+            char: [
+                { id: 'default', name: 'Дефолтный', cls: 'skin-path-default' },
+                { id: 'fire', name: 'Огненный', cls: 'skin-path-fire' },
+                { id: 'galaxy', name: 'Галактический', cls: 'skin-path-galaxy' },
+                { id: 'rgb', name: 'РГБ Скин', cls: 'skin-path-rgb' },
+                { id: 'water', name: 'Водный', cls: 'skin-path-water' }
+            ],
+            map: [
+                { id: 'bright', name: 'Яркая карта', preview: '#E2E8F0' },
+                { id: 'dark', name: 'Черная карта', preview: '#1E1B4B' },
+                { id: 'beige', name: 'Бежевая карта', preview: '#F5EBE6' }
+            ]
+        };
+
+        function renderShop() {
+            const container = document.getElementById("shop-items-container");
+            container.innerHTML = "";
+            
+            const list = skinsData[currentShopTab];
+            const activeId = currentShopTab === 'char' ? db.activeChar : db.activeMap;
+
+            list.forEach(item => {
+                const isUnlocked = db.unlocked.includes(item.id);
+                const isApplied = item.id === activeId;
+                
+                let previewContent = "";
+                if (currentShopTab === 'char') {
+                    previewContent = getPegmanSVG(item.cls);
+                } else {
+                    previewContent = `<div style="width:40px; height:40px; border-radius:50%; background:${item.preview}; border:2px solid #ccc"></div>`;
+                }
+
+                let btnText = "Купить 100";
+                let btnCls = "skin-btn buy";
+
+                if (isUnlocked) {
+                    if (isApplied) {
+                        btnText = "Применено";
+                        btnCls = "skin-btn active-skin";
+                    } else {
+                        btnText = "Выбрать";
+                        btnCls = "skin-btn";
+                    }
+                }
+
+                const card = document.createElement("div");
+                card.className = `skin-card ${isApplied ? 'applied' : ''}`;
+                card.innerHTML = `
+                    <div class="skin-preview-box">${previewContent}</div>
+                    <div class="skin-name">${item.name}</div>
+                    <button class="${btnCls}" onclick="handleSkinAction('${item.id}')">${btnText}</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function handleSkinAction(id) {
+            const isUnlocked = db.unlocked.includes(id) || isVip;
+            
+            if (isUnlocked) {
+                if (currentShopTab === 'char') {
+                    db.activeChar = id;
+                    updatePegmanIcon();
+                } else {
+                    db.activeMap = id;
+                    applyMapSkin(id);
+                }
+                saveGame();
+                renderShop();
+            } else {
+                // Логика покупки
+                if (userCoins >= 100) {
+                    userCoins -= 100;
+                    db.unlocked.push(id);
+                    updateCoinUI();
+                    saveGame();
+                    handleSkinAction(id); // Сразу применяем после покупки
+                } else {
+                    alert("Недостаточно монет для покупки скина!");
+                }
+            }
+        }
+
+        function switchView(view) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            
+            if(view === 'generator') {
+                document.querySelector('[onclick="switchView(\'generator\')"]').classList.add('active');
+                document.getElementById('view-generator').classList.add('active');
+                setTimeout(() => map.invalidateSize(), 200); // Корректный пересчет размеров Leaflet
+            } else {
+                document.querySelector('[onclick="switchView(\'shop\')"]').classList.add('active');
+                document.getElementById('view-shop').classList.add('active');
+                renderShop();
+            }
+        }
+
+        function switchSubTab(type) {
+            currentShopTab = type;
+            document.getElementById('subtab-char').classList.remove('active');
+            document.getElementById('subtab-map').classList.remove('active');
+            if(type === 'char') document.getElementById('subtab-char').classList.add('active');
+            else document.getElementById('subtab-map').classList.add('active');
+            renderShop();
+        }
+
+        // СТАНДАРТНОЕ УПРАВЛЕНИЕ И ГЕНЕРАЦИЯ (ИЗ ПРОШЛОЙ ВЕРСИИ)
+        function calculateEnergyCost(radius) {
+            return Math.floor(radius / 100) + 5;
+        }
+
+        function updateEnergyUI() {
+            const energyText = document.getElementById("energy-text");
+            const energyBar = document.getElementById("energy-bar");
+            const btnGenerate = document.getElementById("btn-generate");
+
+            energyText.textContent = `${currentEnergy} / ${maxEnergy} ⚡`;
+            energyBar.style.width = `${currentEnergy}%`;
+
+            btnGenerate.textContent = `Сгенерировать точку (⚡ ${currentCost})`;
+            btnGenerate.disabled = currentEnergy < currentCost;
+        }
+
+        function startEnergyRegen() {
+            setInterval(() => {
+                if (currentEnergy < maxEnergy) { currentEnergy++; updateEnergyUI(); }
+            }, 2000);
         }
 
         function setupControls() {
@@ -359,14 +710,22 @@
             const radiusVal = document.getElementById("radius-val");
             const btnGenerate = document.getElementById("btn-generate");
 
-            // Первичная инициализация закраски трека
-            updateSliderFill(slider);
+            const updateFill = (s) => {
+                const pct = (s.value - s.min) / (s.max - s.min) * 100;
+                s.style.background = `linear-gradient(to right, var(--primary-purple) 0%, var(--primary-purple) ${pct}%, #E2E8F0 ${pct}%, #E2E8F0 100%)`;
+            };
+
+            updateFill(slider);
+            currentCost = calculateEnergyCost(currentRadius);
+            updateEnergyUI();
 
             slider.addEventListener("input", (e) => {
                 currentRadius = parseInt(e.target.value);
                 radiusVal.textContent = currentRadius >= 1000 ? `${(currentRadius/1000).toFixed(1)} км` : `${currentRadius} м`;
                 searchCircle.setRadius(currentRadius);
-                updateSliderFill(e.target);
+                updateFill(e.target);
+                currentCost = calculateEnergyCost(currentRadius);
+                updateEnergyUI();
             });
 
             map.on('click', (e) => {
@@ -385,9 +744,6 @@
                     map.setView(centerCoords, 14);
                     centerMarker.setLatLng(centerCoords);
                     searchCircle.setLatLng(centerCoords);
-                    document.getElementById("status-text").textContent = "Локация успешно синхронизирована по GPS.";
-                }, () => {
-                    document.getElementById("status-text").textContent = "Доступ к GPS отклонен. Используйте ручной выбор на карте.";
                 });
             }
         }
@@ -395,65 +751,50 @@
         function getRandomPointInCircle(lat, lng, radiusMeters) {
             const r = (radiusMeters / 111320) * Math.sqrt(Math.random());
             const theta = Math.random() * 2 * Math.PI;
-            const randomLat = lat + r * Math.cos(theta);
-            const randomLng = lng + r * Math.sin(theta) / Math.cos(lat * Math.PI / 180);
-            return { lat: randomLat, lng: randomLng };
+            return {
+                lat: lat + r * Math.cos(theta),
+                lng: lng + r * Math.sin(theta) / Math.cos(lat * Math.PI / 180)
+            };
         }
 
         async function checkPointSafety(lat, lng) {
             const query = `[out:json];(node(around:15,${lat},${lng});way(around:15,${lat},${lng}););out tags;`;
-            const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
-            
             try {
-                const response = await fetch(url);
+                const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
                 if (!response.ok) return true;
-                
                 const data = await response.json();
-                for (let element of data.elements) {
-                    if (element.tags) {
-                        if (element.tags.building && element.tags.building !== 'no') return false;
-                        if (element.tags.natural === 'water' || element.tags.waterway || element.tags.landuse === 'reservoir') return false;
+                for (let el of data.elements) {
+                    if (el.tags) {
+                        if (el.tags.building && el.tags.building !== 'no') return false;
+                        if (el.tags.natural === 'water' || el.tags.waterway || el.tags.landuse === 'reservoir') return false;
                     }
                 }
                 return true;
-            } catch (e) {
-                return true; 
-            }
+            } catch (e) { return true; }
         }
 
         async function generateValidPoint() {
+            if (currentEnergy < currentCost) return;
             const statusBox = document.getElementById("status-text");
-            statusBox.innerHTML = "⏳ Проверяем местность на наличие построек и воды...";
+            statusBox.innerHTML = "⏳ Сканируем карту на наличие преград...";
             
-            let attempts = 0;
-            let validPoint = null;
-            const maxAttempts = 15;
-
-            while (attempts < maxAttempts) {
+            let attempts = 0, validPoint = null;
+            while (attempts < 15) {
                 let candidate = getRandomPointInCircle(centerCoords[0], centerCoords[1], currentRadius);
-                let isSafe = await checkPointSafety(candidate.lat, candidate.lng);
-                
-                if (isSafe) {
-                    validPoint = candidate;
-                    break;
-                }
+                if (await checkPointSafety(candidate.lat, candidate.lng)) { validPoint = candidate; break; }
                 attempts++;
             }
 
             if (validPoint) {
+                currentEnergy -= currentCost; updateEnergyUI();
                 if (targetMarker) map.removeLayer(targetMarker);
-
-                const neonIcon = L.divIcon({
-                    className: 'target-glow-marker',
-                    iconSize: [16, 16]
-                });
-
-                targetMarker = L.marker([validPoint.lat, validPoint.lng], { icon: neonIcon }).addTo(map);
+                targetMarker = L.marker([validPoint.lat, validPoint.lng], {
+                    icon: L.divIcon({ className: 'target-glow-marker', iconSize: [16, 16] })
+                }).addTo(map);
                 map.panTo([validPoint.lat, validPoint.lng]);
-
-                statusBox.innerHTML = `🎯 Точка определена (Попыток: ${attempts + 1})!<br>Координаты: ${validPoint.lat.toFixed(5)}, ${validPoint.lng.toFixed(5)}`;
+                statusBox.innerHTML = `🎯 Точка создана!<br>Координаты: ${validPoint.lat.toFixed(5)}, ${validPoint.lng.toFixed(5)}`;
             } else {
-                statusBox.innerHTML = "❌ В выбранном радиусе слишком плотная застройка или вода. Попробуйте расширить радиус поиска.";
+                statusBox.innerHTML = "❌ Ошибка подбора локации. Смените позицию.";
             }
         }
     </script>
