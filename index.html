@@ -10,267 +10,297 @@
     
     <style>
         :root {
-            --bg-color: #F4F6FA;
+            --bg-color: #F3F5F9; /* Нежный серо-голубой фон как на картинке */
             --card-bg: #FFFFFF;
-            --text-main: #1E293B;
-            --text-muted: #64748B;
-            --accent-purple: #7F00FF;
-            --accent-blue: #2481CC;
-            --gradient-purple: linear-gradient(135deg, #7F00FF, #FF007F);
-            --gradient-dark: linear-gradient(135deg, #1E1B4B, #312E81);
+            --primary-purple: #4A3AFF; /* Фирменный глубокий индиго */
+            --accent-cyan: #00F0FF;
+            --text-dark: #0F172A; /* Насыщенный темный для заголовков */
+            --text-muted: #64748B; /* Мягкий серый для подписей */
+            --shadow-sm: 0 4px 12px rgba(74, 58, 255, 0.03);
+            --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.04);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-main);
+            color: var(--text-dark);
             margin: 0;
-            padding: 16px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 16px;
             min-height: 100vh;
             box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Верхняя панель: Профиль и Версия */
-        .header-panel {
+        /* Верхняя панель профиля */
+        .header-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--card-bg);
-            padding: 12px 20px;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(36, 24, 99, 0.05);
-            position: relative;
+            box-shadow: var(--shadow-sm);
         }
 
-        .profile-container {
+        .profile-box {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
+        }
+
+        .avatar-frame {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .avatar {
-            width: 45px;
-            height: 45px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--accent-purple);
-            box-shadow: 0 2px 8px rgba(127, 0, 255, 0.2);
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 4px 10px rgba(74, 58, 255, 0.15);
         }
 
-        .profile-info {
+        .profile-meta {
             display: flex;
             flex-direction: column;
+            gap: 2px;
         }
 
-        .username {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-main);
+        .user-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
         }
 
-        /* Анимация переливающегося ника для VIP */
+        /* Эффект переливающегося никнейма для VIP */
         .vip-nick {
-            background: linear-gradient(270deg, #ff007f, #7f00ff, #00f0ff, #ff007f);
-            background-size: 600% 600%;
+            background: linear-gradient(270deg, #ff007f, #4a3aff, #00f0ff, #ff007f);
+            background-size: 400% 400%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: vipShimmer 4s ease infinite;
-            font-weight: 900;
+            animation: vipFlow 3s ease infinite;
+            font-weight: 800;
         }
 
-        @keyframes vipShimmer {
+        @keyframes vipFlow {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        .status-badge {
-            font-size: 11px;
-            font-weight: 600;
+        .user-status {
+            font-size: 12px;
             color: var(--text-muted);
+            font-weight: 500;
         }
 
-        .version-tag {
-            background: var(--gradient-purple);
-            color: #fff;
-            font-size: 12px;
+        /* Метка текущей версии приложения */
+        .app-version {
+            background: #EBEFF8;
+            color: var(--primary-purple);
+            font-size: 11px;
             font-weight: 700;
             padding: 6px 14px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(255, 0, 127, 0.2);
+            border-radius: 100px;
+            letter-spacing: 0.5px;
         }
 
-        /* Контейнер управления */
-        .control-card {
+        /* Главная карточка управления */
+        .main-card {
             background: var(--card-bg);
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(36, 24, 99, 0.04);
+            border-radius: 32px;
+            padding: 24px;
+            box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 20px;
         }
 
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0;
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .radius-value {
-            color: var(--accent-purple);
-            font-size: 16px;
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-dark);
         }
 
-        .slider-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .radius-display {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary-purple);
+            background: #F0EEFF;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        /* Премиальный кастомный слайдер радиуса */
+        .slider-wrapper {
+            padding: 8px 0;
+            position: relative;
         }
 
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: #E2E8F0;
+            height: 10px;
+            border-radius: 20px;
+            /* Динамический градиент инжектируется через JS */
+            background: #E2E8F0; 
             outline: none;
+            margin: 0;
+            cursor: pointer;
         }
 
+        /* Стилизация ползунка (Thumb) */
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: var(--accent-purple);
+            background: #FFFFFF;
+            border: 4.5px solid var(--primary-purple);
+            box-shadow: 0 4px 12px rgba(74, 58, 255, 0.3);
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(127, 0, 255, 0.4);
-            transition: transform 0.1s;
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
         }
 
         input[type="range"]::-webkit-slider-thumb:active {
-            transform: scale(1.2);
+            transform: scale(0.95);
+            background: var(--primary-purple);
+            border-color: #FFFFFF;
         }
 
-        .btn-primary {
-            background: var(--gradient-dark);
-            color: white;
+        /* Кнопка в стиле "Ongoing" задач с макета */
+        .action-button {
+            background: var(--primary-purple);
+            color: #FFFFFF;
             border: none;
-            padding: 14px;
-            border-radius: 16px;
+            padding: 16px;
+            border-radius: 20px;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
-            box-shadow: 0 4px 15px rgba(30, 27, 75, 0.25);
+            box-shadow: 0 6px 20px rgba(74, 58, 255, 0.2);
+            transition: all 0.2s ease;
         }
 
-        .btn-primary:active {
-            transform: scale(0.98);
-            opacity: 0.9;
+        .action-button:active {
+            transform: scale(0.97);
+            box-shadow: 0 3px 10px rgba(74, 58, 255, 0.1);
         }
 
-        /* Блок статуса и инспекции */
-        .status-box {
+        /* Информационная панель логов */
+        .log-panel {
             background: #F8FAFC;
-            border-left: 4px solid var(--accent-purple);
-            padding: 10px 14px;
-            border-radius: 0 12px 12px 0;
+            border-radius: 16px;
+            padding: 14px 16px;
             font-size: 13px;
             color: var(--text-muted);
-            line-height: 1.4;
+            line-height: 1.5;
+            border-left: 3px solid var(--primary-purple);
         }
 
-        /* Контейнер для карты с кастомными фильтрами */
-        .map-card {
+        /* Блок интерактивной карты */
+        .map-wrapper {
             background: var(--card-bg);
-            border-radius: 24px;
+            border-radius: 32px;
             padding: 10px;
-            box-shadow: 0 10px 30px rgba(36, 24, 99, 0.04);
+            box-shadow: var(--shadow-md);
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            min-height: 350px;
+            min-height: 340px;
         }
 
         #map {
             width: 100%;
             height: 100%;
-            border-radius: 16px;
+            border-radius: 24px;
             flex-grow: 1;
             z-index: 1;
-            /* Кастомный фильтр для стилизации карты под палитру дашборда */
-            filter: hue-rotate(10deg) saturate(110%) contrast(95%);
+            /* Делаем карту чуть мягче по цветам под интерфейс приложения */
+            filter: grayscale(8%) contrast(96%) saturate(104%);
         }
 
-        /* Стилизация маркеров Leaflet под неоновый дизайн */
-        .custom-pulse-icon {
+        /* Кастомная стильная неоновая точка цели */
+        .target-glow-marker {
             background: #FF007F;
-            border: 2px solid white;
+            border: 2.5px solid #FFFFFF;
             border-radius: 50%;
-            box-shadow: 0 0 12px #FF007F;
+            box-shadow: 0 0 15px #FF007F, 0 0 5px rgba(255, 0, 127, 0.5);
         }
     </style>
 </head>
 <body>
 
-    <div class="header-panel">
-        <div class="profile-container">
-            <img id="user-avatar" class="avatar" src="https://ui-avatars.com/api/?name=Guest&background=444&color=fff" alt="Avatar">
-            <div class="profile-info">
-                <span id="user-name" class="username">Гость</span>
-                <span id="user-status" class="status-badge">Браузер</span>
+    <div class="header-card">
+        <div class="profile-box">
+            <div class="avatar-frame">
+                <img id="user-avatar" class="avatar" src="https://ui-avatars.com/api/?name=Guest&background=EBEFF8&color=4A3AFF" alt="Avatar">
+            </div>
+            <div class="profile-meta">
+                <h4 id="user-name" class="user-title">Гость</h4>
+                <span id="user-status" class="user-status">Браузерная сессия</span>
             </div>
         </div>
-        <div class="version-tag">v1.1.0</div>
+        <div class="app-version">v1.2.0</div>
     </div>
 
-    <div class="control-card">
-        <h3 class="card-title">
-            Генератор прогулки
-            <span id="radius-val" class="radius-value">500 м</span>
-        </h3>
+    <div class="main-card">
+        <div class="section-header">
+            <h3 class="section-title">Радиус поиска</h3>
+            <span id="radius-val" class="radius-display">500 м</span>
+        </div>
         
-        <div class="slider-container">
+        <div class="slider-wrapper">
             <input type="range" id="radius-slider" min="100" max="3000" step="50" value="500">
         </div>
 
-        <button class="btn-primary" id="btn-generate">Сгенерировать случайную точку</button>
+        <button class="action-button" id="btn-generate">Сгенерировать случайную точку</button>
         
-        <div class="status-box" id="status-text">
-            Кликните на карту или разрешите геопозицию, чтобы выбрать центр зоны.
+        <div class="log-panel" id="status-text">
+            Установите центр зоны кликом по карте или разрешите доступ к GPS устройства.
         </div>
     </div>
 
-    <div class="map-card">
+    <div class="map-wrapper">
         <div id="map"></div>
     </div>
 
     <script>
         let map, centerMarker, targetMarker, searchCircle;
-        let centerCoords = [55.7558, 37.6173]; // По умолчанию Москва
+        let centerCoords = [55.7558, 37.6173]; // Москва по дефолту
         let currentRadius = 500;
 
-        document.addEventListener("DOMContentLoaded", async () => {
-            // Инициализация Telegram Web App
+        document.addEventListener("DOMContentLoaded", () => {
             const tg = window.Telegram.WebApp;
             tg.ready();
             tg.expand();
 
-            setupTelegramProfile(tg);
+            setupProfile(tg);
             initMap();
-            setupEvents();
+            setupControls();
             tryGeolocation();
         });
 
-        // Настройка отображения профиля из TG
-        function setupTelegramProfile(tg) {
+        function setupProfile(tg) {
             const nameElem = document.getElementById("user-name");
             const avatarElem = document.getElementById("user-avatar");
             const statusElem = document.getElementById("user-status");
@@ -282,37 +312,35 @@
                 if (user.photo_url) {
                     avatarElem.src = user.photo_url;
                 } else {
-                    avatarElem.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name)}&background=7F00FF&color=fff`;
+                    avatarElem.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name)}&background=4A3AFF&color=fff`;
                 }
 
-                // Проверка на VIP статус (серверная/локальная)
                 if (user.id === 5434932796 || (user.username && user.username.toLowerCase() === "kirushapross")) {
                     nameElem.classList.add("vip-nick");
-                    statusElem.textContent = "VIP Пользователь";
+                    statusElem.textContent = "VIP Доступ";
                     statusElem.style.color = "#FF007F";
+                    statusElem.style.fontWeight = "600";
                 } else {
-                    statusElem.textContent = "Telegram Пользователь";
+                    statusElem.textContent = "Telegram Клиент";
                 }
             }
         }
 
-        // Инициализация карты
         function initMap() {
             map = L.map('map', { zoomControl: false }).setView(centerCoords, 14);
             
-            // Используем красочную и чистую подложку Voyager от CartoDB
+            // Чистые и стильные тайлы Voyager от CartoDB под тон макета
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '© OpenStreetMap'
             }).addTo(map);
 
-            // Создаем маркер центра и окружность
             centerMarker = L.marker(centerCoords, { draggable: true }).addTo(map);
             searchCircle = L.circle(centerCoords, {
                 radius: currentRadius,
-                color: '#7F00FF',
-                fillColor: '#7F00FF',
-                fillOpacity: 0.12,
-                weight: 2
+                color: '#4A3AFF',
+                fillColor: '#4A3AFF',
+                fillOpacity: 0.08,
+                weight: 2.5
             }).addTo(map);
 
             centerMarker.on('drag', (e) => {
@@ -321,19 +349,26 @@
             });
         }
 
-        // Настройка событий и ползунка радиуса
-        function setupEvents() {
+        function updateSliderFill(slider) {
+            const percentage = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+            slider.style.background = `linear-gradient(to right, var(--primary-purple) 0%, var(--primary-purple) ${percentage}%, #E2E8F0 ${percentage}%, #E2E8F0 100%)`;
+        }
+
+        function setupControls() {
             const slider = document.getElementById("radius-slider");
             const radiusVal = document.getElementById("radius-val");
             const btnGenerate = document.getElementById("btn-generate");
+
+            // Первичная инициализация закраски трека
+            updateSliderFill(slider);
 
             slider.addEventListener("input", (e) => {
                 currentRadius = parseInt(e.target.value);
                 radiusVal.textContent = currentRadius >= 1000 ? `${(currentRadius/1000).toFixed(1)} км` : `${currentRadius} м`;
                 searchCircle.setRadius(currentRadius);
+                updateSliderFill(e.target);
             });
 
-            // Клик по карте меняет центр зоны
             map.on('click', (e) => {
                 centerCoords = [e.latlng.lat, e.latlng.lng];
                 centerMarker.setLatLng(e.latlng);
@@ -343,67 +378,56 @@
             btnGenerate.addEventListener("click", generateValidPoint);
         }
 
-        // Запрос реального местоположения устройства
         function tryGeolocation() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                    centerCoords = [position.coords.latitude, position.coords.longitude];
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    centerCoords = [pos.coords.latitude, pos.coords.longitude];
                     map.setView(centerCoords, 14);
                     centerMarker.setLatLng(centerCoords);
                     searchCircle.setLatLng(centerCoords);
-                    document.getElementById("status-text").textContent = "Геопозиция определена успешно. Перетащите маркер или настройте радиус.";
+                    document.getElementById("status-text").textContent = "Локация успешно синхронизирована по GPS.";
                 }, () => {
-                    document.getElementById("status-text").textContent = "Не удалось получить геопозицию. Используется дефолтная точка.";
+                    document.getElementById("status-text").textContent = "Доступ к GPS отклонен. Используйте ручной выбор на карте.";
                 });
             }
         }
 
-        // Генерация случайной точки внутри окружности
         function getRandomPointInCircle(lat, lng, radiusMeters) {
             const r = (radiusMeters / 111320) * Math.sqrt(Math.random());
             const theta = Math.random() * 2 * Math.PI;
-            
             const randomLat = lat + r * Math.cos(theta);
             const randomLng = lng + r * Math.sin(theta) / Math.cos(lat * Math.PI / 180);
-            
             return { lat: randomLat, lng: randomLng };
         }
 
-        // Валидация точки через Overpass API (проверка на воду и здания)
         async function checkPointSafety(lat, lng) {
-            // Ищем элементы типа "building" или "water" в радиусе 15 метров от точки
             const query = `[out:json];(node(around:15,${lat},${lng});way(around:15,${lat},${lng}););out tags;`;
             const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
             
             try {
                 const response = await fetch(url);
-                if (!response.ok) return true; // Если API недоступно, пропускаем фильтр ради стабильности
+                if (!response.ok) return true;
                 
                 const data = await response.json();
-                
                 for (let element of data.elements) {
                     if (element.tags) {
-                        // Если это здание
                         if (element.tags.building && element.tags.building !== 'no') return false;
-                        // Если это водоем/река/бассейн
                         if (element.tags.natural === 'water' || element.tags.waterway || element.tags.landuse === 'reservoir') return false;
                     }
                 }
-                return true; // Точка безопасна (не в доме и не на воде)
+                return true;
             } catch (e) {
-                console.error("Ошибка проверки Overpass API: ", e);
                 return true; 
             }
         }
 
-        // Запуск цикла поиска валидной точки
         async function generateValidPoint() {
             const statusBox = document.getElementById("status-text");
-            statusBox.innerHTML = "⏳ Проверяем местность... (ищем сушу без зданий)";
+            statusBox.innerHTML = "⏳ Проверяем местность на наличие построек и воды...";
             
             let attempts = 0;
             let validPoint = null;
-            const maxAttempts = 15; // Чтобы не зациклить приложение в центре озера
+            const maxAttempts = 15;
 
             while (attempts < maxAttempts) {
                 let candidate = getRandomPointInCircle(centerCoords[0], centerCoords[1], currentRadius);
@@ -417,21 +441,19 @@
             }
 
             if (validPoint) {
-                // Удаляем старый маркер цели, если он был
                 if (targetMarker) map.removeLayer(targetMarker);
 
-                // Создаем красивый кастомный неоновый маркер для цели
                 const neonIcon = L.divIcon({
-                    className: 'custom-pulse-icon',
+                    className: 'target-glow-marker',
                     iconSize: [16, 16]
                 });
 
                 targetMarker = L.marker([validPoint.lat, validPoint.lng], { icon: neonIcon }).addTo(map);
                 map.panTo([validPoint.lat, validPoint.lng]);
 
-                statusBox.innerHTML = `✅ Точка найдена (Попыток: ${attempts + 1})!<br>Координаты: ${validPoint.lat.toFixed(5)}, ${validPoint.lng.toFixed(5)}`;
+                statusBox.innerHTML = `🎯 Точка определена (Попыток: ${attempts + 1})!<br>Координаты: ${validPoint.lat.toFixed(5)}, ${validPoint.lng.toFixed(5)}`;
             } else {
-                statusBox.innerHTML = "❌ Не удалось найти свободную точку. Возможно, вокруг сплошная вода или застройка. Попробуйте увеличить радиус.";
+                statusBox.innerHTML = "❌ В выбранном радиусе слишком плотная застройка или вода. Попробуйте расширить радиус поиска.";
             }
         }
     </script>
